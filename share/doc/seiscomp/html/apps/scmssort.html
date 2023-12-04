@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scmssort &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scorgls" href="scorgls.html" />
+    <link rel="prev" title="scmapcut" href="scmapcut.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scorgls.html" title="scorgls"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scmapcut.html" title="scmapcut"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scmssort">
+<span id="id1"></span><h1>scmssort<a class="headerlink" href="#scmssort" title="Permalink to this heading">¶</a></h1>
+<p><strong>Read and manipulate miniSEED records</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scmssort reads unsorted (and possibly multiplexed) MiniSEED files and sorts
+the individual records by time. This is useful e.g. for simulating data
+acquisition and playbacks. Removing of duplicate data and trimming of time
+window is available.</p>
+<p>scmssort reads single files and output to the command line. Cat many files
+to read them at the same time. In this way huge amount of data can be processed
+efficiently.</p>
+<p>Applications to miniSEED records:</p>
+<ul class="simple">
+<li><p>Sort records by time, e.g. for playbacks.</p></li>
+<li><p>Remove duplicate records from files and clean waveform archives.</p></li>
+<li><p>Filter data records, i.e. keep or remove them, based on</p>
+<ul>
+<li><p>time windows,</p></li>
+<li><p>stream lists where each line has the format NET.STA.LOC.CHA including regular
+expressions. Such stream lists can be generated, e.g., using <a class="reference internal" href="scinv.html#scinv"><span class="std std-ref">scinv</span></a>.</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<ul class="simple">
+<li><p>Combine with <a class="reference internal" href="scart.html#scart"><span class="std std-ref">scart</span></a> or <a class="reference internal" href="msrtsimul.html#msrtsimul"><span class="std std-ref">msrtsimul</span></a> to archive data or to make
+playbacks with real-time simulations.</p></li>
+<li><p>Filter data by stream IDs using NSLC lists which can be generated using
+<a class="reference internal" href="scinv.html#scinv"><span class="std std-ref">scinv</span></a>.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Read a single miniSEED data file. The records are sorted by endtime and
+duplicates are removed.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scmssort<span class="w"> </span>-vuE<span class="w"> </span>unsorted.mseed<span class="w"> </span>&gt;<span class="w"> </span>sorted.mseed
+</pre></div>
+</div>
+</li>
+<li><p>Read all files ending with “.mseed” at the same time. The data are trimmed
+to a time window and duplicated or empty records are ignored.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>*.mseed<span class="w"> </span><span class="p">|</span><span class="w"> </span>scmssort<span class="w"> </span>-vuiE<span class="w"> </span>-t<span class="w"> </span><span class="s1">&#39;2020-03-28 15:48~2020-03-28 16:18&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>sorted.mseed
+</pre></div>
+</div>
+</li>
+<li><p>Remove streams listed by stream code and sort records by end time. Also ignore
+duplicated or empty records. Stream lists can be generated, e.g., by <a class="reference internal" href="scinv.html#scinv"><span class="std std-ref">scinv</span></a>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scmssort<span class="w"> </span>-vuiE<span class="w"> </span>--rm<span class="w"> </span>-l<span class="w"> </span>stream-list.txt<span class="w"> </span>test.mseed<span class="w"> </span>&gt;<span class="w"> </span>sorted.mseed
+</pre></div>
+</div>
+</li>
+<li><p>Extract streams by time and stream code and sort records by end time. Also ignore
+duplicated or empty records.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span>CX.PB01..BH?<span class="w"> </span><span class="p">|</span><span class="w"> </span>scmssort<span class="w"> </span>-vuE<span class="w"> </span>-t<span class="w"> </span><span class="s1">&#39;2007-03-28 15:48~2007-03-28 16:18&#39;</span><span class="w"> </span>-l<span class="w"> </span>-<span class="w"> </span>test.mseed<span class="w"> </span>&gt;<span class="w"> </span>sorted.mseed
+scmssort<span class="w"> </span>-vuiE<span class="w"> </span>-t<span class="w"> </span><span class="s1">&#39;2007-03-28 15:48~2007-03-28 16:18&#39;</span><span class="w"> </span>-l<span class="w"> </span>stream-list.txt<span class="w"> </span>test.mseed<span class="w"> </span>&gt;<span class="w"> </span>sorted.mseed
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scmssort [options] input</strong></p>
+<section id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-h">
+<span id="cmdoption-scmssort-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the command-line help and exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-E">
+<span id="cmdoption-scmssort-sort-by-end-time"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sort-by-end-time</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-E" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort by end time.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-i">
+<span id="cmdoption-scmssort-ignore"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ignore</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore all records which have no data samples.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-l">
+<span id="cmdoption-scmssort-list"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>File with streams to filter the records. One stream per
+line. Instead of a file read the from stdin (-). Line
+format: NET.STA.LOC.CHA - wildcards and regular expressions
+are considered. Example: CX.*..BH? .</p>
+<p>NSLC lists may be generated, e.g., using scinv.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-o">
+<span id="cmdoption-scmssort-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of output file for miniSEED data (default is stdout).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-r">
+<span id="cmdoption-scmssort-rm"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rm</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all traces in stream list given by --list
+instead of keeping them.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-t">
+<span id="cmdoption-scmssort-time-window"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--time-window</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify time window (as one -properly quoted- string).
+Times are of course UTC and separated by a tilde ~</p>
+<p>Example:</p>
+<p>‘2020-03-28 15:48~2020-03-28 16:18’</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-u">
+<span id="cmdoption-scmssort-uniqueness"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--uniqueness</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure uniqueness of output, i.e. skip duplicate records.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmssort-v">
+<span id="cmdoption-scmssort-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmssort-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run in verbose mode.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scmssort</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scmapcut.html"
+                          title="previous chapter">scmapcut</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scorgls.html"
+                          title="next chapter">scorgls</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scmssort.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,256 @@
+#!/usr/bin/env seiscomp-python
+
+###############################################################################
+# Copyright (C) 2012 by gempa GmbH                                            #
+#                                                                             #
+# All Rights Reserved.                                                        #
+#                                                                             #
+# NOTICE: All information contained herein is, and remains                    #
+# the property of gempa GmbH and its suppliers, if any. The intellectual      #
+# and technical concepts contained herein are proprietary to gempa GmbH       #
+# and its suppliers.                                                          #
+# Dissemination of this information or reproduction of this material          #
+# is strictly forbidden unless prior written permission is obtained           #
+# from gempa GmbH.                                                            #
+#                                                                             #
+# Author: Jan Becker, Stephan Herrnkind                                       #
+# Email: jabe@gempa.de, herrnkind@gempa.de                                    #
+###############################################################################
+
+from __future__ import absolute_import, division, print_function
+
+import getopt
+import os
+import socket
+import ssl
+import sys
+import time
+
+from stat import ST_MTIME
+
+usage_info = """
+Usage:
+  qlpush [options] [[file1] ...]
+
+Send a XML file to a QuakeLink server.
+
+Options:
+  -h [ --help ]                 Display this help message.
+  -H [ --host ] arg             QuakeLink host (hostname[:port]). If unused,
+                                localhost:18011 is considered.
+  -p [ --print-rev ]            Echo event ID and revision of successfully sent
+                                files.
+  -r [ --rm ] arg               Remove the event with the given event ID.
+  -s [ --ssl ]                  Use secure socket layer (SSL).
+
+Examples:
+Send a XML file with parameters of one event to a QuakeLink server on localhost
+  qlpush event.xml
+
+Remove one event by its ID from a QuakeLink server on localhost
+  qlpush -r gempa2020abcd
+"""
+
+
+# -----------------------------------------------------------------------------
+# Python version depended string conversion
+if sys.version_info[0] < 3:
+    py3bstr = str
+    py3ustr = str
+    byte_stdin = sys.stdin
+
+else:
+    py3bstr = lambda s: s.encode("utf-8")
+    py3ustr = lambda s: s.decode("utf-8", "replace")
+    byte_stdin = sys.stdin.buffer
+
+
+# -----------------------------------------------------------------------------
+def usage(exitcode=0):
+    print(usage_info.format(name=sys.argv[0]), file=sys.stderr)
+    return exitcode
+
+
+# -----------------------------------------------------------------------------
+def send(sock, data):
+    sock.sendall(py3bstr(data))
+
+
+# -----------------------------------------------------------------------------
+def sendFile(sock, printRev, filename):
+    if filename == "-":
+        timestamp = time.time()
+        f = byte_stdin
+    else:
+        try:
+            timestamp = os.stat(filename)[ST_MTIME]
+        except Exception as e:
+            print("ERROR: {}: {}".format(filename, e), file=sys.stderr)
+            return False
+
+        try:
+            f = open(filename, "rb")
+        except OSError:
+            print("ERROR: {}: unable to open file".format(filename), file=sys.stderr)
+            return False
+
+    timestamp = time.strftime("%FT%T.0", time.gmtime(timestamp))
+
+    data = f.read()
+    if not data or len(data) == 0:
+        print("WARNING: {}: file empty".format(filename), file=sys.stderr)
+        return False
+
+    send(sock, "Content-Type: text/xml\r\n")
+    send(sock, "Content-Timestamp: {}\r\n".format(timestamp))
+    send(sock, "Content-Length: {}\r\n".format(len(data)))
+    send(sock, "\r\n")
+    sock.sendall(data)  # data was read from file hence it is a byte string
+    send(sock, "\r\n")
+
+    resp = py3ustr(sock.recv(1024))
+    success = resp.strip()[:3] == "200"
+
+    if printRev and success:
+        eid = None
+        rev = None
+        for line in resp.splitlines():
+            lineUpper = line.upper()
+            if lineUpper[:9] == "EVENT-ID:":
+                eid = line[9:].strip()
+            if lineUpper[:15] == "EVENT-REVISION:":
+                try:
+                    rev = int(line[15:])
+                except ValueError:
+                    print("Received invalid revision", file=sys.stderr)
+        if eid is not None and rev is not None:
+            print("{} {}".format(eid, rev))
+
+    resp = resp.replace("\r", "").replace("\n", ", ")
+    print("Server response: {}".format(resp), file=sys.stderr)
+    return success
+
+
+# -----------------------------------------------------------------------------
+def removeID(sock, eid):
+    timestamp = time.strftime("%FT%T.0", time.gmtime())
+
+    send(sock, "Content-Type: text/plain\r\n")
+    send(sock, "Content-Timestamp: {}\r\n".format(timestamp))
+    send(sock, "Content-Operation: dispose\r\n")
+    send(sock, "Content-Length: {}\r\n".format(len(eid)))
+    send(sock, "\r\n")
+    send(sock, eid)
+    send(sock, "\r\n")
+
+    resp = py3ustr(sock.recv(1024))
+    resp = resp.replace("\r", "").replace("\n", ", ")
+    print("Server response: {}".format(resp), file=sys.stderr)
+    return resp.strip()[:3] == "200"
+
+
+# -----------------------------------------------------------------------------
+def qlpush(host, port, useSSL, printRev, removeEvent, filenames):
+    # pylint: disable=R0913
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        if useSSL:
+            sock = ssl.wrap_socket(sock)
+        sock.connect((host, port))
+    except socket.error as e:
+        print("ERROR: {}".format(e), file=sys.stderr)
+        return False
+
+    try:
+        success = 0
+        if removeEvent:
+            for fname in filenames:
+                if removeID(sock, fname):
+                    success += 1
+        else:
+            for fname in filenames:
+                if sendFile(sock, printRev, fname):
+                    success += 1
+
+        print("Closing connection", file=sys.stderr)
+    except socket.error as e:
+        print("ERROR: socket: {}".format(e), file=sys.stderr)
+
+    sock.close()
+
+    if removeEvent:
+        print(
+            "{}/{} events successfully removed".format(success, len(filenames)),
+            file=sys.stderr,
+        )
+    else:
+        print(
+            "{}/{} files successfully sent".format(success, len(filenames)),
+            file=sys.stderr,
+        )
+
+    return success == len(filenames)
+
+
+# -----------------------------------------------------------------------------
+def main():
+    try:
+        opts, args = getopt.gnu_getopt(
+            sys.argv[1:], "hH:spr", ["help", "host=", "ssl", "print-rev", "rm"]
+        )
+    except getopt.GetoptError as e:
+        # print help information and exit:
+        print(str(e))  # will print something like "option -a not recognized"
+        return usage()
+
+    addr = None
+    useSSL = False
+    printRev = False
+    removeEvent = False
+
+    for o, a in opts:
+        if o in ("-h", "--help"):
+            return usage()
+
+        if o in ("-H", "--host"):
+            addr = a
+        elif o in ["-s", "--ssl"]:
+            useSSL = True
+        elif o in ("-p", "--print-rev"):
+            printRev = True
+        elif o in ("-r", "--rm"):
+            removeEvent = True
+        else:
+            assert False, "unhandled option"
+
+    if len(args) == 0:
+        args.append("-")
+
+    host = "localhost"
+    port = 18011
+
+    if addr:
+        a = addr.split(":")
+        if len(a[0]) > 0:
+            host = a[0]
+        if len(a) == 2 and len(a[1]) > 0:
+            try:
+                port = int(a[1])
+            except ValueError:
+                print("invalid port given: {}".format(a[1]), file=sys.stderr)
+                return 1
+        elif len(a) > 2:
+            print("invalid host address given: {}".format(addr), file=sys.stderr)
+            return 1
+
+    print("Host: {}:{}".format(host, port), file=sys.stderr)
+
+    if qlpush(host, port, useSSL, printRev, removeEvent, args):
+        return 0
+
+    return 1
+
+
+# -----------------------------------------------------------------------------
+if __name__ == "__main__":
+    sys.exit(main())

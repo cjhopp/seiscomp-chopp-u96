@@ -1,0 +1,3023 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>seedlink &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="slarchive" href="slarchive.html" />
+    <link rel="prev" title="scwfas" href="scwfas.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="slarchive.html" title="slarchive"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scwfas.html" title="scwfas"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/acquisition.html" accesskey="U">Acquisition</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="seedlink">
+<span id="id1"></span><h1>seedlink<a class="headerlink" href="#seedlink" title="Permalink to this heading">¶</a></h1>
+<p><strong>Real-time waveform server implementing the SeedLink protocol.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>SeedLink is a real-time data acquisition protocol and a client-server software
+that implements this protocol. The SeedLink protocol is based on TCP. All
+connections are initiated by the client. During handshaking phase the client can
+subscribe to specific stations and streams using simple commands in ASCII coding.
+When handshaking is completed, a stream of SeedLink “packets” consisting of a
+8-byte SeedLink header (containing the sequence number) followed by a 512-byte
+miniSEED record, is sent to the client. The packets of each individual station
+are always transferred in timely (FIFO) order. The SeedLink implementation used
+in SeisComP is the oldest and most widely used, however, other implementations
+exist. Another well-known implementation is deployed in IRIS DMC and some
+manufacturers have implemented SeedLink in their digitizer firmware. All
+implementations are generally compatible, but not all of them support the full
+SeedLink protocol. On the other hand IRIS DMC implements some extensions which
+are not supported by other servers. In the following we use “SeedLink” to denote
+the SeedLink implementation used in SeisComP. The data source of a SeedLink
+server can be anything which is supported by a SeedLink plugin - a small program
+that sends data to the SeedLink server. Plugins are controlled by the SeedLink
+server, e.g., a plugin is automatically restarted if it crashes or a timeout
+occurs. Data supplied by a plugin can be a form of miniSEED packets or just
+raw integer samples with accompanying timing information. In the latter case,
+the SeedLink server uses an inegrated “Stream Processor” to create the desired
+data streams and assemble miniSEED packets.</p>
+<section id="supported-data-sources">
+<h3>Supported data sources<a class="headerlink" href="#supported-data-sources" title="Permalink to this heading">¶</a></h3>
+<p>The table below lists digitizers and data acquisition systems that are supported by
+SeedLink plugins. More plugins (Kinemetrics K2, Lennartz MARS-88, Lennartz PCM
+5800, etc.) have been implemented by various users, but are not (yet) included
+in the package. The included C language plugin interface is described in
+section 5.1.1.5. Antelope, Earthworm and NAQS can also import data from
+SeisComP. In SeisComP the class <a class="reference internal" href="global_recordstream.html#global-recordstream"><span class="std std-ref">RecordStream</span></a> is implemented that supports both
+SeedLink and ArcLink sources; this class is used by all SeisComP modules that
+work with waveform data. On a lower level, SeedLink clients can be implemented
+using the <span id="id2"><em>Libslink</em> [<a class="reference internal" href="../base/references.html#id143" title="Libslink. SeedLink client library written in C. URL: https://ds.iris.edu/ds/nodes/dmc/software/downloads/libslink/.">15</a>]</span> software library or its Java counterpart, JSeedLink. Libslink
+supports Linux/UNIX, Windows and MacOS X platforms, and comes with an exhaustive
+documentation in form of UNIX manual pages.</p>
+<table class="docutils align-left">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Plugin name</p></th>
+<th class="head"><p>Source or Digitizer/DAS</p></th>
+<th class="head"><p>Plugin Implementer</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-antelope-label"><span class="std std-ref">antelope</span></a> *</p></td>
+<td><p>Antelope</p></td>
+<td><p>Chad Trabant (IRIS)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-caps-label"><span class="std std-ref">caps</span></a></p></td>
+<td><p>CAPS server <span id="id3">[<a class="reference internal" href="../base/references.html#id87" title="CAPS. gempa module. URL: https://docs.gempa.de/caps/current/index.html.">3</a>]</span></p></td>
+<td><p><a class="reference external" href="https://www.gempa.de">gempa GmbH</a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-chain-label"><span class="std std-ref">chain</span></a></p></td>
+<td><p>SeedLink</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-odd"><td><p>dm24 **</p></td>
+<td><p>Guralp DM24</p></td>
+<td><p>GFZ; based on libgcf2 from Guralp</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-dr24-label"><span class="std std-ref">dr24</span></a></p></td>
+<td><p>Geotech DR24</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-echopro-3ch100hz-label"><span class="std std-ref">echopro_3ch100hz</span></a> /  <a class="reference internal" href="#seedlink-sources-echopro-6ch200hz-label"><span class="std std-ref">echopro_6ch200hz</span></a></p></td>
+<td><p>Kelunji Echo/EchoPro</p></td>
+<td><p>Oyvind Natvik (UiB)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-edata-label"><span class="std std-ref">edata</span></a></p></td>
+<td><p>Earth Data PS2400/PS6-24</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-ewexport-label"><span class="std std-ref">ewexport</span></a></p></td>
+<td><p>Earthworm export server (TCP/IP), Chad Trabant (IRIS)</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-ewexport-pasv-label"><span class="std std-ref">ewexport_pasv</span></a></p></td>
+<td><p>Earthworm passive export server (TCP/IP)</p></td>
+<td><p>Chad Trabant (IRIS)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-fs-mseed-label"><span class="std std-ref">fs_mseed</span></a></p></td>
+<td><p>miniSEED file plugin</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-gdrt-label"><span class="std std-ref">gdrt</span></a></p></td>
+<td><p>GDRT server</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-hrd24-label"><span class="std std-ref">hrd24</span></a></p></td>
+<td><p>Nanometrics HRD24</p></td>
+<td><p>GFZ; Recai Yalgin</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-liss-label"><span class="std std-ref">liss</span></a></p></td>
+<td><p>LISS</p></td>
+<td><p>Chad Trabant (IRIS)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-m24-label"><span class="std std-ref">m24</span></a> *</p></td>
+<td><p>Lennartz M24</p></td>
+<td><p>Lennartz Electronic GmbH</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-minilogger-label"><span class="std std-ref">minilogger</span></a></p></td>
+<td><p>SEP064 USB Seismometer Interface</p></td>
+<td><p>GFZ; Anthony Lomax</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-mseedfifo-label"><span class="std std-ref">mseedfifo</span></a></p></td>
+<td><p>Generic</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-mseedscan-label"><span class="std std-ref">mseedscan</span></a></p></td>
+<td><p>Transfers miniSEED files from a directory</p></td>
+<td><p>Chad Trabant (IRIS)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-mk6-label"><span class="std std-ref">mk6</span></a> *</p></td>
+<td><p>MK6</p></td>
+<td><p>Jan Wiszniowski (IGPAS)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-mppt-label"><span class="std std-ref">mppt</span></a> *</p></td>
+<td><p>SunSaver MPPT via Modbus TCP/IP</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-mws-label"><span class="std std-ref">mws</span></a></p></td>
+<td><p>Reinhardt MWS5/MWS9 Weather Station</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-naqs-label"><span class="std std-ref">naqs</span></a></p></td>
+<td><p>NAQS</p></td>
+<td><p>Chad Trabant (IRIS); based on sample code from Nanometrics, Inc.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-nmxp-label"><span class="std std-ref">nmxp</span></a> *</p></td>
+<td><p>NAQS</p></td>
+<td><p>Matteo Quintiliani (INGV)</p></td>
+</tr>
+<tr class="row-even"><td><p>nrts **</p></td>
+<td><p>NRTS</p></td>
+<td><p>GFZ; based on ISI toolkit from David E. Chavez</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-ps2400-eth-label"><span class="std std-ref">ps2400_eth</span></a></p></td>
+<td><p><a class="reference internal" href="#seedlink-sources-ps2400-eth-label"><span class="std std-ref">Earth Data PS2400/PS6 Ethernet</span></a></p></td>
+<td><p>GFZ; <a class="reference external" href="https://www.gempa.de">gempa GmbH</a></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-q330-label"><span class="std std-ref">q330</span></a></p></td>
+<td><p>Quanterra Q330</p></td>
+<td><p>GFZ; based on lib330 maintained by ISTI, Inc.</p></td>
+</tr>
+<tr class="row-odd"><td><p>comserv **</p></td>
+<td><p>Quanterra Q380/Q680, Q4120, Q720</p></td>
+<td><p>GFZ; based on Comserv by Quanterra, Inc.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-reftek-label"><span class="std std-ref">reftek</span></a></p></td>
+<td><p>RefTek RTPD</p></td>
+<td><p>GFZ; based on software library provided by RefTek, Inc.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-sadc-label"><span class="std std-ref">sadc</span></a></p></td>
+<td><p>SARA SADC10/18/20/30</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-scream-label"><span class="std std-ref">scream</span></a></p></td>
+<td><p>SCREAM</p></td>
+<td><p>Reinoud Sleeman (KNMI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-scream-ring-label"><span class="std std-ref">scream_ring</span></a></p></td>
+<td><p>SCREAM</p></td>
+<td><p>Reinoud Sleeman (KNMI), This is the second revision of the scream plugin which supports buffering for short-term completeness.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-vaisala-label"><span class="std std-ref">vaisala</span></a></p></td>
+<td><p>Vaisala ASCII protocol (serial plugin)</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-wago-label"><span class="std std-ref">wago</span></a></p></td>
+<td><p>WAGO MODBUS/TCP devices</p></td>
+<td><p>GFZ</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#seedlink-sources-wave24-label"><span class="std std-ref">wave24</span></a> *</p></td>
+<td><p>Wave24</p></td>
+<td><p>MicroStep-MIS</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#seedlink-sources-win-label"><span class="std std-ref">win</span></a></p></td>
+<td><p>WIN</p></td>
+<td><p>GFZ; based on source code of WIN system</p></td>
+</tr>
+<tr class="row-even"><td><p>ws2300 **</p></td>
+<td><p>Lacrosse 2300 Weather Station</p></td>
+<td><p>GFZ; based on open2300 library from Kenneth Lavrsen</p></td>
+</tr>
+</tbody>
+</table>
+<p>* Third-party plugin, not included in SeisComP distribution</p>
+<p>** No longer supported</p>
+</section>
+<section id="telnet-interface">
+<h3>Telnet interface<a class="headerlink" href="#telnet-interface" title="Permalink to this heading">¶</a></h3>
+<p><strong class="program">seedlink</strong> provides a telnet interface accepting the commands set out in
+<a class="reference internal" href="#seedlink-commands"><span class="std std-ref">Commands</span></a> through the seedlink <a class="reference internal" href="slmon.html#confval-port"><code class="xref std std-confval docutils literal notranslate"><span class="pre">port</span></code></a></p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>telnet [host] [port]
+</pre></div>
+</div>
+<p>Example fetching the SeedLink version:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>$ telnet localhost 18000
+Trying 127.0.0.1...
+Connected to localhost.gempa.de.
+Escape character is &#39;^]&#39;.
+hello
+SeedLink v3.3 (2020.122)
+bye
+Connection closed by foreign host.
+</pre></div>
+</div>
+</section>
+<section id="queries">
+<h3>Queries<a class="headerlink" href="#queries" title="Permalink to this heading">¶</a></h3>
+<p><strong class="program">seedlink</strong> provides a query interface.
+Use <strong class="program">slinktool</strong> to send queries
+for fetching:</p>
+<ul class="simple">
+<li><p>Station and stream information</p></li>
+<li><p>Waveform data</p></li>
+</ul>
+</section>
+</section>
+<section id="protocol">
+<h2>Protocol<a class="headerlink" href="#protocol" title="Permalink to this heading">¶</a></h2>
+<p>A SeedLink session starts with opening the TCP/IP connection and ends with
+closing the TCP/IP connection. During the session the following steps are
+performed in order:</p>
+<ul class="simple">
+<li><p>Opening the connection</p></li>
+<li><p>Handshaking</p></li>
+<li><p>Transferring SeedLink packets</p></li>
+</ul>
+<p>We will take a closer look at the protocol. Note, the details are normally
+hidden from the clients by the libslink software library; therefore it is not
+necessary to be familiar with the protocol in order to implement clients.</p>
+<section id="handshaking">
+<h3>Handshaking<a class="headerlink" href="#handshaking" title="Permalink to this heading">¶</a></h3>
+<p>When the TCP/IP connection has been established the server will wait for the
+client to start handshaking without initially sending any data to the client.
+During handshaking the client sends SeedLink commands to the server. The
+commands are used to set the connection into a particular mode, setup stream
+selectors, request a packet sequence number to start with and eventually start
+data transmission. SeedLink commands consist of an ASCII string followed by
+zero or several arguments separated by spaces and terminated with carriage
+return (&lt;cr&gt;, ASCII code 13) followed by an optional linefeed
+(&lt;lf&gt;, ASCII code 10). The commands can be divided into two categories: “action
+commands” and “modifier commands”. Action commands perform a function such as
+starting data transfer. Modifier commands are used to specialize or modify the
+function performed by the action commands that follow. When a server receives a
+modifier command it responds with the ASCII string “OK” followed by a carriage
+return and a line feed to acknowledge that the command has been accepted. If
+the command was not recognized by the server or has invalid parameters, then
+the ASCII string “ERROR” is sent as a response to the client followed by a
+carriage return and a line feed. The client should not send any further
+commands before it has received a response to the previous modifier command. If
+a network error or timeout occurs the client should close the connection and
+start a new session. Data transmission is started when the server receives the
+commands DATA, FETCH, TIME or END as described in section 5.1.1.3. Once the data
+transfer has been started no more commands, except INFO, should be sent to the
+server. The flow diagram of handshaking in uni-station vs. multi-station mode
+is shown in <a class="reference internal" href="#seedlink-handshaking"><span class="std std-ref">Handshaking in uni-station vs. multi-station mode.</span></a>.</p>
+<figure class="align-default" id="id5">
+<span id="seedlink-handshaking"></span><a class="reference internal image-reference" href="../_images/Handshaking_uni_multi_station_mode.jpg"><img alt="../_images/Handshaking_uni_multi_station_mode.jpg" src="../_images/Handshaking_uni_multi_station_mode.jpg" style="width: 10cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Handshaking in uni-station vs. multi-station mode.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="data-transfer">
+<h3>Data Transfer<a class="headerlink" href="#data-transfer" title="Permalink to this heading">¶</a></h3>
+<p>When handshaking has been completed the server starts sending data packets, each
+consisting of an 8-byte SeedLink header followed by a 512-byte miniSEED record.
+The SeedLink header is an ASCII string consisting of the letters “SL” followed
+by a six-digit hexadecimal packet sequence number. Each station has its own
+sequence numbers. If multiple stations are requested using a single TCP channel
+the client should look at the contents of the miniSEED header to determine the
+station name (or to maintain the current sequence numbers for each station). A
+sequence number in the same format is used as an argument to the commands “DATA”
+or “FETCH” to start the data transfer from a particular packet. Each SeedLink
+node re-assigns sequence numbers for technical reasons. It is not possible to
+use the same sequence numbers when communicating with alternative servers.
+Within a particular node the sequence numbers of a single station are
+consecutive and wrap around at FFFFFF. This can be used by the client to detect
+“sequence gaps” (e.g., some data has been missed by the client due to long
+network outage or a software bug). However, if stream selectors are used the
+sequence numbers are only guaranteed to be in increasing order (with wrap)
+because some packets might be filtered out by the server. In this case the
+first packet is not necessarily the one requested, but the nearest packet (not
+older than requested) that matches installed selectors.
+The data is transferred as a continuous stream without any error detections or
+flow control because these functions are performed by the TCP protocol. This
+guarantees the highest data transfer rate that is possible with the particular
+hardware and TCP/IP implementation.
+Obviously, the average data transfer rate must be greater than the rate at
+which new data becomes ready to send at the server. If this is the case, sooner
+or later the server has sent all data available to the client. When this
+happens, depending on the SeedLink mode, the server sends new data as soon as
+it arrives or appends ASCII string “END” to the last packet and waits for the
+client to close connection. The latter mode is called “dial-up mode” because
+it is normally used in conjunction with dial-up lines to open the connection
+periodically for a short time and download all data available. A SeedLink
+packet can never start with “END” thus no ambiguity arises.</p>
+</section>
+<section id="commands">
+<span id="seedlink-commands"></span><h3>Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h3>
+<dl class="simple">
+<dt>HELLO</dt><dd><p>responds with a two-line message (both lines terminated with &lt;cr&gt;&lt;lf&gt;). The first line contains the version number of the SeedLink daemon, the second  line contains station or data center description specified in the configuration. HELLO is used mainly for testing a SeedLink server with “telnet”. It is also used by libslink to determine the server version.</p>
+</dd>
+<dt>CAT</dt><dd><p>shows the station list. Used mainly for testing a SeedLink server with “telnet”.</p>
+</dd>
+<dt>BYE</dt><dd><p>closes the connection. Used mainly for testing a SeedLink server with “telnet”.</p>
+</dd>
+<dt>STATION station code [network code]</dt><dd><p>turns on multi-station mode, used to transfer data of multiple stations over a single TCP channel. The STATION command, followed by SELECT (optional) and FETCH, DATA or TIME commands is repeated for each station and the handshaking is finished with END. STATION is a modifier command (it modifies the function of subsequent SELECT, and DATA, FETCH or TIME commands) so it responds with “OK” on success, “ERROR” otherwise.</p>
+</dd>
+<dt>END</dt><dd><p>end of handshaking in multi-station mode. This is an action command, because it starts data transfer. No explicit response is sent.</p>
+</dd>
+<dt>SELECT [pattern]</dt><dd><p>when used without pattern, all selectors are canceled. Otherwise, the pattern is a positive selector to enable matching miniSEED stream transfer. The pattern can be used as well as a negative selector with a leading “!” to prevent the transfer of some miniSEED streams. Only one selector can be used in a single SELECT request. A SeedLink packet is sent to the client if it matches any positive selector and doesn’t match any negative selectors.</p>
+</dd>
+</dl>
+<p>General format of selectors is LLCCC.T where LL is location, CCC is channel, and T is type (one of DECOTL for data, event, calibration, blockette, timing, and log records). “LL”, “.T”, and “LLCCC.” can be omitted, meaning “any”. It is also possible to use “?” in place of L and C. Some examples can be found in table 3-1 in section 3.3.3.2.
+SELECT is a modifier command (it modifies the function of subsequent DATA, FETCH or TIME commands) so a response follows with “OK” on success, “ERROR” otherwise.</p>
+<dl class="simple">
+<dt>DATA [n [begin time]]</dt><dd><p>in multi-station mode this sets the current station into real-time mode and (optionally) the current sequence number to n; in uni-station mode this starts data transfer in real-time mode from packet n or from the next packet available if used without arguments. If begin time is used, any older packets are filtered out. begin time should be in the form of 6 decimal numbers separated by commas in the form: year,month,day,hour,minute,second, e.g. ’2002,08,05,14,00,00’. DATA is a modifier command in multi-station mode (responds with “OK” or “ERROR”); in uni-station mode it is an action command (no explicit response is sent).</p>
+</dd>
+<dt>FETCH [n [begin time]]</dt><dd><p>works like DATA but sets the station to dial-up mode instead of real-time mode.</p>
+</dd>
+<dt>TIME [begin time [end time]]</dt><dd><p>extracts the time window from begin time to end time. The times are specified in the form of 6 decimal numbers separated by commas in the form: year,month,day,hour,minute,second, e.g. ’2002,08,05,14,00,00’.</p>
+</dd>
+<dt>INFO level</dt><dd><p>requests an INFO packet containing XML data embedded in a miniSEED log record. level should be one of the following: ID, CAPABILITIES, STATIONS, STREAMS, GAPS, CONNECTIONS, ALL. The XML document conforms to the Document Type Definition (DTD) shown in section ???. The amount of info available depends on the configuration of the SeedLink server.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="plugin-interface">
+<h2>Plugin Interface<a class="headerlink" href="#plugin-interface" title="Permalink to this heading">¶</a></h2>
+<p>In order to implement a SeedLink plugin a developer needs two files included in the SeisComP distribution: <code class="file docutils literal notranslate"><span class="pre">plugin.h</span></code> and <code class="file docutils literal notranslate"><span class="pre">plugin.c</span></code>.
+In these files the following public functions are defined:</p>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.send_raw3">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_raw3</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">station</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">channel</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ptime</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">pt</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">usec_correction</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">timing_quality</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dataptr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">number_of_samples</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_raw3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<p>is used to send a raw packet (array of 32-bit integer samples) to SeedLink. The parameters are:</p>
+<dl class="simple">
+<dt>station</dt><dd><p>station ID, must match one of the defined stations in seedlink.ini. (Up to 10 characters.)</p>
+</dd>
+<dt>channel</dt><dd><p>channel ID, referenced by the “input” element in streams.xml. (Up to 10 characters.)</p>
+</dd>
+<dt>pt</dt><dd><p>time of the first sample in the array. If NULL then time is calculated relative to the previous send_raw3() call. struct ptime is defined in <code class="file docutils literal notranslate"><span class="pre">plugin.h</span></code>.</p>
+</dd>
+<dt>usec_correction</dt><dd><p>time correction in microseconds to be written in the SEED data header. Can be useful if the digitizer is not phase locked to GPS.</p>
+</dd>
+<dt>timing_quality</dt><dd><p>timing quality in percent (0-100). The number is directly written into miniSEED header (blockette 1001). Semantics is implementation-defined. Usually 100 means that GPS is in lock and 0 means there never was a GPS lock, so the timing is completely unreliable. When GPS goes out of lock, the value can slowly decrease reflecting a possible timedrift.</p>
+</dd>
+<dt>dataptr</dt><dd><p>Array of signed 32-bit samples.</p>
+</dd>
+<dt>Number_of_samples</dt><dd><p>Length of the sample array.</p>
+</dd>
+</dl>
+<p>Special cases:</p>
+<ul class="simple">
+<li><p>If timing_quality = -1, blockette 1001 is omitted.</p></li>
+<li><p>If number_of_samples = 0 &amp; pt = NULL set new time without sending any data.</p></li>
+<li><p>If dataptr = NULL send a gap (advance time as if number of samples was sent without sending any actual data).</p></li>
+</ul>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.send_raw_depoch">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_raw_depoch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">station</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">channel</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n"><span class="pre">depoch</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">usec_correction</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">timing_quality</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">int32_t</span></span><span class="w"> </span><span class="n"><span class="pre">dataptr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">number_of_samples</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_raw_depoch" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<p>same as send_raw3() except time is measured in seconds since 1 January 1970 (depoch). Leap seconds are ignored.</p>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.send_flush3">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_flush3</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">station</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">channel</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_flush3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<p>flushes all miniSEED data streams associated with a channel. All buffered data is sent out creating “unfilled” miniSEED records if necessary. The parameters are:</p>
+<dl class="simple">
+<dt>station</dt><dd><p>station ID.</p>
+</dd>
+<dt>Channel</dt><dd><p>channel ID.</p>
+</dd>
+</dl>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.send_mseed">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_mseed</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">station</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dataptr</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">packet_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_mseed" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<p>is used to send a miniSEED packet to SeedLink. Such packets are not further processed. The parameters are:</p>
+<dl class="simple">
+<dt>station</dt><dd><p>station ID.</p>
+</dd>
+<dt>dataptr</dt><dd><p>pointer to 512-byte miniSEED packet.</p>
+</dd>
+<dt>packet size</dt><dd><p>must be 512.</p>
+</dd>
+</dl>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.send_log3">
+<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_log3</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">station</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ptime</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">pt</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fmt</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_log3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<p>is used to send a log message to SeedLink (LOG stream). It must be noted that encapsulating log messages in miniSEED records is relatively inefficient because each message takes at least one record (512 bytes), regardless of message size. Due to 64-byte miniSEED header, up to 448 bytes per record can be used *  The parameters are:</p>
+<dl class="simple">
+<dt>station</dt><dd><p>station ID.</p>
+</dd>
+<dt>pt</dt><dd><p>the timestamp of the message.</p>
+</dd>
+<dt>fmt</dt><dd><p>format string, as used by printf(), followed by a variable number of arguments.</p>
+</dd>
+</dl>
+</section>
+<section id="compatibility-with-earlier-versions">
+<h2>Compatibility with Earlier Versions<a class="headerlink" href="#compatibility-with-earlier-versions" title="Permalink to this heading">¶</a></h2>
+<p>It is possible to determine the version of the plugin interface by looking at the C macro PLUGIN_INTERFACE_VERSION. The current version is 3, therefore all functions that have changed since earlier versions end with “3”. It is possible to enable full backward compatibility with earlier versions of the plugin interface by defining the C macro PLUGIN_COMPATIBILITY. In this case the old functions are also defined.</p>
+</section>
+<section id="seedlink-configuration-files">
+<h2>SeedLink configuration files<a class="headerlink" href="#seedlink-configuration-files" title="Permalink to this heading">¶</a></h2>
+<p>The following configuration files are used by SeedLink and its plugins.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some files such as seedlink.ini, plugin.ini and chain*.xml are generated by the <strong class="program">seiscomp</strong> tool according
+to the configuration in <code class="file docutils literal notranslate"><span class="pre">etc/seedlink.cfg</span></code> and its bindings. They live in <code class="file docutils literal notranslate"><span class="pre">var/lib/seedlink</span></code> and should
+not be modified. If modifications are necessary then the generator needs to be changed to better support
+the desired user options.</p>
+</div>
+<dl class="simple">
+<dt>plugins.ini</dt><dd><p>Configuration file for SeedLink plugins. Used by serial_plugin, fs_plugin and comserv_plugin.</p>
+</dd>
+<dt>seedlink.ini</dt><dd><p>Main configuration file for SeedLink. For more details see below.</p>
+</dd>
+<dt>filters.fir</dt><dd><p>Coefficients of SeedLink’s decimating FIR filters. If a filter’s name ends with “M”, it is a minimum-phase filter – causal filter with minimized (non-constant) phase delay; since the filter is non-symmetric all coefficients must be given. Otherwise the filter is a zero-phase filter, i.e. a non-causal filter with zero phase delay; in this case the filter is symmetric and so only half of the coefficients must be given (it is not possible to use a zero-phase filter with an odd number of coefficients).</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The coefficients for non-symmetric (minimum-phase) FIR filters in the filters.fir file are stored
+in reverse order. It is important to reverse the order of coefficients if the operator adds
+a new minimum-phase filter or uses the included minimum-phase filters for another application.
+The coefficients for symmetric (zero-phase) FIR filters are not stored in reverse order. As a
+sanity check for symmetric filters the largest coefficient is always in the middle of the symmetry.</p>
+</div>
+<dl class="simple">
+<dt>streams.xml</dt><dd><p>SeedLink stream configuration file for the internal stream processor, referenced from seedlink.ini. For details see below.</p>
+</dd>
+</dl>
+<p>*.ini files have a somewhat obscure syntax. They contain zero or more sections, each beginning with a section name
+in squared brackets which should appear on a line of its own. Section name cannot contain spaces and squared brackets,
+but it can be optionally surrounded by spaces. Each section consists of zero or more entries – definitions and assignments.
+A definition consists of a keyword and a name separated by spaces (e.g. “station EDD”). An assignment consists of a
+parameter and a value separated by the “=” sign and optionally surrounded by spaces (e.g. “network = GE”).</p>
+<p>The set of assignments that immediately follow a definition is in the scope of that definition. Assignments in the
+beginning of a section are “global” – they are used to set some generic parameters and provide default values
+(e.g. “network = GE” in the beginning of the section sets the default network that can be overridden in the scope
+of a station definition).</p>
+<p>Parameters and keywords are case insensitive and must not contain the symbols “=”, “[”, “]” or spaces. Names must
+not contain “=” signs or spaces. Values must not contain “=” signs or spaces, unless enclosed in double quotes.
+Double quotes that are part of the value itself must be preceded by “&quot;.</p>
+<p>Each assignment must be complete on a single line, but several assignments can appear on one line, separated by spaces.
+Any line beginning with a “#” or “*” character is regarded as a comment and ignored.</p>
+<section id="seedlink-ini">
+<h3>seedlink.ini<a class="headerlink" href="#seedlink-ini" title="Permalink to this heading">¶</a></h3>
+<p>seedlink.ini may contain several sections, but only one having the same name as
+the executable to be used. A section in seedlink.ini has the following structure
+(parameters are shown in courier, default values are shown in squared brackets,
+but relying on them is not recommended):</p>
+<p>seedlink.ini is generated from <code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/seedlink.cfg</span></code> and
+<code class="file docutils literal notranslate"><span class="pre">etc/seedlink.cfg</span></code>.</p>
+</section>
+<section id="streams-xml">
+<h3>streams.xml<a class="headerlink" href="#streams-xml" title="Permalink to this heading">¶</a></h3>
+<p>This file, like all XML documents, has a tree-like structure. The root element
+is called “stream” and it in turn contains “proc” elements which are referenced
+by name in seedlink.ini. A “proc” element contains one or more “tree” elements,
+which in turn contain “input” and “node” elements. There should be one “input”
+element per plugin channel; if an “input” element is missing, the channel is
+ignored and you will see a message like:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>Jun 24 12:56:28 st55 seedlink: EDD channel X ignored
+</pre></div>
+</div>
+<p>Here is the description of all elements and attributes:</p>
+<dl class="simple">
+<dt><strong>element</strong> streams</dt><dd><p>root element, has no attributes.</p>
+</dd>
+<dt><strong>element</strong> proc</dt><dd><p>defines a “proc” object (set of “stream trees”), referenced from seedlink.ini.</p>
+</dd>
+<dt><strong>attribute</strong> name</dt><dd><p>name of “proc” object, for reference.</p>
+</dd>
+<dt><strong>element</strong> using</dt><dd><p>used to include all “stream trees” defined by one “proc” object in another “proc” object.</p>
+</dd>
+<dt><strong>attribute</strong> name</dt><dd><p>the name of referenced “proc” object.</p>
+</dd>
+<dt><strong>element</strong> tree</dt><dd><p>defines a “stream tree” – a downsampling scheme of an input channel.</p>
+</dd>
+<dt><strong>element</strong> input</dt><dd><p>associates an input channel with the stream tree.</p>
+</dd>
+<dt><strong>attribute</strong> name</dt><dd><p>name of the input channel; depends on the configuration of the particular plugin (usual channel names are “Z”, “N” and “E”).</p>
+</dd>
+<dt><strong>attribute</strong> channel</dt><dd><p>name of the output channel (last letter of a miniSEED stream name).</p>
+</dd>
+<dt><strong>attribute</strong> location</dt><dd><p>miniSEED location code of the output channel (up to two characters).</p>
+</dd>
+<dt><strong>attribute</strong> rate</dt><dd><p>sampling rate of the input channel (must match the actual sampling rate, which is dependent on the configuration of the plugin and digitizer).</p>
+</dd>
+<dt><strong>element</strong> node</dt><dd><p>defines a node of a stream tree; this element is recursive, meaning that it may contain one or more “node” elements itself.</p>
+</dd>
+<dt><strong>attribute</strong> filter</dt><dd><p>use the named filter for decimation; filters are defined in file filters.fir.</p>
+</dd>
+<dt><strong>attribute</strong> stream</dt><dd><p>create miniSEED output stream at this node. The value of the attribute should be a miniSEED stream name without the last character (which is taken from the attribute “channel” of element “input”).</p>
+</dd>
+</dl>
+<p><code class="file docutils literal notranslate"><span class="pre">streams.xml</span></code> is generated into <code class="file docutils literal notranslate"><span class="pre">var/lib/seedlink/streams.xml</span></code>. Each
+data plugin provides templates with predefined procs. If e.g. the <em>chain</em> plugin
+is configured with proc <em>stream100</em> then <code class="file docutils literal notranslate"><span class="pre">share/templates/seedlink/chain/streams_stream100.tpl</span></code>
+is being read and generated into the final <code class="file docutils literal notranslate"><span class="pre">streams.xml</span></code>. Own proc definitions
+can be added by creation a corresponding template file.</p>
+<p>Again, the <strong>source</strong> and <strong>proc</strong> definition is used to resolve the streams proc
+template file at <code class="file docutils literal notranslate"><span class="pre">share/templates/seedlink/[source]/streams_[proc].tpl</span></code>.</p>
+</section>
+</section>
+<section id="module-configuration">
+<span id="seedlink-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>seedlink is a <a class="reference internal" href="../base/glossary.html#term-standalone-module"><span class="xref std std-term">standalone module</span></a> and does not inherit <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+</div>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/seedlink.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/seedlink.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/seedlink.cfg</span></code></div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-port">
+<span class="sig-name descname"><span class="pre">port</span></span><a class="headerlink" href="#confval-port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">18000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Defines the Seedlink port to accept requests. If this port
+is changed and other modules depend on it (slarchive, processing)
+those ports must be updated as well!</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filebase">
+<span class="sig-name descname"><span class="pre">filebase</span></span><a class="headerlink" href="#confval-filebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>dir</em></p>
+<p>Path to the base directory of SeedLink data files (disk buffer).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-network">
+<span class="sig-name descname"><span class="pre">network</span></span><a class="headerlink" href="#confval-network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Default network code. Used when a network code is omitted by a client
+in STATION request. Should be set to the network code of the majority
+of configured stations. 1 or 2 characters long, uppercase.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-trusted">
+<span class="sig-name descname"><span class="pre">trusted</span></span><a class="headerlink" href="#confval-trusted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.0/8</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>List of trusted addresses.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-access">
+<span class="sig-name descname"><span class="pre">access</span></span><a class="headerlink" href="#confval-access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0/0</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>List of IP addresses or IP/mask pairs (in ipchains/iptables syntax)
+that can access stations. Per station access definitions
+supersede this parameter. By default any client can access
+all stations.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-stream_check">
+<span class="sig-name descname"><span class="pre">stream_check</span></span><a class="headerlink" href="#confval-stream_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Check start and end times of streams.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap_check_pattern">
+<span class="sig-name descname"><span class="pre">gap_check_pattern</span></span><a class="headerlink" href="#confval-gap_check_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">XXXXX</span></code></p>
+<p>Type: <em>string</em></p>
+<p>If stream_check = enabled, also check for gaps in all channels that
+match given pattern. Register all gaps that are larger than +-0.5 seconds.
+gap_check_pattern = [EBLV][HLNG][ZNE]|S[NG][ZNE].
+Disabled to save memory.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap_treshold">
+<span class="sig-name descname"><span class="pre">gap_treshold</span></span><a class="headerlink" href="#confval-gap_treshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">500000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Time difference between records (microseconds) above which a gap is declared.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-window_extraction">
+<span class="sig-name descname"><span class="pre">window_extraction</span></span><a class="headerlink" href="#confval-window_extraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Can be enabled or disabled. Required for slinktool option -tw.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-window_extraction_trusted">
+<span class="sig-name descname"><span class="pre">window_extraction_trusted</span></span><a class="headerlink" href="#confval-window_extraction_trusted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Same as window_extraction for trusted IP addresses.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-websocket">
+<span class="sig-name descname"><span class="pre">websocket</span></span><a class="headerlink" href="#confval-websocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Allow websocket connections.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-websocket_trusted">
+<span class="sig-name descname"><span class="pre">websocket_trusted</span></span><a class="headerlink" href="#confval-websocket_trusted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Same as websocket for trusted IP addresses.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-msrtsimul">
+<span class="sig-name descname"><span class="pre">msrtsimul</span></span><a class="headerlink" href="#confval-msrtsimul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If activated Seedlink uses the mseedfifo to read records and
+only the mseedfifo_plugin is started. This command is useful
+to playback historic data by eg msrtsimul.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-inventory_connection">
+<span class="sig-name descname"><span class="pre">inventory_connection</span></span><a class="headerlink" href="#confval-inventory_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines a database read connection to be used for Seedlink
+station descriptions. If no database is to be used (the default;
+configure with &quot;&quot;) then the station code will be used. Example:
+&quot;mysql://sysop:sysop&#64;localhost/seiscomp&quot;. If a remote host is
+specified, ensure that its database server is reachable from
+this computer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-info">
+<span class="sig-name descname"><span class="pre">info</span></span><a class="headerlink" href="#confval-info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">streams</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Info level provided to arbitrary hosts.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-info_trusted">
+<span class="sig-name descname"><span class="pre">info_trusted</span></span><a class="headerlink" href="#confval-info_trusted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">all</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Info level provided to trusted hosts.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-request_log">
+<span class="sig-name descname"><span class="pre">request_log</span></span><a class="headerlink" href="#confval-request_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether requests should be logged.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-proc_gap_warn">
+<span class="sig-name descname"><span class="pre">proc_gap_warn</span></span><a class="headerlink" href="#confval-proc_gap_warn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>microseconds</em></p>
+<p>Give warning if an input channel has time gap larger than this (microseconds).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-proc_gap_flush">
+<span class="sig-name descname"><span class="pre">proc_gap_flush</span></span><a class="headerlink" href="#confval-proc_gap_flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">100000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Flush streams if an input channel has time gap larger than this (microseconds).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-proc_gap_reset">
+<span class="sig-name descname"><span class="pre">proc_gap_reset</span></span><a class="headerlink" href="#confval-proc_gap_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1000000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Reset FIR filters if an input channel has time gap larger than this (microseconds).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-backfill_buffer">
+<span class="sig-name descname"><span class="pre">backfill_buffer</span></span><a class="headerlink" href="#confval-backfill_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>float</em></p>
+<p>Unit: <em>s</em></p>
+<p>Enable backfilling buffer for out-of-order records.
+This values defines its capacity in seconds.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-seq_gap_limit">
+<span class="sig-name descname"><span class="pre">seq_gap_limit</span></span><a class="headerlink" href="#confval-seq_gap_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">100000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum allowed deviation from the sequence number of oldest packet if
+packet with requested sequence number is not found. If seq_gap_limit is
+exceeded, data flow starts from the next packet coming in, otherwise
+from the oldest packet in buffer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-connections">
+<span class="sig-name descname"><span class="pre">connections</span></span><a class="headerlink" href="#confval-connections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">500</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Total number of TCP/IP connections allowed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-connections_per_ip">
+<span class="sig-name descname"><span class="pre">connections_per_ip</span></span><a class="headerlink" href="#confval-connections_per_ip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum number of TCP/IP connections per IP.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-bytespersec">
+<span class="sig-name descname"><span class="pre">bytespersec</span></span><a class="headerlink" href="#confval-bytespersec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>B/s</em></p>
+<p>Maximum speed per connection (0: throttle disabled).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-lockfile">
+<span class="sig-name descname"><span class="pre">lockfile</span></span><a class="headerlink" href="#confval-lockfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;ROOTDIR&#64;/var/run/seedlink.pid</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Path to lockfile to prevent multiple instances.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-buffers">
+<span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#confval-buffers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">100</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Size of memory buffer (number of recent Mini-SEED records kept in RAM).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-segments">
+<span class="sig-name descname"><span class="pre">segments</span></span><a class="headerlink" href="#confval-segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">50</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of disk buffer segments (files under &lt;dir&gt;/station/segments/
+where &lt;dir&gt; is the directory given by the filebase parameter).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-segsize">
+<span class="sig-name descname"><span class="pre">segsize</span></span><a class="headerlink" href="#confval-segsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Size of one disk buffer segment in the records (512-byte units).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-blanks">
+<span class="sig-name descname"><span class="pre">blanks</span></span><a class="headerlink" href="#confval-blanks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of blank records to insert after the re-scan of disk buffer
+if &lt;dir&gt;/station/buffer.xml is not found (assuming the server
+did not terminate correctly).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-encoding">
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#confval-encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">steim2</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Encoding of Mini-SEED records created by SeedLink. The value must be
+steim1 or steim2. If omitted, the global encoding parameter is used.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sequence_file_cleanup">
+<span class="sig-name descname"><span class="pre">sequence_file_cleanup</span></span><a class="headerlink" href="#confval-sequence_file_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>min</em></p>
+<p>If configured with a value greater than zero then all sequence files
+created by the chain plugin are deleted which are older than X minutes
+before Seedlink is started.</p>
+</dd></dl>
+
+<section id="caps-extension">
+<span id="seedlink-caps"></span><h3>caps extension<a class="headerlink" href="#caps-extension" title="Permalink to this heading">¶</a></h3>
+<p>Global options for the CAPS plugin</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.caps.maxTimeDiff">
+<span class="sig-name descname"><span class="pre">plugins.caps.maxTimeDiff</span></span><a class="headerlink" href="#confval-plugins.caps.maxTimeDiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">86400</span></code></p>
+<p>Type: <em>float</em></p>
+<p>The maxmimum time difference with respect to current
+time of the end time of a received record. If
+exceeded then the end time will not be logged into
+the state file.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.caps.inOrder">
+<span class="sig-name descname"><span class="pre">plugins.caps.inOrder</span></span><a class="headerlink" href="#confval-plugins.caps.inOrder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Request all records in-order. Out-of-order records will
+be skipped.</p>
+</dd></dl>
+
+</section>
+<section id="mseedfifo-extension">
+<span id="seedlink-mseedfifo"></span><h3>mseedfifo extension<a class="headerlink" href="#mseedfifo-extension" title="Permalink to this heading">¶</a></h3>
+<p>Global options for the mseedfifo plugin</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.mseedfifo.fifo">
+<span class="sig-name descname"><span class="pre">plugins.mseedfifo.fifo</span></span><a class="headerlink" href="#confval-plugins.mseedfifo.fifo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path to named fifo pipe. Default:
+$SEISCOMP_ROOT/var/run/seedlink/mseedfifo for seedlink.
+Alias modules automatically replace &quot;seedlink&quot;
+by the alias name.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.mseedfifo.noexit">
+<span class="sig-name descname"><span class="pre">plugins.mseedfifo.noexit</span></span><a class="headerlink" href="#confval-plugins.mseedfifo.noexit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Do not exit plugin if writer closes the fifo.</p>
+</dd></dl>
+
+</section>
+<section id="q330-extension">
+<span id="seedlink-q330"></span><h3>q330 extension<a class="headerlink" href="#q330-extension" title="Permalink to this heading">¶</a></h3>
+<p>Global options for the Q330 plugin</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.q330.udpbase">
+<span class="sig-name descname"><span class="pre">plugins.q330.udpbase</span></span><a class="headerlink" href="#confval-plugins.q330.udpbase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">5500</span></code></p>
+<p>Type: <em>int</em></p>
+<p>UDP base port used when udp port is defined as &quot;auto&quot;</p>
+</dd></dl>
+
+</section>
+<section id="chain-extension">
+<span id="seedlink-chain"></span><h3>chain extension<a class="headerlink" href="#chain-extension" title="Permalink to this heading">¶</a></h3>
+<p>Global options for the chain plugin</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.chain.dialupConnections">
+<span class="sig-name descname"><span class="pre">plugins.chain.dialupConnections</span></span><a class="headerlink" href="#confval-plugins.chain.dialupConnections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Defines the maximum number of concurrent dial-up
+connections. A value of 0 does not limit the
+concurrent connections.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-plugins.chain.loadTimeTable">
+<span class="sig-name descname"><span class="pre">plugins.chain.loadTimeTable</span></span><a class="headerlink" href="#confval-plugins.chain.loadTimeTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled load_timetable is used by the chain plugin to request
+the available time windows of each stream in the Seedlink buffer
+to discard older records.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="bindings-parameters">
+<h2>Bindings Parameters<a class="headerlink" href="#bindings-parameters" title="Permalink to this heading">¶</a></h2>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-0">
+<span class="sig-name descname"><span class="pre">access</span></span><a class="headerlink" href="#confval-0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0/0</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>List of IP addresses or IP/mask pairs (in ipchains/iptables syntax).
+Only if a client’s IP address
+matches one of those the station is shown (slinktool -L, etc.) and
+accessible. If omitted, the global access parameter is used.
+If the global access parameter is not set any client can access the station.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-1">
+<span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#confval-1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">100</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Size of memory buffer (number of recent Mini-SEED records kept in RAM).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-2">
+<span class="sig-name descname"><span class="pre">segments</span></span><a class="headerlink" href="#confval-2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">50</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of disk buffer segments (files under &lt;dir&gt;/station/segments/
+where &lt;dir&gt; is the directory given by the filebase parameter).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-3">
+<span class="sig-name descname"><span class="pre">segsize</span></span><a class="headerlink" href="#confval-3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Size of one disk buffer segment in the records (512-byte units).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-4">
+<span class="sig-name descname"><span class="pre">blanks</span></span><a class="headerlink" href="#confval-4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of blank records to insert after the re-scan of disk buffer
+if &lt;dir&gt;/station/buffer.xml is not found (assuming the server
+did not terminate correctly).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-5">
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#confval-5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Encoding of Mini-SEED records created by SeedLink. The value must be
+steim1 or steim2. If omitted, the global encoding parameter is used.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-6">
+<span class="sig-name descname"><span class="pre">backfill_buffer</span></span><a class="headerlink" href="#confval-6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>float</em></p>
+<p>Unit: <em>s</em></p>
+<p>Enable backfilling buffer for out-of-order records when raw samples
+are transmitted. This values defines its capacity in seconds.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-proc">
+<span class="sig-name descname"><span class="pre">proc</span></span><a class="headerlink" href="#confval-proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object uniquely defined in a seedlink template file, e.g.
+$SEISCOMP_ROOT/share/templates/seedlink/streams_{name}.tpl.
+proc is used for processing, e.g. renaming or resampling of raw
+streams (streams submitted by a plugin as raw samples).
+The template file is used to generate
+$SEISCOMP_ROOT/var/lib/seedlink/streams.xml .</p>
+<p>Example template: $SEISCOMP_ROOT/share/templates/seedlink/streams_stream100.tpl</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources">
+<span class="sig-name descname"><span class="pre">sources</span></span><a class="headerlink" href="#confval-sources" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Defines a list of extension bindings to be used.
+Each binding can then be configured individually.</p>
+<p>Available identifiers: <a class="reference internal" href="#seedlink-sources-antelope-label"><span class="std std-ref">antelope</span></a> <a class="reference internal" href="#seedlink-sources-caps-label"><span class="std std-ref">caps</span></a> <a class="reference internal" href="#seedlink-sources-chain-label"><span class="std std-ref">chain</span></a> <a class="reference internal" href="#seedlink-sources-dr24-label"><span class="std std-ref">dr24</span></a> <a class="reference internal" href="#seedlink-sources-echopro-3ch100hz-label"><span class="std std-ref">echopro_3ch100hz</span></a> <a class="reference internal" href="#seedlink-sources-echopro-6ch200hz-label"><span class="std std-ref">echopro_6ch200hz</span></a> <a class="reference internal" href="#seedlink-sources-edata-label"><span class="std std-ref">edata</span></a> <a class="reference internal" href="#seedlink-sources-ewexport-label"><span class="std std-ref">ewexport</span></a> <a class="reference internal" href="#seedlink-sources-ewexport-pasv-label"><span class="std std-ref">ewexport_pasv</span></a> <a class="reference internal" href="#seedlink-sources-fs-mseed-label"><span class="std std-ref">fs_mseed</span></a> <a class="reference internal" href="#seedlink-sources-gdrt-label"><span class="std std-ref">gdrt</span></a> <a class="reference internal" href="#seedlink-sources-gmeteo-label"><span class="std std-ref">gmeteo</span></a> <a class="reference internal" href="#seedlink-sources-hrd24-label"><span class="std std-ref">hrd24</span></a> <a class="reference internal" href="#seedlink-sources-liss-label"><span class="std std-ref">liss</span></a> <a class="reference internal" href="#seedlink-sources-m24-label"><span class="std std-ref">m24</span></a> <a class="reference internal" href="#seedlink-sources-minilogger-label"><span class="std std-ref">minilogger</span></a> <a class="reference internal" href="#seedlink-sources-miscscript-label"><span class="std std-ref">miscScript</span></a> <a class="reference internal" href="#seedlink-sources-miscserial-label"><span class="std std-ref">miscSerial</span></a> <a class="reference internal" href="#seedlink-sources-mk6-label"><span class="std std-ref">mk6</span></a> <a class="reference internal" href="#seedlink-sources-mppt-label"><span class="std std-ref">mppt</span></a> <a class="reference internal" href="#seedlink-sources-mseedfifo-label"><span class="std std-ref">mseedfifo</span></a> <a class="reference internal" href="#seedlink-sources-mseedscan-label"><span class="std std-ref">mseedscan</span></a> <a class="reference internal" href="#seedlink-sources-mws-label"><span class="std std-ref">mws</span></a> <a class="reference internal" href="#seedlink-sources-naqs-label"><span class="std std-ref">naqs</span></a> <a class="reference internal" href="#seedlink-sources-nmxp-label"><span class="std std-ref">nmxp</span></a> <a class="reference internal" href="#seedlink-sources-ps2400-eth-label"><span class="std std-ref">ps2400_eth</span></a> <a class="reference internal" href="#seedlink-sources-q330-label"><span class="std std-ref">q330</span></a> <a class="reference internal" href="#seedlink-sources-reftek-label"><span class="std std-ref">reftek</span></a> <a class="reference internal" href="#seedlink-sources-sadc-label"><span class="std std-ref">sadc</span></a> <a class="reference internal" href="#seedlink-sources-scream-label"><span class="std std-ref">scream</span></a> <a class="reference internal" href="#seedlink-sources-scream-ring-label"><span class="std std-ref">scream_ring</span></a> <a class="reference internal" href="#seedlink-sources-vaisala-label"><span class="std std-ref">vaisala</span></a> <a class="reference internal" href="#seedlink-sources-wago-label"><span class="std std-ref">wago</span></a> <a class="reference internal" href="#seedlink-sources-wave24-label"><span class="std std-ref">wave24</span></a> <a class="reference internal" href="#seedlink-sources-win-label"><span class="std std-ref">win</span></a></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># param1 and param2 are just placeholders.</span>
+<span class="nv">sources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>antelope,<span class="w"> </span>caps
+sources.antelope1.param1<span class="w"> </span><span class="o">=</span><span class="w"> </span>value11
+sources.antelope1.param2<span class="w"> </span><span class="o">=</span><span class="w"> </span>value12
+sources.caps2.param1<span class="w"> </span><span class="o">=</span><span class="w"> </span>value21
+sources.caps2.param2<span class="w"> </span><span class="o">=</span><span class="w"> </span>value22
+
+<span class="c1"># To use the same binding twice, aliases must be used.</span>
+<span class="c1"># Aliases are created by prepending a unique name followed by a colon</span>
+<span class="nv">sources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>antelope,<span class="w"> </span>antelope_2:antelope
+sources.antelope.param1<span class="w"> </span><span class="o">=</span><span class="w"> </span>value11
+sources.antelope.param2<span class="w"> </span><span class="o">=</span><span class="w"> </span>value12
+sources.antelope_2.param1<span class="w"> </span><span class="o">=</span><span class="w"> </span>value21
+sources.antelope_2.param2<span class="w"> </span><span class="o">=</span><span class="w"> </span>value22
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="antelope">
+<span id="seedlink-sources-antelope-label"></span><h3>antelope<a class="headerlink" href="#antelope" title="Permalink to this heading">¶</a></h3>
+<p>Antelope ORB (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.antelope.select">
+<span class="sig-name descname"><span class="pre">sources.antelope.select</span></span><a class="headerlink" href="#confval-sources.antelope.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">*</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Regular expression to match ORB packets, default is all
+waveform data.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.antelope.address">
+<span class="sig-name descname"><span class="pre">sources.antelope.address</span></span><a class="headerlink" href="#confval-sources.antelope.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">localhost</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP of the Antelope ORB.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.antelope.port">
+<span class="sig-name descname"><span class="pre">sources.antelope.port</span></span><a class="headerlink" href="#confval-sources.antelope.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">39136</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the Antelope ORB.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.antelope.proc">
+<span class="sig-name descname"><span class="pre">sources.antelope.proc</span></span><a class="headerlink" href="#confval-sources.antelope.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="caps">
+<span id="seedlink-sources-caps-label"></span><h3>caps<a class="headerlink" href="#caps" title="Permalink to this heading">¶</a></h3>
+<p>Transfers data from CAPS to SeedLink server</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.caps.address">
+<span class="sig-name descname"><span class="pre">sources.caps.address</span></span><a class="headerlink" href="#confval-sources.caps.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">localhost:18002</span></code></p>
+<p>Type: <em>string</em></p>
+<p>CAPS URL to fetch data from, format: [[caps|capss]://][user:pass&#64;]host[:port]</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.caps.streams">
+<span class="sig-name descname"><span class="pre">sources.caps.streams</span></span><a class="headerlink" href="#confval-sources.caps.streams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">*.*</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Comma separated list of streams. Stream format is [LOC.CHA].
+Streams may contain wildcards</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.caps.proc">
+<span class="sig-name descname"><span class="pre">sources.caps.proc</span></span><a class="headerlink" href="#confval-sources.caps.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="chain">
+<span id="seedlink-sources-chain-label"></span><h3>chain<a class="headerlink" href="#chain" title="Permalink to this heading">¶</a></h3>
+<p>Seedlink server (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.address">
+<span class="sig-name descname"><span class="pre">sources.chain.address</span></span><a class="headerlink" href="#confval-sources.chain.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">geofon.gfz-potsdam.de</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP of the Seedlink server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.port">
+<span class="sig-name descname"><span class="pre">sources.chain.port</span></span><a class="headerlink" href="#confval-sources.chain.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">18000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the Seedlink server</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.selectors">
+<span class="sig-name descname"><span class="pre">sources.chain.selectors</span></span><a class="headerlink" href="#confval-sources.chain.selectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of stream selectors. If left empty all available
+streams will be requested. See slinktool manpage for
+more information.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.station">
+<span class="sig-name descname"><span class="pre">sources.chain.station</span></span><a class="headerlink" href="#confval-sources.chain.station" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines the input station if different from the stations
+code. Usually leave this parameter unconfigured. If
+configured and different from the stations code
+the station code will be renamed to match the local station
+code.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.network">
+<span class="sig-name descname"><span class="pre">sources.chain.network</span></span><a class="headerlink" href="#confval-sources.chain.network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines the input network if different from the stations
+network. Usually leave this parameter unconfigured. If
+configured and different from the stations network code
+the network code will be renamed to match the local network
+code.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.group">
+<span class="sig-name descname"><span class="pre">sources.chain.group</span></span><a class="headerlink" href="#confval-sources.chain.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Usually stations with the same source addresses and dialup
+options are grouped together and managed by a chain plugin
+process. You can give here an additional group ID. Available
+placeholders are $NET and $STA that are replaced by the
+network code or station code. Whitespaces are replaced by
+underscores when generating chain.xml.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.defaultTimingQuality">
+<span class="sig-name descname"><span class="pre">sources.chain.defaultTimingQuality</span></span><a class="headerlink" href="#confval-sources.chain.defaultTimingQuality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>int</em></p>
+<p>The default timing quality is used when unpacking data that
+does not contain blockette 1001, that allows SeedLink to
+construct blockette 1001 for downsampled data.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.overlapRemoval">
+<span class="sig-name descname"><span class="pre">sources.chain.overlapRemoval</span></span><a class="headerlink" href="#confval-sources.chain.overlapRemoval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>If overlap removal is set to &quot;initial&quot; or &quot;full&quot;, then
+earlier records will be discarded (record number is used
+in case several subsequent records have the same header time).
+All other values are treated as &quot;none&quot;. Leave this option
+unset unless you know what you are doing.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.batchmode">
+<span class="sig-name descname"><span class="pre">sources.chain.batchmode</span></span><a class="headerlink" href="#confval-sources.chain.batchmode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled then the chain plugin tries to subscribe for
+channels with the BATCH command which is magnitudes faster
+than the old handshake. Not all SeedLink servers support
+the BATCH mode so it needs to be turned off in case of
+problems.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.dialup.enable">
+<span class="sig-name descname"><span class="pre">sources.chain.dialup.enable</span></span><a class="headerlink" href="#confval-sources.chain.dialup.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enables dialup mode. Needs schedule and uptime to be
+set accordingly.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.dialup.uptime">
+<span class="sig-name descname"><span class="pre">sources.chain.dialup.uptime</span></span><a class="headerlink" href="#confval-sources.chain.dialup.uptime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">600</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Dialup uptime in seconds.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.dialup.schedule">
+<span class="sig-name descname"><span class="pre">sources.chain.dialup.schedule</span></span><a class="headerlink" href="#confval-sources.chain.dialup.schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0,30</span> <span class="pre">*</span> <span class="pre">*</span> <span class="pre">*</span> <span class="pre">*</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The dialup schedula in cron format.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.dialup.ifup">
+<span class="sig-name descname"><span class="pre">sources.chain.dialup.ifup</span></span><a class="headerlink" href="#confval-sources.chain.dialup.ifup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>An optional dialup ifup script.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.dialup.ifdown">
+<span class="sig-name descname"><span class="pre">sources.chain.dialup.ifdown</span></span><a class="headerlink" href="#confval-sources.chain.dialup.ifdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>An optional dialup ifdown script.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.channels.rename">
+<span class="sig-name descname"><span class="pre">sources.chain.channels.rename</span></span><a class="headerlink" href="#confval-sources.chain.channels.rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Allows to rename channels. This is a list of
+strings where each item defines one mapping in the
+format &quot;SRC_LOCCHA:DST_LOCCHA&quot;. Either SRC_LOCCHA or
+DST_LOCCHA may contain wildcard characters (question
+mark) and the location code (LOC) in both identifiers
+is optional.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.chain.channels.unpack">
+<span class="sig-name descname"><span class="pre">sources.chain.channels.unpack</span></span><a class="headerlink" href="#confval-sources.chain.channels.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Allows to unpack channels instead of sending them as
+miniseed to Seedlink. Unpacked streams can be downsampled
+by Seedlink. This is a list of strings where each item
+defines one unpack mapping  in the format
+&quot;SRC_LOCCHA:DST_ID:1&quot; where DST_ID can
+be an arbitrary channel id which must match the definition of
+a stream in streams.xml. The last &quot;:1&quot; is optional and defines
+if the unpacked data should be doubled (duplicate each sample).
+In case rename mappings are active, SRC_LOCCHA referes to
+the final channel name after renaming.</p>
+</dd></dl>
+
+</section>
+<section id="dr24">
+<span id="seedlink-sources-dr24-label"></span><h3>dr24<a class="headerlink" href="#dr24" title="Permalink to this heading">¶</a></h3>
+<p>Geotech DR24 (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.dr24.comport">
+<span class="sig-name descname"><span class="pre">sources.dr24.comport</span></span><a class="headerlink" href="#confval-sources.dr24.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.dr24.baudrate">
+<span class="sig-name descname"><span class="pre">sources.dr24.baudrate</span></span><a class="headerlink" href="#confval-sources.dr24.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.dr24.proc">
+<span class="sig-name descname"><span class="pre">sources.dr24.proc</span></span><a class="headerlink" href="#confval-sources.dr24.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">dr24_20</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="echopro-3ch100hz">
+<span id="seedlink-sources-echopro-3ch100hz-label"></span><h3>echopro_3ch100hz<a class="headerlink" href="#echopro-3ch100hz" title="Permalink to this heading">¶</a></h3>
+<p>Kelunji Echo/EchoPro serial plugin (3 Ch, 200 Hz)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.echopro_3ch100hz.comport">
+<span class="sig-name descname"><span class="pre">sources.echopro_3ch100hz.comport</span></span><a class="headerlink" href="#confval-sources.echopro_3ch100hz.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/ttyS0</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial Port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.echopro_3ch100hz.proc">
+<span class="sig-name descname"><span class="pre">sources.echopro_3ch100hz.proc</span></span><a class="headerlink" href="#confval-sources.echopro_3ch100hz.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">echopro_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of stream processing scheme.</p>
+</dd></dl>
+
+</section>
+<section id="echopro-6ch200hz">
+<span id="seedlink-sources-echopro-6ch200hz-label"></span><h3>echopro_6ch200hz<a class="headerlink" href="#echopro-6ch200hz" title="Permalink to this heading">¶</a></h3>
+<p>Kelunji Echo/EchoPro serial plugin (6 Ch, 100 Hz)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.echopro_6ch200hz.comport">
+<span class="sig-name descname"><span class="pre">sources.echopro_6ch200hz.comport</span></span><a class="headerlink" href="#confval-sources.echopro_6ch200hz.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/ttyS0</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial Port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.echopro_6ch200hz.proc">
+<span class="sig-name descname"><span class="pre">sources.echopro_6ch200hz.proc</span></span><a class="headerlink" href="#confval-sources.echopro_6ch200hz.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">echopro_200</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of stream processing scheme.</p>
+</dd></dl>
+
+</section>
+<section id="edata">
+<span id="seedlink-sources-edata-label"></span><h3>edata<a class="headerlink" href="#edata" title="Permalink to this heading">¶</a></h3>
+<p>EarthData PS6-24 (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.edata.comport">
+<span class="sig-name descname"><span class="pre">sources.edata.comport</span></span><a class="headerlink" href="#confval-sources.edata.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.edata.baudrate">
+<span class="sig-name descname"><span class="pre">sources.edata.baudrate</span></span><a class="headerlink" href="#confval-sources.edata.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">115200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.edata.proc">
+<span class="sig-name descname"><span class="pre">sources.edata.proc</span></span><a class="headerlink" href="#confval-sources.edata.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">edata_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="ewexport">
+<span id="seedlink-sources-ewexport-label"></span><h3>ewexport<a class="headerlink" href="#ewexport" title="Permalink to this heading">¶</a></h3>
+<p>Earthworm export server (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport.address">
+<span class="sig-name descname"><span class="pre">sources.ewexport.address</span></span><a class="headerlink" href="#confval-sources.ewexport.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Hostname or IP of the Earthworm export server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport.port">
+<span class="sig-name descname"><span class="pre">sources.ewexport.port</span></span><a class="headerlink" href="#confval-sources.ewexport.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>int</em></p>
+<p>Port of the Earthworm export server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport.proc">
+<span class="sig-name descname"><span class="pre">sources.ewexport.proc</span></span><a class="headerlink" href="#confval-sources.ewexport.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport.heartbeat.message">
+<span class="sig-name descname"><span class="pre">sources.ewexport.heartbeat.message</span></span><a class="headerlink" href="#confval-sources.ewexport.heartbeat.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">alive</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Text for heartbeat to server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport.heartbeat.rate">
+<span class="sig-name descname"><span class="pre">sources.ewexport.heartbeat.rate</span></span><a class="headerlink" href="#confval-sources.ewexport.heartbeat.rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">120</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Rate at which to expect heartbeats from server in seconds.</p>
+</dd></dl>
+
+</section>
+<section id="ewexport-pasv">
+<span id="seedlink-sources-ewexport-pasv-label"></span><h3>ewexport_pasv<a class="headerlink" href="#ewexport-pasv" title="Permalink to this heading">¶</a></h3>
+<p>Earthworm passive export server (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport_pasv.address">
+<span class="sig-name descname"><span class="pre">sources.ewexport_pasv.address</span></span><a class="headerlink" href="#confval-sources.ewexport_pasv.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Bind IP of the Earthworm passive export server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport_pasv.port">
+<span class="sig-name descname"><span class="pre">sources.ewexport_pasv.port</span></span><a class="headerlink" href="#confval-sources.ewexport_pasv.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>int</em></p>
+<p>Port of the Earthworm passive export server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport_pasv.proc">
+<span class="sig-name descname"><span class="pre">sources.ewexport_pasv.proc</span></span><a class="headerlink" href="#confval-sources.ewexport_pasv.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport_pasv.heartbeat.message">
+<span class="sig-name descname"><span class="pre">sources.ewexport_pasv.heartbeat.message</span></span><a class="headerlink" href="#confval-sources.ewexport_pasv.heartbeat.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">alive</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Text for heartbeat to server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ewexport_pasv.heartbeat.rate">
+<span class="sig-name descname"><span class="pre">sources.ewexport_pasv.heartbeat.rate</span></span><a class="headerlink" href="#confval-sources.ewexport_pasv.heartbeat.rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">120</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Rate at which to expect heartbeats from server in seconds.</p>
+</dd></dl>
+
+</section>
+<section id="fs-mseed">
+<span id="seedlink-sources-fs-mseed-label"></span><h3>fs_mseed<a class="headerlink" href="#fs-mseed" title="Permalink to this heading">¶</a></h3>
+<p>Mini-SEED file plugin</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.input_type">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.input_type</span></span><a class="headerlink" href="#confval-sources.fs_mseed.input_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">ddb</span></code></p>
+<p>Type: <em>string</em></p>
+<p><em>No description available</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.data_format">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.data_format</span></span><a class="headerlink" href="#confval-sources.fs_mseed.data_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">mseed</span></code></p>
+<p>Type: <em>string</em></p>
+<p><em>No description available</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.location">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.location</span></span><a class="headerlink" href="#confval-sources.fs_mseed.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;ROOTDIR&#64;/var/lib/seedlink/indata</span></code></p>
+<p>Type: <em>path</em></p>
+<p><em>No description available</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.pattern">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.pattern</span></span><a class="headerlink" href="#confval-sources.fs_mseed.pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>&quot;pattern&quot; is a POSIX extended regular expression that
+must match input file names (useful for filtering out non-data
+files). For example &quot;BH[NEZ]&quot; would match any files
+that contained &quot;BHE&quot;, &quot;BHN&quot; or &quot;BHZ&quot;.
+If no pattern is specified all files will be processed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.scan_level">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.scan_level</span></span><a class="headerlink" href="#confval-sources.fs_mseed.scan_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">2</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Look for data files at the 1st or 2nd directory level.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.move_files">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.move_files</span></span><a class="headerlink" href="#confval-sources.fs_mseed.move_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Move file to subdirectory &quot;processed&quot; before starting to read it.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.delete_files">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.delete_files</span></span><a class="headerlink" href="#confval-sources.fs_mseed.delete_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Delete processed files.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.use_timestamp">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.use_timestamp</span></span><a class="headerlink" href="#confval-sources.fs_mseed.use_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Look only for files that are newer than the last file processed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.timestamp_file">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.timestamp_file</span></span><a class="headerlink" href="#confval-sources.fs_mseed.timestamp_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;ROOTDIR&#64;/var/run/seedlink/fs_mseed.tim</span></code></p>
+<p>Type: <em>path</em></p>
+<p>Timestamp file is used to save the modification time of the last
+file processed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.polltime">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.polltime</span></span><a class="headerlink" href="#confval-sources.fs_mseed.polltime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>New files are searched for every &quot;polltime&quot; seconds.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.delay">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.delay</span></span><a class="headerlink" href="#confval-sources.fs_mseed.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">30</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Wait until the file is at least n seconds old, before trying to
+read it.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.verbosity">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.verbosity</span></span><a class="headerlink" href="#confval-sources.fs_mseed.verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Tells how many debugging messages are printed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.zero_sample_limit">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.zero_sample_limit</span></span><a class="headerlink" href="#confval-sources.fs_mseed.zero_sample_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum number of consecutive zeros in datastream before data
+gap will be declared (-1 = disabled).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.default_timing_quality">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.default_timing_quality</span></span><a class="headerlink" href="#confval-sources.fs_mseed.default_timing_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>If timing quality is not available, use this value as default
+(-1 = disabled).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.proc">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.proc</span></span><a class="headerlink" href="#confval-sources.fs_mseed.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>sources.fs_mseed.channels.*</strong>
+<em>Channel definitions (Mini-SEED streams are defined in streams.xml,</em>
+<em>look for &lt;proc name=”generic_3x50”&gt;).</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>sources.fs_mseed.channels.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.fs_mseed.channels.-name.source_id">
+<span class="sig-name descname"><span class="pre">sources.fs_mseed.channels.$name.source_id</span></span><a class="headerlink" href="#confval-sources.fs_mseed.channels.-name.source_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p><em>No description available</em></p>
+</dd></dl>
+
+</section>
+<section id="gdrt">
+<span id="seedlink-sources-gdrt-label"></span><h3>gdrt<a class="headerlink" href="#gdrt" title="Permalink to this heading">¶</a></h3>
+<p>GDRT (GFZ Displacement Real-Time) is the data format of the Real-time Precise
+Point Positioning (RTPPP) provided by the Helmholtz Centre Potsdam – GFZ German
+Research Centre for Geosciences. This development was supported by the German
+Federal Ministry of Education and Research (BMBF) within the EWRICA project.</p>
+<p>The GDRT plugin is a SeedLink plugin that converts GDRT UDP messages to
+miniSEED channels according to the following table:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Field name</p></th>
+<th class="head"><p>Format</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>miniSEED channel</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Start of message</p></td>
+<td><p>character(1)</p></td>
+<td><p>A fixed character ‘&gt;’</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Station ID</p></td>
+<td><p>character(4)</p></td>
+<td><p>GDRT station ID</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Epoch time</p></td>
+<td><p>integer(4)
+integer(2)
+integer(2)
+integer(2)
+integer(2)
+double(%5.2f)</p></td>
+<td><p>UTC time (year, month, day, hour,
+minute, second)</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td rowspan="4"><p>4</p></td>
+<td rowspan="4"><p>Solution type</p></td>
+<td rowspan="4"><p>integer(2)</p></td>
+<td><p>0: Single point positioning (SPP)</p></td>
+<td rowspan="4"><p>LBS</p></td>
+</tr>
+<tr class="row-even"><td><p>+1: Precise point positioning (PPP)</p></td>
+</tr>
+<tr class="row-odd"><td><p>+2: Precise point positioning
+ambiguity resolution (PPP-AR)</p></td>
+</tr>
+<tr class="row-even"><td><p>+4: Precise point positioning
+regional augmentation (PPP-RA)</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="5"><p>5</p></td>
+<td rowspan="5"><p>Observation type</p></td>
+<td rowspan="5"><p>integer(2)</p></td>
+<td><p>+1: GPS</p></td>
+<td rowspan="5"><p>LBO</p></td>
+</tr>
+<tr class="row-even"><td><p>+2: GLONASS</p></td>
+</tr>
+<tr class="row-odd"><td><p>+4: Galileo</p></td>
+</tr>
+<tr class="row-even"><td><p>+8: BDS</p></td>
+</tr>
+<tr class="row-odd"><td><p>+16: Seismic data</p></td>
+</tr>
+<tr class="row-even"><td rowspan="4"><p>6</p></td>
+<td rowspan="4"><p>Positioning type</p></td>
+<td rowspan="4"><p>integer(2)</p></td>
+<td><p>1: Coordinate fixed solution</p></td>
+<td rowspan="4"><p>LBP</p></td>
+</tr>
+<tr class="row-odd"><td><p>2: Static solution</p></td>
+</tr>
+<tr class="row-even"><td><p>3: Kinematic solution</p></td>
+</tr>
+<tr class="row-odd"><td><p>4: Dynamic solution</p></td>
+</tr>
+<tr class="row-even"><td rowspan="2"><p>7</p></td>
+<td rowspan="2"><p>Processing type</p></td>
+<td rowspan="2"><p>integer(2)</p></td>
+<td><p>1: Real-time solution</p></td>
+<td rowspan="2"><p>LBT</p></td>
+</tr>
+<tr class="row-odd"><td><p>2: Post-processing solution</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>Ratio of
+ambiguity fix</p></td>
+<td><p>double(%6.2f)</p></td>
+<td><p>The ratio value of PPP ambiguty
+fixing (larger value means more
+reliable ambiguity fixing)</p></td>
+<td><p>LBR (×100)</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>Number of
+satellites</p></td>
+<td><p>integer(2)
+integer(2)
+integer(2)
+integer(2)</p></td>
+<td><p>Number of satellites used for the
+solution (GPS, GLONASS, Galileo, BDS)</p></td>
+<td><p>LBC (summed)</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>Coordinate X</p></td>
+<td><p>double(%14.4f)</p></td>
+<td rowspan="3"><p>Coordinates X, Y, and Z in the Earth
+Centered Earth Fixed (ECEF)
+coordinate system in meters</p></td>
+<td><p>LBX</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>Coordinate Y</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LBY</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>Coordinate Z</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LBZ</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>Variance of
+coordinate X</p></td>
+<td><p>double(%14.4f)</p></td>
+<td rowspan="3"><p>Variance of coordinates (m²)</p></td>
+<td><p>LB1</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>Variance of
+coordinate Y</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LB2</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>Variance of
+coordinate Z</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LB3</p></td>
+</tr>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>Covariance of
+coordinates X and Y</p></td>
+<td><p>double(%14.4f)</p></td>
+<td rowspan="3"><p>Covariance of coordinates (m²)</p></td>
+<td><p>LB4</p></td>
+</tr>
+<tr class="row-odd"><td><p>17</p></td>
+<td><p>Covariance of
+coordinates X and Z</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LB5</p></td>
+</tr>
+<tr class="row-even"><td><p>18</p></td>
+<td><p>Covariance of
+coordinates Y and Z</p></td>
+<td><p>double(%14.4f)</p></td>
+<td><p>LB6</p></td>
+</tr>
+<tr class="row-odd"><td><p>19</p></td>
+<td><p>Correction
+information</p></td>
+<td><p>string(4)</p></td>
+<td><p>Name of orbit/clock/upd product and
+name of three used reference stations
+in PPP-RA, separated with ‘+’</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>20</p></td>
+<td><p>End of message</p></td>
+<td><p>character(1)</p></td>
+<td><p>A fixed character ‘!’</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gdrt.station">
+<span class="sig-name descname"><span class="pre">sources.gdrt.station</span></span><a class="headerlink" href="#confval-sources.gdrt.station" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>GDRT station code.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gdrt.locationCode">
+<span class="sig-name descname"><span class="pre">sources.gdrt.locationCode</span></span><a class="headerlink" href="#confval-sources.gdrt.locationCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Sensor location code.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gdrt.sampleRate">
+<span class="sig-name descname"><span class="pre">sources.gdrt.sampleRate</span></span><a class="headerlink" href="#confval-sources.gdrt.sampleRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>Hz</em></p>
+<p>Sample rate in Hz.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gdrt.udpport">
+<span class="sig-name descname"><span class="pre">sources.gdrt.udpport</span></span><a class="headerlink" href="#confval-sources.gdrt.udpport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">9999</span></code></p>
+<p>Type: <em>int</em></p>
+<p>UDP port for receiving GDRT messages. By default port 9999 will be used.</p>
+</dd></dl>
+
+</section>
+<section id="gmeteo">
+<span id="seedlink-sources-gmeteo-label"></span><h3>gmeteo<a class="headerlink" href="#gmeteo" title="Permalink to this heading">¶</a></h3>
+<p>GFZ meteo protocol (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gmeteo.comport">
+<span class="sig-name descname"><span class="pre">sources.gmeteo.comport</span></span><a class="headerlink" href="#confval-sources.gmeteo.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/meteo</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gmeteo.baudrate">
+<span class="sig-name descname"><span class="pre">sources.gmeteo.baudrate</span></span><a class="headerlink" href="#confval-sources.gmeteo.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.gmeteo.proc">
+<span class="sig-name descname"><span class="pre">sources.gmeteo.proc</span></span><a class="headerlink" href="#confval-sources.gmeteo.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">gmeteo</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="hrd24">
+<span id="seedlink-sources-hrd24-label"></span><h3>hrd24<a class="headerlink" href="#hrd24" title="Permalink to this heading">¶</a></h3>
+<p>Nanometrics HRD24 (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.hrd24.comport">
+<span class="sig-name descname"><span class="pre">sources.hrd24.comport</span></span><a class="headerlink" href="#confval-sources.hrd24.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.hrd24.baudrate">
+<span class="sig-name descname"><span class="pre">sources.hrd24.baudrate</span></span><a class="headerlink" href="#confval-sources.hrd24.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.hrd24.bundles">
+<span class="sig-name descname"><span class="pre">sources.hrd24.bundles</span></span><a class="headerlink" href="#confval-sources.hrd24.bundles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">59</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of bundles in packet.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.hrd24.proc">
+<span class="sig-name descname"><span class="pre">sources.hrd24.proc</span></span><a class="headerlink" href="#confval-sources.hrd24.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">hrd24_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="liss">
+<span id="seedlink-sources-liss-label"></span><h3>liss<a class="headerlink" href="#liss" title="Permalink to this heading">¶</a></h3>
+<p>LISS server (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.liss.address">
+<span class="sig-name descname"><span class="pre">sources.liss.address</span></span><a class="headerlink" href="#confval-sources.liss.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;$STATION.$NET.liss.org&quot;</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP of the LISS server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.liss.port">
+<span class="sig-name descname"><span class="pre">sources.liss.port</span></span><a class="headerlink" href="#confval-sources.liss.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">4000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the LISS server</p>
+</dd></dl>
+
+</section>
+<section id="m24">
+<span id="seedlink-sources-m24-label"></span><h3>m24<a class="headerlink" href="#m24" title="Permalink to this heading">¶</a></h3>
+<p>Lennartz M24</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.m24.comport">
+<span class="sig-name descname"><span class="pre">sources.m24.comport</span></span><a class="headerlink" href="#confval-sources.m24.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.m24.baudrate">
+<span class="sig-name descname"><span class="pre">sources.m24.baudrate</span></span><a class="headerlink" href="#confval-sources.m24.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.m24.time_offset">
+<span class="sig-name descname"><span class="pre">sources.m24.time_offset</span></span><a class="headerlink" href="#confval-sources.m24.time_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Time offset in usecs.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.m24.proc">
+<span class="sig-name descname"><span class="pre">sources.m24.proc</span></span><a class="headerlink" href="#confval-sources.m24.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">m24_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="minilogger">
+<span id="seedlink-sources-minilogger-label"></span><h3>minilogger<a class="headerlink" href="#minilogger" title="Permalink to this heading">¶</a></h3>
+<p>SEP064 USB Seismometer Interface</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.port_path_hint">
+<span class="sig-name descname"><span class="pre">sources.minilogger.port_path_hint</span></span><a class="headerlink" href="#confval-sources.minilogger.port_path_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/ttyACM0</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Device path and name of port for USB Seismometer Interface.
+If the specified port cannot be opened or is not a USB Seismometer
+Interface device, all available ports will be scanned.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.allow_set_interface_attribs">
+<span class="sig-name descname"><span class="pre">sources.minilogger.allow_set_interface_attribs</span></span><a class="headerlink" href="#confval-sources.minilogger.allow_set_interface_attribs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Allow low-level setting of port interface attributes when available
+ports are scanned to find a USB Seismometer Interface device, 0=NO, 1=Yes.
+Setting 1 (=Yes) may help successful detection and correct reading of the
+USB Seismometer Interface device, particularly for the RasberryPi, but can
+have adverse effects on other devices, terminals, etc. open on the system.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.mswrite_header_sample_rate">
+<span class="sig-name descname"><span class="pre">sources.minilogger.mswrite_header_sample_rate</span></span><a class="headerlink" href="#confval-sources.minilogger.mswrite_header_sample_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Sets a fixed sample rate to report in the miniseed file header.
+The default (-1) sets an estimated sample rate based on recent packet start
+times. This estimated sample rate will vary slightly over time, potentially
+producing errors in some software when reading the miniseed files.
+See also: nominal_sample_rate</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.mswrite_data_encoding_type">
+<span class="sig-name descname"><span class="pre">sources.minilogger.mswrite_data_encoding_type</span></span><a class="headerlink" href="#confval-sources.minilogger.mswrite_data_encoding_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">STEIM2</span></code></p>
+<p>Type: <em>string</em></p>
+<p>SEED data encoding type for writing miniseed files.
+Supported values are: INT16, INT32, STEIM1, STEIM2</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.channel_prefix">
+<span class="sig-name descname"><span class="pre">sources.minilogger.channel_prefix</span></span><a class="headerlink" href="#confval-sources.minilogger.channel_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">SH</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The initial letters to set for the miniseed header ‘channel’, will be
+prepended to the component.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.component">
+<span class="sig-name descname"><span class="pre">sources.minilogger.component</span></span><a class="headerlink" href="#confval-sources.minilogger.component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">Z</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Component of seismogram, one of Z, N or E.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.do_settings_sep064">
+<span class="sig-name descname"><span class="pre">sources.minilogger.do_settings_sep064</span></span><a class="headerlink" href="#confval-sources.minilogger.do_settings_sep064" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Set sample rate and gain on SEP 064 device, 0=NO, 1=Yes.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.nominal_sample_rate">
+<span class="sig-name descname"><span class="pre">sources.minilogger.nominal_sample_rate</span></span><a class="headerlink" href="#confval-sources.minilogger.nominal_sample_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">80</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Nominal sample rate per second, one of 20, 40 or 80.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.minilogger.nominal_gain">
+<span class="sig-name descname"><span class="pre">sources.minilogger.nominal_gain</span></span><a class="headerlink" href="#confval-sources.minilogger.nominal_gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">4</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Nominal gain, one of 1, 2 or 4.</p>
+</dd></dl>
+
+</section>
+<section id="miscscript">
+<span id="seedlink-sources-miscscript-label"></span><h3>miscScript<a class="headerlink" href="#miscscript" title="Permalink to this heading">¶</a></h3>
+<p>Misceallaneous script</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.script_path">
+<span class="sig-name descname"><span class="pre">sources.miscScript.script_path</span></span><a class="headerlink" href="#confval-sources.miscScript.script_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Script path.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.script_args">
+<span class="sig-name descname"><span class="pre">sources.miscScript.script_args</span></span><a class="headerlink" href="#confval-sources.miscScript.script_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Script arguments.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.proc">
+<span class="sig-name descname"><span class="pre">sources.miscScript.proc</span></span><a class="headerlink" href="#confval-sources.miscScript.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object used for channel naming (and eventually down sampling). If this field is left to default (auto), a basic proc (without decimation) will be automatically generated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.channels">
+<span class="sig-name descname"><span class="pre">sources.miscScript.channels</span></span><a class="headerlink" href="#confval-sources.miscScript.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">HHZ,HHN,HHE</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Names of the channels. These names are only used if you choose to automatically generate the proc. Nevertheless, even if you are not using the auto proc, it is important to declare correctly this list as the number of channels is used to size the internal plugin’s buffers. If you do not want seedlink to use one of the channels, replace it names with &quot;none&quot;. Example : 01HHZ,none,none,02HHZ,HHE,HHN</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.sample_frequency">
+<span class="sig-name descname"><span class="pre">sources.miscScript.sample_frequency</span></span><a class="headerlink" href="#confval-sources.miscScript.sample_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Sampling frequency. Must be integer or a fraction of integers.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscScript.flush_period">
+<span class="sig-name descname"><span class="pre">sources.miscScript.flush_period</span></span><a class="headerlink" href="#confval-sources.miscScript.flush_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>This parameter aims at enforcing the sending of seedlink data blocks (512bytes) even if they are not yet full. 0 means no enforcing.</p>
+</dd></dl>
+
+</section>
+<section id="miscserial">
+<span id="seedlink-sources-miscserial-label"></span><h3>miscSerial<a class="headerlink" href="#miscserial" title="Permalink to this heading">¶</a></h3>
+<p>Miscellaneous ASCII serial Plugin (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.comport">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.comport</span></span><a class="headerlink" href="#confval-sources.miscSerial.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.baudrate">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.baudrate</span></span><a class="headerlink" href="#confval-sources.miscSerial.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">9600</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.proc">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.proc</span></span><a class="headerlink" href="#confval-sources.miscSerial.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object used for channel naming (and eventually down sampling). If this field is left to default (auto), a basic proc (without decimation) will be automatically generated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.channels">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.channels</span></span><a class="headerlink" href="#confval-sources.miscSerial.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">HHZ,HHN,HHE</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Names of the channels. These names are only used if you choose to automatically generate the proc. Nevertheless, even if you are not using the auto proc, it is important to declare correctly this list as the number of channels is used to size the internal plugin’s buffers. If you do not want seedlink to use one of the channels, replace it names with &quot;none&quot;. Example : 01HHZ,none,none,02HHZ,HHE,HHN</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.sample_frequency">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.sample_frequency</span></span><a class="headerlink" href="#confval-sources.miscSerial.sample_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Sampling frequency. Must be integer or a fraction of integers.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.flush_period">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.flush_period</span></span><a class="headerlink" href="#confval-sources.miscSerial.flush_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>This parameter aims at enforcing the sending of seedlink data blocks (512bytes, even if they are not yet full. 0 means no enforcing.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.miscSerial.serial_clock_period">
+<span class="sig-name descname"><span class="pre">sources.miscSerial.serial_clock_period</span></span><a class="headerlink" href="#confval-sources.miscSerial.serial_clock_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>If this parameter is not 0, a date frame (&quot;YYYY,mm,dd hh:mm:ss\n&quot;) will be send on serial port every serial_clock_period seconds.</p>
+</dd></dl>
+
+</section>
+<section id="mk6">
+<span id="seedlink-sources-mk6-label"></span><h3>mk6<a class="headerlink" href="#mk6" title="Permalink to this heading">¶</a></h3>
+<p>MK6</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mk6.proc">
+<span class="sig-name descname"><span class="pre">sources.mk6.proc</span></span><a class="headerlink" href="#confval-sources.mk6.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="mppt">
+<span id="seedlink-sources-mppt-label"></span><h3>mppt<a class="headerlink" href="#mppt" title="Permalink to this heading">¶</a></h3>
+<p>SunSaver MPPT via Modbus TCP/IP</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mppt.address">
+<span class="sig-name descname"><span class="pre">sources.mppt.address</span></span><a class="headerlink" href="#confval-sources.mppt.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">localhost</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mppt.port">
+<span class="sig-name descname"><span class="pre">sources.mppt.port</span></span><a class="headerlink" href="#confval-sources.mppt.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">502</span></code></p>
+<p>Type: <em>int</em></p>
+<p>TCP port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mppt.unit_id">
+<span class="sig-name descname"><span class="pre">sources.mppt.unit_id</span></span><a class="headerlink" href="#confval-sources.mppt.unit_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Modbus unit identifier.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mppt.channels">
+<span class="sig-name descname"><span class="pre">sources.mppt.channels</span></span><a class="headerlink" href="#confval-sources.mppt.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of channels.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mppt.proc">
+<span class="sig-name descname"><span class="pre">sources.mppt.proc</span></span><a class="headerlink" href="#confval-sources.mppt.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">mppt</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="mseedfifo">
+<span id="seedlink-sources-mseedfifo-label"></span><h3>mseedfifo<a class="headerlink" href="#mseedfifo" title="Permalink to this heading">¶</a></h3>
+<p>mseedfifo_plugin</p>
+</section>
+<section id="mseedscan">
+<span id="seedlink-sources-mseedscan-label"></span><h3>mseedscan<a class="headerlink" href="#mseedscan" title="Permalink to this heading">¶</a></h3>
+<p>MseedScan transfers new or changed miniSEED files from a directory
+to a SeedLink server. It recursively a directory
+structures and continuously checks for file modifications. The files
+are presumed to be composed of Mini-SEED records of 512 Bytes. As the
+files are appended or created the plugin will feed the new records to
+the controlling SeedLink server.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mseedscan.dir">
+<span class="sig-name descname"><span class="pre">sources.mseedscan.dir</span></span><a class="headerlink" href="#confval-sources.mseedscan.dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Directory to scan.</p>
+</dd></dl>
+
+</section>
+<section id="mws">
+<span id="seedlink-sources-mws-label"></span><h3>mws<a class="headerlink" href="#mws" title="Permalink to this heading">¶</a></h3>
+<p>MWS (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mws.comport">
+<span class="sig-name descname"><span class="pre">sources.mws.comport</span></span><a class="headerlink" href="#confval-sources.mws.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/weatherstation</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mws.baudrate">
+<span class="sig-name descname"><span class="pre">sources.mws.baudrate</span></span><a class="headerlink" href="#confval-sources.mws.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.mws.proc">
+<span class="sig-name descname"><span class="pre">sources.mws.proc</span></span><a class="headerlink" href="#confval-sources.mws.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">mws</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="naqs">
+<span id="seedlink-sources-naqs-label"></span><h3>naqs<a class="headerlink" href="#naqs" title="Permalink to this heading">¶</a></h3>
+<p>NAQS (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.naqs.address">
+<span class="sig-name descname"><span class="pre">sources.naqs.address</span></span><a class="headerlink" href="#confval-sources.naqs.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">localhost</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Address of server, required.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.naqs.port">
+<span class="sig-name descname"><span class="pre">sources.naqs.port</span></span><a class="headerlink" href="#confval-sources.naqs.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">28000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Specify the NAQS control/data port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.naqs.proc">
+<span class="sig-name descname"><span class="pre">sources.naqs.proc</span></span><a class="headerlink" href="#confval-sources.naqs.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">naqs_bb40_sm100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="nmxp">
+<span id="seedlink-sources-nmxp-label"></span><h3>nmxp<a class="headerlink" href="#nmxp" title="Permalink to this heading">¶</a></h3>
+<p>NAQS (TCP/IP) with nmxptool. nmxptool is not part of SeisComP and needs to be installed
+under $INSTALLDIR/share/plugins/seedlink/.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.address">
+<span class="sig-name descname"><span class="pre">sources.nmxp.address</span></span><a class="headerlink" href="#confval-sources.nmxp.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">idahub.ucsd.edu</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP of the NAQS server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.port">
+<span class="sig-name descname"><span class="pre">sources.nmxp.port</span></span><a class="headerlink" href="#confval-sources.nmxp.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">28000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>TCP port of the NAQS server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.max_latency">
+<span class="sig-name descname"><span class="pre">sources.nmxp.max_latency</span></span><a class="headerlink" href="#confval-sources.nmxp.max_latency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">300</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Max latency in seconds (time to wait for missing packets).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.short_term_completion">
+<span class="sig-name descname"><span class="pre">sources.nmxp.short_term_completion</span></span><a class="headerlink" href="#confval-sources.nmxp.short_term_completion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Short-Term-Completion (default -1).</p>
+<p>-1 is for Raw Stream, no Short-Term-Completion.
+Packets contain compressed data.</p>
+<p>0 decompressed packets are received in chronological order without
+waiting for missing packets.</p>
+<p>[1..300] decompressed packets are received in chronological order
+but waiting for missing packets at most SECs seconds. This requires
+NaqsServer version greater than 1.90.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.additional_options">
+<span class="sig-name descname"><span class="pre">sources.nmxp.additional_options</span></span><a class="headerlink" href="#confval-sources.nmxp.additional_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines additional options passed to nmxptool.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.nmxp.proc">
+<span class="sig-name descname"><span class="pre">sources.nmxp.proc</span></span><a class="headerlink" href="#confval-sources.nmxp.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">naqs_bb40_sm100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="ps2400-eth">
+<span id="seedlink-sources-ps2400-eth-label"></span><h3>ps2400_eth<a class="headerlink" href="#ps2400-eth" title="Permalink to this heading">¶</a></h3>
+<p>The ps2400_eth plug-in fetches data from a Earth Data PS2400/PS6-24
+digitizer (firmware &gt;= 2.23) using TCP/IP. Other configurable parameters
+are in $SEISCOMP_ROOT/share/templates/seedlink/ps2400_eth/plugins.ini.tpl.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ps2400_eth.address">
+<span class="sig-name descname"><span class="pre">sources.ps2400_eth.address</span></span><a class="headerlink" href="#confval-sources.ps2400_eth.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>IP of the Earth Data PS2400/PS6-24 digitizer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ps2400_eth.port">
+<span class="sig-name descname"><span class="pre">sources.ps2400_eth.port</span></span><a class="headerlink" href="#confval-sources.ps2400_eth.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1411</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the Earth Data PS2400/PS6-24 digitizer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.ps2400_eth.proc">
+<span class="sig-name descname"><span class="pre">sources.ps2400_eth.proc</span></span><a class="headerlink" href="#confval-sources.ps2400_eth.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">ps2400_eth_edata_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="q330">
+<span id="seedlink-sources-q330-label"></span><h3>q330<a class="headerlink" href="#q330" title="Permalink to this heading">¶</a></h3>
+<p>Quanterra Q330 (UDP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.address">
+<span class="sig-name descname"><span class="pre">sources.q330.address</span></span><a class="headerlink" href="#confval-sources.q330.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Hostname or IP.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.port">
+<span class="sig-name descname"><span class="pre">sources.q330.port</span></span><a class="headerlink" href="#confval-sources.q330.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">5330</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Source port to receive data packets.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.udpport">
+<span class="sig-name descname"><span class="pre">sources.q330.udpport</span></span><a class="headerlink" href="#confval-sources.q330.udpport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
+<p>Type: <em>string</em></p>
+<p>UDP port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.proc">
+<span class="sig-name descname"><span class="pre">sources.q330.proc</span></span><a class="headerlink" href="#confval-sources.q330.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object uniquely defined in a template file of
+the q330 plugin e.g.
+$SEISCOMP_ROOT/share/templates/seedlink/q330/streams_{name}.tpl.
+proc is used for processing, e.g. renaming or resampling of raw
+streams (streams submitted by a plugin as raw samples).
+The template file is used to generate
+$SEISCOMP_ROOT/var/lib/seedlink/streams.xml .</p>
+<p>Example template: $SEISCOMP_ROOT/share/templates/seedlink/q330/streams_q330_100.tpl</p>
+<p>If proc is not given, the streams are taken as provided by the DAS.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.slot">
+<span class="sig-name descname"><span class="pre">sources.q330.slot</span></span><a class="headerlink" href="#confval-sources.q330.slot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Q330 dataport number (1-4).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.serial">
+<span class="sig-name descname"><span class="pre">sources.q330.serial</span></span><a class="headerlink" href="#confval-sources.q330.serial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0x0100000123456789</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Q330 serial number (with 0x prefix).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.q330.auth">
+<span class="sig-name descname"><span class="pre">sources.q330.auth</span></span><a class="headerlink" href="#confval-sources.q330.auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0x00</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Q330 auth code (with 0x prefix).</p>
+</dd></dl>
+
+</section>
+<section id="reftek">
+<span id="seedlink-sources-reftek-label"></span><h3>reftek<a class="headerlink" href="#reftek" title="Permalink to this heading">¶</a></h3>
+<p>RefTek RTPD (TCP/IP)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.address">
+<span class="sig-name descname"><span class="pre">sources.reftek.address</span></span><a class="headerlink" href="#confval-sources.reftek.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Hostname or IP of the RTPD server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.port">
+<span class="sig-name descname"><span class="pre">sources.reftek.port</span></span><a class="headerlink" href="#confval-sources.reftek.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">2543</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the RTPD server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.map">
+<span class="sig-name descname"><span class="pre">sources.reftek.map</span></span><a class="headerlink" href="#confval-sources.reftek.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines an alternative unit mapping file. The default file
+is in $INSTALLDIR/var/lib/seedlink/reftek2sl.map. If
+this path is not an absolute path it will treated as relative
+path to $INSTALLDIR/var/lib/seedlink. The map file is used
+if the unit is not explictly given in the binding. Each line
+in the file is one mapping from a unit to a station name. The
+first column is the unit id e.g. 91F3 and the second column
+the Seedlink station name e.g. ABCD.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.unit">
+<span class="sig-name descname"><span class="pre">sources.reftek.unit</span></span><a class="headerlink" href="#confval-sources.reftek.unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">91F3</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The unit id.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.proc">
+<span class="sig-name descname"><span class="pre">sources.reftek.proc</span></span><a class="headerlink" href="#confval-sources.reftek.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">reftek</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object uniquely defined in a template file of
+the reftek plugin e.g.
+$SEISCOMP_ROOT/share/templates/seedlink/reftek/streams_{name}.tpl.
+proc is used for processing, e.g. renaming or resampling of raw
+streams (streams submitted by a plugin as raw samples).
+The template file is used to generate
+$SEISCOMP_ROOT/var/lib/seedlink/streams.xml .</p>
+<p>Example template: $SEISCOMP_ROOT/share/templates/seedlink/reftek/streams_reftek.tpl</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.timeout">
+<span class="sig-name descname"><span class="pre">sources.reftek.timeout</span></span><a class="headerlink" href="#confval-sources.reftek.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">60</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Timeout length in seconds. If no data is received from a Reftek
+unit during this period, the plugin assumes that the unit is
+disconnected.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.default_tq">
+<span class="sig-name descname"><span class="pre">sources.reftek.default_tq</span></span><a class="headerlink" href="#confval-sources.reftek.default_tq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">40</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Default timing quality in percents. This value will be used when
+no timing quality information is available. Can be -1 to omit
+the blockette 1001 altogether.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.unlock_tq">
+<span class="sig-name descname"><span class="pre">sources.reftek.unlock_tq</span></span><a class="headerlink" href="#confval-sources.reftek.unlock_tq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Timing quality to use when GPS is out of lock.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.reftek.log_soh">
+<span class="sig-name descname"><span class="pre">sources.reftek.log_soh</span></span><a class="headerlink" href="#confval-sources.reftek.log_soh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Send Reftek state-of-health data as Mini-SEED LOG stream.</p>
+</dd></dl>
+
+</section>
+<section id="sadc">
+<span id="seedlink-sources-sadc-label"></span><h3>sadc<a class="headerlink" href="#sadc" title="Permalink to this heading">¶</a></h3>
+<p>SADC10/18/20/30 (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.sadc.comport">
+<span class="sig-name descname"><span class="pre">sources.sadc.comport</span></span><a class="headerlink" href="#confval-sources.sadc.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.sadc.baudrate">
+<span class="sig-name descname"><span class="pre">sources.sadc.baudrate</span></span><a class="headerlink" href="#confval-sources.sadc.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">38400</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.sadc.pctime">
+<span class="sig-name descname"><span class="pre">sources.sadc.pctime</span></span><a class="headerlink" href="#confval-sources.sadc.pctime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Use PC time for initial time setting.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.sadc.proc">
+<span class="sig-name descname"><span class="pre">sources.sadc.proc</span></span><a class="headerlink" href="#confval-sources.sadc.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">sadc_100</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="scream">
+<span id="seedlink-sources-scream-label"></span><h3>scream<a class="headerlink" href="#scream" title="Permalink to this heading">¶</a></h3>
+<p>SCREAM! server (TCP/UDP/IP) plugin that receives data via
+the SCREAM! protocol and sends raw data to Seedlink. The mapping
+from SCREAM! channel id’s to Seedlink net.sta.loc.cha is defined
+in $INSTALLDIR/var/lib/seedlink/config/scream2sl.map if not
+specified otherwise (parameter ‘map’).</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.address">
+<span class="sig-name descname"><span class="pre">sources.scream.address</span></span><a class="headerlink" href="#confval-sources.scream.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>IP of the SCREAM! server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.port">
+<span class="sig-name descname"><span class="pre">sources.scream.port</span></span><a class="headerlink" href="#confval-sources.scream.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1567</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the SCREAM!</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.tcp">
+<span class="sig-name descname"><span class="pre">sources.scream.tcp</span></span><a class="headerlink" href="#confval-sources.scream.tcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enables TCP/IP mode. By default the data is received via
+UDP but TCP is used instead. This needs a propert
+configuration of the SCREAM! server to accept TCP
+connections.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.proc">
+<span class="sig-name descname"><span class="pre">sources.scream.proc</span></span><a class="headerlink" href="#confval-sources.scream.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.map">
+<span class="sig-name descname"><span class="pre">sources.scream.map</span></span><a class="headerlink" href="#confval-sources.scream.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines an alternative stream mapping file. The default file
+is in $INSTALLDIR/var/lib/seedlink/scream2sl.map. If
+this path is not an absolute path it will treated as relative
+path to $INSTALLDIR/var/lib/seedlink.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream.channels">
+<span class="sig-name descname"><span class="pre">sources.scream.channels</span></span><a class="headerlink" href="#confval-sources.scream.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Defines the channel mappings (ID:channel, …) from SCREAM!
+to the channel code used in streams.xml. If no channel mappings
+are given, the map file defined in map (either default or custom)
+is used.</p>
+</dd></dl>
+
+</section>
+<section id="scream-ring">
+<span id="seedlink-sources-scream-ring-label"></span><h3>scream_ring<a class="headerlink" href="#scream-ring" title="Permalink to this heading">¶</a></h3>
+<p>SCREAM! server plugin that receives data via
+the SCREAM! protocol and sends raw data to Seedlink. The mapping
+from SCREAM! channel id’s to Seedlink net.sta.loc.cha is defined
+in $INSTALLDIR/var/lib/seedlink/config/scream2sl.map if not
+specified otherwise (parameter ‘map’). This is the second revision
+of the scream plugin which supports buffering for short-term
+completeness.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.address">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.address</span></span><a class="headerlink" href="#confval-sources.scream_ring.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>IP of the SCREAM! server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.port">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.port</span></span><a class="headerlink" href="#confval-sources.scream_ring.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1567</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Port of the SCREAM!</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.tcp">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.tcp</span></span><a class="headerlink" href="#confval-sources.scream_ring.tcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enables TCP/IP mode. By default the data is received via
+UDP but TCP is used instead. This needs a propert
+configuration of the SCREAM! server to accept TCP
+connections.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.tcpport">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.tcpport</span></span><a class="headerlink" href="#confval-sources.scream_ring.tcpport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1567</span></code></p>
+<p>Type: <em>int</em></p>
+<p>TCP request port of the SCREAM! for backfill requests</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.proc">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.proc</span></span><a class="headerlink" href="#confval-sources.scream_ring.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.rsize">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.rsize</span></span><a class="headerlink" href="#confval-sources.scream_ring.rsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Size of the stream ringbuffers (small values are useful for RT systems;
+large values for decreasing gaps).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.map">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.map</span></span><a class="headerlink" href="#confval-sources.scream_ring.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines an alternative stream mapping file. The default file
+is in $INSTALLDIR/var/lib/seedlink/scream2sl.map. If
+this path is not an absolute path it will treated as relative
+path to $INSTALLDIR/var/lib/seedlink.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.scream_ring.channels">
+<span class="sig-name descname"><span class="pre">sources.scream_ring.channels</span></span><a class="headerlink" href="#confval-sources.scream_ring.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Defines the channel mappings (ID:channel, …) from SCREAM!
+to the channel code used in streams.xml. If no channel mappings
+are given, the map file defined in map (either default or custom)
+is used.</p>
+</dd></dl>
+
+</section>
+<section id="vaisala">
+<span id="seedlink-sources-vaisala-label"></span><h3>vaisala<a class="headerlink" href="#vaisala" title="Permalink to this heading">¶</a></h3>
+<p>Vaisala ASCII protocol (serial plugin)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.vaisala.comport">
+<span class="sig-name descname"><span class="pre">sources.vaisala.comport</span></span><a class="headerlink" href="#confval-sources.vaisala.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/weatherstation</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.vaisala.baudrate">
+<span class="sig-name descname"><span class="pre">sources.vaisala.baudrate</span></span><a class="headerlink" href="#confval-sources.vaisala.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">19200</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.vaisala.proc">
+<span class="sig-name descname"><span class="pre">sources.vaisala.proc</span></span><a class="headerlink" href="#confval-sources.vaisala.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">vaisala</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="wago">
+<span id="seedlink-sources-wago-label"></span><h3>wago<a class="headerlink" href="#wago" title="Permalink to this heading">¶</a></h3>
+<p>WAGO Controller (T-Elektronik)</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wago.address">
+<span class="sig-name descname"><span class="pre">sources.wago.address</span></span><a class="headerlink" href="#confval-sources.wago.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Hostname or IP.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wago.port">
+<span class="sig-name descname"><span class="pre">sources.wago.port</span></span><a class="headerlink" href="#confval-sources.wago.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">502</span></code></p>
+<p>Type: <em>int</em></p>
+<p>TCP port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wago.channels">
+<span class="sig-name descname"><span class="pre">sources.wago.channels</span></span><a class="headerlink" href="#confval-sources.wago.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of channels.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wago.proc">
+<span class="sig-name descname"><span class="pre">sources.wago.proc</span></span><a class="headerlink" href="#confval-sources.wago.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">wago</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="wave24">
+<span id="seedlink-sources-wave24-label"></span><h3>wave24<a class="headerlink" href="#wave24" title="Permalink to this heading">¶</a></h3>
+<p>Wave24</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wave24.comport">
+<span class="sig-name descname"><span class="pre">sources.wave24.comport</span></span><a class="headerlink" href="#confval-sources.wave24.comport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/dev/data</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Serial port.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wave24.baudrate">
+<span class="sig-name descname"><span class="pre">sources.wave24.baudrate</span></span><a class="headerlink" href="#confval-sources.wave24.baudrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">57600</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Baud rate.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.wave24.proc">
+<span class="sig-name descname"><span class="pre">sources.wave24.proc</span></span><a class="headerlink" href="#confval-sources.wave24.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">wave24bb</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+<section id="win">
+<span id="seedlink-sources-win-label"></span><h3>win<a class="headerlink" href="#win" title="Permalink to this heading">¶</a></h3>
+<p>WIN server</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.win.udpport">
+<span class="sig-name descname"><span class="pre">sources.win.udpport</span></span><a class="headerlink" href="#confval-sources.win.udpport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">18000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>UDP port to receive data packets.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.win.map">
+<span class="sig-name descname"><span class="pre">sources.win.map</span></span><a class="headerlink" href="#confval-sources.win.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines an alternative stream mapping file. The default file
+is in $INSTALLDIR/var/lib/seedlink/win2sl.map. If
+this path is not an absolute path it will treated as relative
+path to $INSTALLDIR/var/lib/seedlink.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.win.channels">
+<span class="sig-name descname"><span class="pre">sources.win.channels</span></span><a class="headerlink" href="#confval-sources.win.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of channels (hexID:name, …). The name can either be a single
+channel name or a combination of station and channel separated by
+a whitespace, e.g. &quot;ABCD BHZ&quot;. If no station name is given,
+e.g. only BHZ is specified, the name of the station the plugin bound to
+is used. The definition of a station name is important if the plugin
+configuration is used as a profile and assigned to multiple stations.
+In this case a mapping file would be the more appropriate solution.</p>
+<p>If no channel mappings are given, the map file defined in map
+(either default or custom) is used.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sources.win.proc">
+<span class="sig-name descname"><span class="pre">sources.win.proc</span></span><a class="headerlink" href="#confval-sources.win.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">win</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Name of the proc object (defined in streams.xml); used for processing
+raw streams (streams submitted by a plugin as raw samples).</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">seedlink</a><ul>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#supported-data-sources">Supported data sources</a></li>
+<li><a class="reference internal" href="#telnet-interface">Telnet interface</a></li>
+<li><a class="reference internal" href="#queries">Queries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#protocol">Protocol</a><ul>
+<li><a class="reference internal" href="#handshaking">Handshaking</a></li>
+<li><a class="reference internal" href="#data-transfer">Data Transfer</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plugin-interface">Plugin Interface</a></li>
+<li><a class="reference internal" href="#compatibility-with-earlier-versions">Compatibility with Earlier Versions</a></li>
+<li><a class="reference internal" href="#seedlink-configuration-files">SeedLink configuration files</a><ul>
+<li><a class="reference internal" href="#seedlink-ini">seedlink.ini</a></li>
+<li><a class="reference internal" href="#streams-xml">streams.xml</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a><ul>
+<li><a class="reference internal" href="#caps-extension">caps extension</a></li>
+<li><a class="reference internal" href="#mseedfifo-extension">mseedfifo extension</a></li>
+<li><a class="reference internal" href="#q330-extension">q330 extension</a></li>
+<li><a class="reference internal" href="#chain-extension">chain extension</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bindings-parameters">Bindings Parameters</a><ul>
+<li><a class="reference internal" href="#antelope">antelope</a></li>
+<li><a class="reference internal" href="#caps">caps</a></li>
+<li><a class="reference internal" href="#chain">chain</a></li>
+<li><a class="reference internal" href="#dr24">dr24</a></li>
+<li><a class="reference internal" href="#echopro-3ch100hz">echopro_3ch100hz</a></li>
+<li><a class="reference internal" href="#echopro-6ch200hz">echopro_6ch200hz</a></li>
+<li><a class="reference internal" href="#edata">edata</a></li>
+<li><a class="reference internal" href="#ewexport">ewexport</a></li>
+<li><a class="reference internal" href="#ewexport-pasv">ewexport_pasv</a></li>
+<li><a class="reference internal" href="#fs-mseed">fs_mseed</a></li>
+<li><a class="reference internal" href="#gdrt">gdrt</a></li>
+<li><a class="reference internal" href="#gmeteo">gmeteo</a></li>
+<li><a class="reference internal" href="#hrd24">hrd24</a></li>
+<li><a class="reference internal" href="#liss">liss</a></li>
+<li><a class="reference internal" href="#m24">m24</a></li>
+<li><a class="reference internal" href="#minilogger">minilogger</a></li>
+<li><a class="reference internal" href="#miscscript">miscScript</a></li>
+<li><a class="reference internal" href="#miscserial">miscSerial</a></li>
+<li><a class="reference internal" href="#mk6">mk6</a></li>
+<li><a class="reference internal" href="#mppt">mppt</a></li>
+<li><a class="reference internal" href="#mseedfifo">mseedfifo</a></li>
+<li><a class="reference internal" href="#mseedscan">mseedscan</a></li>
+<li><a class="reference internal" href="#mws">mws</a></li>
+<li><a class="reference internal" href="#naqs">naqs</a></li>
+<li><a class="reference internal" href="#nmxp">nmxp</a></li>
+<li><a class="reference internal" href="#ps2400-eth">ps2400_eth</a></li>
+<li><a class="reference internal" href="#q330">q330</a></li>
+<li><a class="reference internal" href="#reftek">reftek</a></li>
+<li><a class="reference internal" href="#sadc">sadc</a></li>
+<li><a class="reference internal" href="#scream">scream</a></li>
+<li><a class="reference internal" href="#scream-ring">scream_ring</a></li>
+<li><a class="reference internal" href="#vaisala">vaisala</a></li>
+<li><a class="reference internal" href="#wago">wago</a></li>
+<li><a class="reference internal" href="#wave24">wave24</a></li>
+<li><a class="reference internal" href="#win">win</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scwfas.html"
+                          title="previous chapter">scwfas</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="slarchive.html"
+                          title="next chapter">slarchive</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/seedlink.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

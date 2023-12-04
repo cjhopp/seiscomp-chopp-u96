@@ -1,0 +1,114 @@
+from __future__ import absolute_import, division, print_function
+
+import os
+import datetime
+import json
+import hashlib
+import subprocess
+import logging
+import logging.handlers
+import threading
+
+
+from .utils import py3bstr
+
+mutex = threading.Lock()
+
+
+class MyFileHandler(logging.handlers.TimedRotatingFileHandler):
+    def __init__(self, filename):
+        super(MyFileHandler, self).__init__(
+            filename, when="midnight", utc=True)
+
+    def rotate(self, source, dest):
+        super(MyFileHandler, self).rotate(source, dest)
+
+        if os.path.exists(dest):
+            subprocess.Popen(["bzip2", dest])
+
+
+class Tracker(object):
+    def __init__(self, logger, geoip, service, userName, userIP, clientID, userSalt):
+        self.__logger = logger
+        self.__userName = userName
+        self.__userSalt = userSalt
+        self.__logged = False
+
+        if userName:
+            userID = int(hashlib.md5(py3bstr(userSalt + userName.lower())).hexdigest()[:8], 16)
+        else:
+            userID = int(hashlib.md5(py3bstr(userSalt + userIP)).hexdigest()[:8], 16)
+
+        self.__data = {
+            'service': service,
+            'userID': userID,
+            'clientID': clientID,
+            'userEmail': None,
+            'auth': not not userName,
+            'userLocation': {},
+            'created': datetime.datetime.utcnow().isoformat() + 'Z'
+        }
+
+        if geoip:
+            self.__data['userLocation']['country'] = geoip.country_code_by_addr(userIP)
+
+        if (userName and userName.lower().endswith("@gfz-potsdam.de")) or \
+           userIP.startswith("139.17."):
+            self.__data['userLocation']['institution'] = "GFZ"
+
+    #pylint: disable=W0613
+    def line_status(self, start_time, end_time, network, station, channel,
+                    location, restricted, net_class, shared, constraints,
+                    volume, status, size, message):
+
+        try:
+            trace = self.__data['trace']
+
+        except KeyError:
+            trace = []
+            self.__data['trace'] = trace
+
+        trace.append({
+            'net': network,
+            'sta': station,
+            'loc': location,
+            'cha': channel,
+            'start': start_time.iso(),
+            'end': end_time.iso(),
+            'restricted': restricted,
+            'status': status,
+            'bytes': size
+        })
+
+        if restricted and status == 'OK':
+            self.__data['userEmail'] = self.__userName
+
+    # FDSNWS requests have one volume, so volume_status() is called once per request
+    def volume_status(self, volume, status, size, message):
+        self.__data['status'] = status
+        self.__data['bytes'] = size
+        self.__data['finished'] = datetime.datetime.utcnow().isoformat() + 'Z'
+
+    def request_status(self, status, message):
+        with mutex:
+            if not self.__logged:
+                self.__logger.info(json.dumps(self.__data))
+                self.__logged = True
+
+
+class RequestLog(object):
+    def __init__(self, filename, userSalt):
+        self.__logger = logging.getLogger("seiscomp.fdsnws.reqlog")
+        self.__logger.addHandler(MyFileHandler(filename))
+        self.__logger.setLevel(logging.INFO)
+        self.__userSalt = userSalt
+
+        try:
+            import GeoIP
+            self.__geoip = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
+
+        except ImportError:
+            self.__geoip = None
+
+    def tracker(self, service, userName, userIP, clientID):
+        return Tracker(self.__logger, self.__geoip, service, userName, userIP, clientID, self.__userSalt)

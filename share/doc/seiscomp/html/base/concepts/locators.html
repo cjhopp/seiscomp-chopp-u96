@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Locators &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Glossary" href="../glossary.html" />
+    <link rel="prev" title="Magnitudes" href="magnitudes.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="../glossary.html" title="Glossary"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="magnitudes.html" title="Magnitudes"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../concepts.html" accesskey="U">Concepts</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="locators">
+<span id="concepts-locators"></span><h1>Locators<a class="headerlink" href="#locators" title="Permalink to this heading">¶</a></h1>
+<p>Locators receive <a class="reference internal" href="../glossary.html#term-pick"><span class="xref std std-term">phase picks</span></a> from modules such as <a class="reference internal" href="../../apps/scautoloc.html#scautoloc"><span class="std std-ref">scautoloc</span></a>,
+<a class="reference internal" href="../../apps/screloc.html#screloc"><span class="std std-ref">screloc</span></a> or <a class="reference internal" href="../../apps/scolv.html#scolv"><span class="std std-ref">scolv</span></a> for locating seismic or non-seismic sources. The
+solutions may include source time and location with or without uncertainties.
+They are used to form new <a class="reference internal" href="../glossary.html#term-origin"><span class="xref std std-term">origins</span></a> which can be treated
+further.</p>
+<p><cite>SeisComP</cite> ships with built-in locators:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../apps/global_fixedhypocenter.html#global-fixedhypocenter"><span class="std std-ref">FixedHypocenter</span></a> (FH)</p></li>
+<li><p><a class="reference internal" href="../../apps/global_hypo71.html#global-hypo71"><span class="std std-ref">Hypo71</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/global_iloc.html#global-iloc"><span class="std std-ref">iLoc</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/global_locsat.html#global-locsat"><span class="std std-ref">LOCSAT</span></a>, the default locator in <a class="reference internal" href="../../apps/scautoloc.html#scautoloc"><span class="std std-ref">scautoloc</span></a> and <a class="reference internal" href="../../apps/scolv.html#scolv"><span class="std std-ref">scolv</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/global_nonlinloc.html#global-nonlinloc"><span class="std std-ref">NonLinLoc</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/global_stdloc.html#global-stdloc"><span class="std std-ref">StdLoc</span></a></p></li>
+</ul>
+<p>and a none built-in locator:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../apps/global_locext.html#global-locext"><span class="std std-ref">LocExt</span></a>.</p></li>
+</ul>
+<p>While the built-in locators are well defined and documented, any other external
+locator routine can be added to <cite>SeisComP</cite> by configuration of the locator
+<a class="reference internal" href="../../apps/global_locext.html#global-locext"><span class="std std-ref">LocExt</span></a> and custom scripts.
+LOCSAT and FixedHypocenter are native to <cite>SeisComP</cite>. All other locators are
+implemented as <a class="reference internal" href="../glossary.html#term-plugin"><span class="xref std std-term">plugins</span></a>. A <a class="reference internal" href="../glossary.html#term-plugin"><span class="xref std std-term">plugin</span></a>
+needs to be added to the list of loaded plugins by configuration of the global
+parameter <a class="reference internal" href="../../apps/global.html#confval-plugins"><code class="xref std std-confval docutils literal notranslate"><span class="pre">plugins</span></code></a> for making the corresponding locator available to
+<cite>SeisComP</cite> applications.</p>
+<p>A comparison of the locators is given in the table below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The specifications given below may depend on the configuration of the
+respective locator. Please carefully read the documentation of the locators
+for optimizing their performance.</p>
+</div>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>FH</p></th>
+<th class="head"><p>Hypo71</p></th>
+<th class="head"><p>iLoc</p></th>
+<th class="head"><p>LocExt</p></th>
+<th class="head"><p>LOCSAT</p></th>
+<th class="head"><p>NonLinLoc</p></th>
+<th class="head"><p>StdLoc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Applications</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>phases considered by default</p></td>
+<td><p>seismic / infrasound</p></td>
+<td><p>seismic</p></td>
+<td><p>seismic / infrasound / hydroacoustic</p></td>
+<td><p>[3]</p></td>
+<td><p>seismic / infrasound</p></td>
+<td><p>seismic</p></td>
+<td><p>seismic</p></td>
+</tr>
+<tr class="row-even"><td><p>distance ranges of application</p></td>
+<td><p>local / regional / teleseismic</p></td>
+<td><p>local / regional</p></td>
+<td><p>local / regional / teleseismic</p></td>
+<td><p>[3]</p></td>
+<td><p>local / regional / teleseismic</p></td>
+<td><p>local / regional / teleseismic</p></td>
+<td><p>local / regional [4]</p></td>
+</tr>
+<tr class="row-odd"><td><p>application with default configuration</p></td>
+<td><p>regional / teleseismic</p></td>
+<td><p>❌</p></td>
+<td><p>regional / global</p></td>
+<td><p>[3]</p></td>
+<td><p>regional / teleseismic</p></td>
+<td><p>❌</p></td>
+<td><p>local / regional [1]</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Algorithm</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>inversion algorithm</p></td>
+<td><p>linear</p></td>
+<td><p>iterative</p></td>
+<td><p>configurable</p></td>
+<td><p>[3]</p></td>
+<td><p>grid search</p></td>
+<td><p>probabilistic</p></td>
+<td><p>configurable</p></td>
+</tr>
+<tr class="row-even"><td><p>automatic phase renaming</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-odd"><td><p>considers network code</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>✅ [1]</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>positive station elevation</p></td>
+<td><p>✅ [2/4]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅ [2]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>negative station elevation</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>considers pick time</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>considers pick slowness</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-even"><td><p>considers pick backazimuth</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-odd"><td><p>speed</p></td>
+<td><p>fast</p></td>
+<td><p>fast</p></td>
+<td><p>fast - intermediate</p></td>
+<td><p>[3]</p></td>
+<td><p>fast</p></td>
+<td><p>intermediate</p></td>
+<td><p>fast - intermediate</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Velocity model</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>velocity model</p></td>
+<td><p>1D [4]</p></td>
+<td><p>1D</p></td>
+<td><p>1D</p></td>
+<td><p>[3]</p></td>
+<td><p>1D</p></td>
+<td><p>1D / 3D</p></td>
+<td><p>1D / 3D [4]</p></td>
+</tr>
+<tr class="row-even"><td><p>independent Vp and Vs</p></td>
+<td><p>✅ [4]</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅ [4]</p></td>
+</tr>
+<tr class="row-odd"><td><p>default velocity model</p></td>
+<td><p>iasp91 / tab</p></td>
+<td><p>❌</p></td>
+<td><p>iasp91 / ak135</p></td>
+<td><p>[3]</p></td>
+<td><p>iasp91 / tab</p></td>
+<td><p>❌</p></td>
+<td><p>iasp91 / tab [1]</p></td>
+</tr>
+<tr class="row-even"><td><p>applies RSTT</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Hypocenter solution</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>inverts for hypocenter location</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>inverts for hypocenter time</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>[3]</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>supports negative source depth</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>[3]</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Configuration</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>native or plugin to load</p></td>
+<td><p>✅</p></td>
+<td><p><em>hypo71</em></p></td>
+<td><p><em>lociloc</em></p></td>
+<td><p><em>locext</em></p></td>
+<td><p>✅</p></td>
+<td><p><em>locnll</em></p></td>
+<td><p><em>stdloc</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>SeisComP</cite> provides locator</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p>operates without external files</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>operates without custom scripts</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Others</strong></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>remarks</p></td>
+<td><p>intended for ground-truth tests / single-station location / any travel-time interface</p></td>
+<td></td>
+<td><p>operational at EMSC and ISC (earlier version)</p></td>
+<td><p>any external locator can be called by a custom script</p></td>
+<td><p>currently the fastest locator in <cite>SeisComP</cite> and the only one available to <a class="reference internal" href="../../apps/scautoloc.html#scautoloc"><span class="std std-ref">scautoloc</span></a></p></td>
+<td><p>considers model uncertainties</p></td>
+<td><p>uses travel-times from any travel-time interface</p></td>
+</tr>
+<tr class="row-even"><td><p>point of contact</p></td>
+<td><p><span id="id1"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+<td><p><span id="id2"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+<td><p><a class="reference external" href="mailto:ibondar2014&#37;&#52;&#48;gmail&#46;com">ibondar2014 <span>&#64;</span>gmail<span>&#46;</span>com</a></p></td>
+<td><p><span id="id3"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+<td><p><span id="id4"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+<td><p><span id="id5"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+<td><p><span id="id6"><em>SeisComP forum</em> [<a class="reference internal" href="../references.html#id250" title="SeisComP forum. GFZ. URL: https://forum.seiscomp.de/.">23</a>]</span></p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>[1]: requires initial or specific configuration</p></li>
+<li><p>[2]: requires correction file</p></li>
+<li><p>[3]: depends on selected locator</p></li>
+<li><p>[4]: depends on selected travel-time interface</p></li>
+</ul>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="magnitudes.html"
+                          title="previous chapter">Magnitudes</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../glossary.html"
+                          title="next chapter">Glossary</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/base/concepts/locators.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

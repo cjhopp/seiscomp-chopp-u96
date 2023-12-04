@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scorgls &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scquery" href="scquery.html" />
+    <link rel="prev" title="scmssort" href="scmssort.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scquery.html" title="scquery"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scmssort.html" title="scmssort"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scorgls">
+<span id="id1"></span><h1>scorgls<a class="headerlink" href="#scorgls" title="Permalink to this heading">¶</a></h1>
+<p><strong>List origin IDs from database.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p><em>scorgls</em> lists all available origin IDs within a given time range to stdout.</p>
+<p>Use <a class="reference internal" href="scevtls.html#scevtls"><span class="std std-ref">scevtls</span></a> for listing all event IDs. In extension to <a class="reference internal" href="scevtls.html#scevtls"><span class="std std-ref">scevtls</span></a>
+and scorgls <a class="reference internal" href="scquery.html#scquery"><span class="std std-ref">scquery</span></a> can search for parameters based on complex custom
+queries.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
+<p>Print all origin IDs for the complete year 2012.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scorgls<span class="w"> </span>-d<span class="w"> </span>mysql://sysop:sysop@localhost/seiscomp<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--begin<span class="w"> </span><span class="s2">&quot;2012-01-01 00:00:00&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--end<span class="w"> </span><span class="s2">&quot;2013-01-01 00:00:00&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="module-configuration">
+<span id="scorgls-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scorgls.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scorgls.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scorgls.cfg</span></code></div>
+</div>
+<p>scorgls inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scorgls [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-h">
+<span id="cmdoption-scorgls-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-V">
+<span id="cmdoption-scorgls-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-D">
+<span id="cmdoption-scorgls-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-v">
+<span id="cmdoption-scorgls-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-q">
+<span id="cmdoption-scorgls-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-s">
+<span id="cmdoption-scorgls-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-l">
+<span id="cmdoption-scorgls-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-d">
+<span id="cmdoption-scorgls-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scorgls-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scorgls-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="origins">
+<h3>Origins<a class="headerlink" href="#origins" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-begin">
+<span class="sig-name descname"><span class="pre">--begin</span></span><span class="sig-prename descclassname"> <span class="pre">time</span></span><a class="headerlink" href="#cmdoption-scorgls-begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>The lower bound of the time interval. Format:
+&quot;2012-01-01 00:00:00&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-end">
+<span class="sig-name descname"><span class="pre">--end</span></span><span class="sig-prename descclassname"> <span class="pre">time</span></span><a class="headerlink" href="#cmdoption-scorgls-end" title="Permalink to this definition">¶</a></dt>
+<dd><p>The upper bound of the time interval. Format:
+&quot;2012-01-01 00:00:00&quot;.</p>
+</dd></dl>
+
+</section>
+<section id="output">
+<h3>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scorgls-0">
+<span id="cmdoption-scorgls-delimiter"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--delimiter</span></span><span class="sig-prename descclassname"> <span class="pre">string</span></span><a class="headerlink" href="#cmdoption-scorgls-0" title="Permalink to this definition">¶</a></dt>
+<dd><p>The delimiter of the resulting origin IDs.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scorgls</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#origins">Origins</a></li>
+<li><a class="reference internal" href="#output">Output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scmssort.html"
+                          title="previous chapter">scmssort</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scquery.html"
+                          title="next chapter">scquery</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scorgls.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2423 @@
+.. highlight:: rst
+
+.. _gaps:
+
+####
+gaps
+####
+
+**gempa application server for the web.**
+
+
+Description
+===========
+
+|product| provides a collection of web-based client tools running in a web
+browser anywhere on PCs, tablets or smartphones to interface with a |scname|
+installation that operates the |appname| server. Through |product|, operators
+gain insight into a remote |scname| data acquisition and processing system and
+can interact with it. In full-screen mode, the modules are excellent for
+demonstrating the performance of the |scname| server system in a show room.
+
+Here we refer to |product| as the gempa product and to |appname| as the provided
+module which can be configured and started within |scname|.
+
+
+.. _gaps_overview:
+
+Overview
+========
+
+When connecting to a |appname| server, the :ref:`start page<fig-gaps_start>` is
+shown. From there the individual web modules can be reached. These are:
+
+* :ref:`EQView<gaps_eqview>`: View event catalogs and detailed parameters in
+  custom widgets on a map,
+* :ref:`StationView<gaps_stationview>`: View stations and their parameters along
+  with events on a map,
+* :ref:`TraceView<gaps_traceview>`: View raw or filtered waveforms from stations
+  along with phase picks
+  and event parameters. Select the station interactively on a map,
+* :ref:`OriginLocatorView<gaps_olv>`: Browse and view event catalogs, select and
+  analyze events by viewing or selecting phase detections and processing
+  waveforms.
+
+
+Read the full instructions on using these web modules in section
+:ref:`gaps_client_modules`.
+
+.. _fig-gaps_start:
+
+.. figure:: media/gaps_gempa_start.png
+   :align: center
+   :width: 16cm
+
+   GAPS start page (full-screen mode, example from gempa's
+   `demo website <https://demo.gempa.de>`_).
+
+
+|appname| reads event parameters from :cite:t:`quakelink` which is provided
+along with |product|. It uses maps stored as tiles :cite:t:`tiles`.
+The web applications can be customized to show different details on maps and
+catalogs. All may be secured on multiple levels. In
+this way authorized users can process data and commit the results to the
+|scname| server system as if they were directly connected to a |scname| system.
+Read the section :ref:`gaps_installation` to learn about your options.
+
+
+.. _gaps_system_requirements:
+
+System requirements
+===================
+
+* :cite:t:`quakelink` serves event parameters to |appname|. In order to have
+  |appname| functioning, a QuakeLink server must therefore be accessible
+  remotely or configured locally along with |scname| and started.
+* |appname| reads maps from tiles provided by the plugin :cite:t:`mbtiles`
+  provided by gempa's *mappprojection* package which must be installed.
+
+In a basic setup, the |appname| and QuakeLink HTTP interfaces are directly
+accessed by the web browser. Make sure that the interfaces are configured and
+accessible by the client.
+
+The steps for installation and configuration are explained in section
+:ref:`gaps_installation`. All configuration parameters are detailed in section
+:ref:`sec-gaps_configuration`.
+
+
+.. _gaps_installation:
+
+Installation and Setup
+======================
+
+This chapter describes in detail how to setup |appname| for common use cases
+with:
+
+* :ref:`gaps_system_requirements`,
+* :ref:`gaps_installation_basic_setup`,
+* :ref:`gaps_quakelink` configuration,
+* :ref:`gaps_setup` and customization,
+* :ref:`gaps_installation_web_server_integration`.
+
+For a **quick installation and setup on a local machine** follow the instruction
+in sections:
+
+#. :ref:`gaps_installation_basic_setup`,
+#. :ref:`gaps_quakelink`,
+#. :ref:`gaps_quakelink_connection`.
+
+Later you may improve further by following the full procedure set out below.
+E.g. you may set access control rules (read :ref:`gaps_connection_access`) and
+integrate |appname| into your web server
+(read :ref:`gaps_installation_web_server_integration`) for visibility from your
+or any public network.
+You may even generate custom web pages as set out in :ref:`custom-gaps-pages`.
+
+
+.. _gaps_installation_basic_setup:
+
+Package installation
+--------------------
+
+|product| consists of 2 packages that should be installed for full
+functionality:
+
+* *gaps-server* for the |appname| server application,
+* *gaps-frontends/gaps-frontends-all* for the |appname| web apps
+  (client applications) without/with OriginLocatorView.
+
+Install the |product| and the mapprojections packages in addition
+to |scname| via
+`gsm package manager <https://data.gempa.de/gsm/gempa-gsm.tar.gz>`_.
+You may install |product| with or without the OriginLocatorView.
+
+* Installation **without** OriginLocatorView:
+
+  .. code-block:: sh
+
+     ./gsm install mapprojections gaps-server gaps-frontends
+
+  or
+
+* Installation **with** OriginLocatorView:
+
+  .. code-block:: sh
+
+     ./gsm install mapprojections gaps-server gaps-frontends-all
+
+The quakelink package must be installed as well unless you want to
+connect to an external QuakeLink server:
+
+.. code-block:: sh
+
+   ./gsm install quakelink
+
+
+.. _gaps_quakelink:
+
+QuakeLink
+---------
+
+.. hint ::
+
+   This chapter on QuakeLink may be skipped if QuakeLink is already running or
+   if another external QuakeLink server shall be used for |appname| as described
+   in :ref:`gaps_quakelink_connection`.
+
+
+Configure and start QuakeLink and populate it with event parameters.
+Configure QuakeLink in
+:file:`${SEISCOMP_ROOT}/etc/quakelink.cfg`  or use :cite:t:`scconfig`.
+
+#. Enable QuakeLink HTTP web interface:
+
+   .. code-block:: properties
+
+      # Port to listen for HTTP request
+      QL.http.port = 18080
+
+#. Enable and start the services
+
+   .. code-block:: sh
+
+      seiscomp enable quakelink
+      seiscomp start quakelink
+
+#. For importing event parameters into QuakeLink, either
+
+   * configure, enable and start :cite:t:`sc2ql`, :cite:t:`ql2ql` or
+     :cite:t:`fdsnws2ql` for automatic import or
+   * execute :cite:t:`qlpush` on demand.
+
+#. For testing and an overview over available events open the default QuakeLink
+   URL in a web browser:
+
+   .. code-block:: sh
+
+      http://localhost:18080
+
+
+.. _gaps_setup:
+
+|appname| server
+----------------
+
+|appname| requires to configure:
+
+* Module parameters for general properties,
+* Bindings for defining stations visible in the web frontends
+
+in addition to the connection to QuakeLink and the maps.
+
+In order to bind a station to |appname|, e.g. showing its symbol in the station
+view, create a |appname| binding for that station with parameter enable set to
+*true*. Stations that have not been bound to |appname| will be removed from the
+inventory and therefore not be shown.
+
+Configure |appname| in :file:`${SEISCOMP_ROOT}/etc/gaps.cfg` or use
+:cite:t:`scconfig`. A subset of control parameters is described in this section
+but a complete list can be found in :ref:`Configuration<sec-gaps_configuration>`.
+More detailed help for all parameters can be found in the configuration of the
+|appname| module in :program:`scconfig` (mouse-over the respective parameter).
+
+
+.. _gaps_quakelink_connection:
+
+Connect GAPS with QuakeLink
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Configure the connection of |appname| to QuakeLink.
+
+#. Set the URI for requesting events from QuakeLink in :confval:`quakelink`.
+   This URI is used as a default for all web applications. e.g.:
+
+   .. code-block:: properties
+
+      quakelink = http://your_server:18080/events/query
+
+#. Set the QuakeLink proxy connection initiated by |appname| in
+   :confval:`quakelinkProxy`: to convert and forward single events from
+   QuakeLink to the browser, e.g.:
+
+   .. code-block:: properties
+
+      quakelinkProxy = ql://your_server:18010
+
+   .. hint ::
+
+      The parameters :confval:`quakelink` and :confval:`quakelinkProxy` need to
+      point to the same server address and must be available to the client.
+      Hence, for the server address you may use
+
+      * **localhost** if you are running the |appname| frontends on the same
+        machine as the |appname| server and Quakelink or if the connection to
+        QuakeLink and |appname| is controlled via
+        :ref:`NGINX <gaps_installation_web_server_integration>` or another
+        web server.
+      * **a public IP address or name** if |appname| and QuakeLink run on a
+        publicly available computer.
+
+   Compare also with the settings in :cite:t:`sc2ql`.
+
+#. Enable and start the services
+
+   .. code-block:: sh
+
+      seiscomp enable gaps
+      seiscomp start gaps
+
+   or restart |appname| after applying further configurations later on
+
+   .. code-block:: sh
+
+      seiscomp restart gaps
+
+#. For testing the initial setup of |appname| try to open the default |appname|
+   URL in a web browser, e.g *firefox* where the
+   :ref:`GAPS start page <fig-gaps_start>` should appear:
+
+   .. code-block:: sh
+
+      firefox http://localhost:8080
+
+   .. note::
+
+      If the |appname| front end displays the notification
+      ``Could not reach server, try again in 10 s`` and the browser console
+      (Ctrl+Shift+I) contains CORS error message like
+      ``Cross-Origin Request Blocked: The Same Origin Policy disallows reading the
+      remote resource at http://localhost:18080/events/query?archived. (Reason:
+      CORS request did not succeed)``, it is very likely that the QuakeLink server
+      is not up and running. Please check the QuakeLink log file under
+      :file:`${HOME}/.seiscomp/log/quakelink.log`
+
+
+.. _gaps_maps_control:
+
+Map properties
+~~~~~~~~~~~~~~
+
+The location of maps stored as :cite:t:`tiles`
+as well as the zoom levels can be configured.
+Maps from :cite:t:`osm` or generated by the user can be included.
+High resolution maps can also be purchased from :cite:t:`gempa`.
+`Contact gempa GmbH <https://www.gempa.de/contact/>`_ for the details.
+
+.. _fig-gaps_scconfig_maps:
+
+.. figure:: media/gaps_gempa_scconfig_maps.png
+   :align: center
+   :width: 16cm
+
+   scconfig: window for setting the map parameters.
+
+
+#. Add the mbtiles plugin to global parameters and configure
+   :confval:`map.location` and :confval:`map.type` with the map tile file or URL
+   and the map type, respectively.
+
+   .. code-block:: properties
+
+      plugins = ${plugins}, mbtiles
+      map.location = [file/map URL]
+      map.type = [type]
+
+   .. note ::
+
+      These parameters are typically set by global module configuration in
+      :file:`${SEISCOMP_ROOT}/etc/global.cfg` but they may be overridden in
+      |appname| in :file:`${SEISCOMP_ROOT}/etc/gaps.cfg`.
+#. The maps are available through global parameters but you may adjust map
+   features
+
+   * Set :confval:`tileDB` to the MBTiles tile database if |appname| should serve
+     tiles itself. Leave it empty if mapURI is configured with a remote tile
+     server in :confval:`apps.mapURI`.
+
+     .. code-block:: properties
+
+        tileDB = /home/data/maps/world-11/world-11.mbtiles
+
+   * For using a remote tile server set :confval:`apps.mapURI`. Provide start
+     values for zoom level {z}, latitude {y} and longitude {x}, e.g.:
+
+     * locally stored maps:
+
+       .. code-block:: properties
+
+          apps.mapURI = "../tiles/{z}/{y}/{x}"
+
+     * a remote server
+
+       .. code-block:: properties
+
+          apps.mapURI = "http://example.com:8080/tiles/{z}/{x}/{y}"
+
+     * or a OpenStreetMap server
+
+       .. code-block:: properties
+
+          apps.mapURI = "http://tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+     .. note::
+
+        OpenStreetMap and probably other tile server expect the tile indexes as
+        *z*, *x*, *y* whereas the built-in |appname| tile server expects *z*, *y*, *x*.
+
+
+   * Set :confval:`apps.mapMaxLevel` to the maximum zoom number for which the
+     tiles source has available. The tiles
+     on all zoom levels higher than :confval:`apps.mapMaxLevel` will be loaded
+     at :confval:`apps.mapMaxLevel` level and auto-scaled.
+
+   * Adjust :confval:`apps.mapMaxZoom` to fix the maximum allowed zoom level in
+     interactive maps. The maximum level must be provided by the maps
+     server.
+
+   * Define the region of the initially shown maps in StationView and TraceView
+     by :confval:`apps.mapRegion.*` parameters:
+
+     .. code-block:: properties
+
+        # The minimum latitude of the region.
+        apps.mapRegion.minimumLatitude = -90
+
+        # The minimum longitude of the region.
+        apps.mapRegion.minimumLongitude = -225
+
+        # The maximum latitude of the region.
+        apps.mapRegion.maximumLatitude = 90
+
+        # The maximum longitude of the region.
+        apps.mapRegion.maximumLongitude = 225
+
+#. Set the parameter :confval:`apps.logoPath` to show customized logo images for
+   your institution in the EQView or the StationView. By default, "GEMPA" will
+   be shown.
+
+
+.. _gaps_connection_access:
+
+Connection and access control
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _fig-gaps_scconfig:
+
+.. figure:: media/gaps_gempa_scconfig_1.png
+   :align: center
+   :width: 16cm
+
+   scconfig: window for setting the access control parameters.
+
+#. **Connection control:** Control the client access by providing IP and port to
+   bind the http server to by :confval:`bind`.
+   Use 0.0.0.0 to bind to all interfaces. Either the port or the IP address may be
+   omitted, e.g. "0.0.0.0" or ":1234". Leave empty to run without providing a
+   http server.
+
+   Access only from the localhost of the server using port 8080 (default):
+
+   .. code-block:: properties
+
+      bind = 127.0.0.1:8080
+
+   Access only from all remote IP addresses using port 8080:
+
+   .. code-block:: properties
+
+      bind = 0.0.0.0:8080
+
+   For connecting via https configure :confval:`sbind`. Port ":-1" (default)
+   rejects the usage of https.
+
+#. **Access control:** Re-locating events and committing the results in the
+   OriginLocatorView is protected by username and password.
+   :ref:`Different roles <gaps_users_properties>` can be assigned to the users.
+
+   * Configure :confval:`users` for defining users names with encrypted
+     passwords which may operate the OriginLocatorView. Define the file
+     containing user names and encrypted passwords:
+
+     .. code-block:: properties
+
+        users = @CONFIGDIR@/gaps/users
+
+     The users file contains the user details (name:encrpyted-password). Add one
+     line per user e.g. for user sysop:
+
+     .. code-block:: properties
+
+        sysop:encrpyted-password
+
+   * Create the content of this file with user name and the encrypted password.
+     For encrypting the password it is recommended to apply a strong algorithm
+     such as sha-256 or sha-512. The password encryption tool may depend on the
+     Linux flavour.
+
+     * When *mkpasswd* is available the command
+
+       .. code-block:: sh
+
+          user=sysop pw=`mkpasswd -m sha-512` && echo $user:$pw;
+
+       generates a line for e.g. user "sysop".
+
+     * Alternatively use, e.g. on RHEL or CentOS:
+
+       .. code-block:: sh
+
+          python -c 'import crypt,getpass; print(getpass.getpass("Name: ")+":"+crypt.crypt(getpass.getpass(),crypt.mksalt(crypt.METHOD_SHA512)))'
+
+   .. _gaps_users_properties:
+
+   * Different **user properties** can be assigned to users or the
+     OriginLocatorView. Currently, the two properties are interpreted:
+
+     * **staff:** full access to relocating events and committing the results
+       to the |scname| system.
+     * **guest:** limited access. Only relocating events is allowed but
+       committing the results is prohibited.
+
+     The properties are provided in a file defined by :confval:`userProperties`,
+     e.g.:
+
+     .. code-block:: properties
+
+        userProperties = @CONFIGDIR@/gaps/access
+
+     Each line contains the user name and a list of properties in format
+     "username:prop1,prop2,prop3". Those properties are used to grant access
+     to specific functionalities in |appname| such as sending processing results
+     back.
+
+     Example of the file :file:`@CONFIGDIR@/gaps/access` for users sysop,  user1
+     and user2 (one line per user):
+
+     .. code-block:: properties
+
+        sysop:staff
+        user1:staff
+        user2:guest
+
+
+.. _gaps_eqview_control:
+
+EQView
+------
+
+Widgets in the EQView can be configured allowing specific focusing on source
+regions and earthquakes therein with that exceed a given magnitude threshold.
+
+.. _fig-gaps_scconfig_eqview:
+
+.. figure:: media/gaps_gempa_scconfig_eqview.png
+   :align: center
+   :width: 16cm
+
+   scconfig: window for setting the EQView widget control parameters.
+
+
+Set the parameter :confval:`apps.logoPath` to show customized logo images.
+
+
+eqview.widgets
+~~~~~~~~~~~~~~
+
+Controls which of the defined widgets profiles are shown, e.g.:
+
+.. code-block:: properties
+
+   apps.eqview.widgets = world, europe, chile, indonesia
+
+
+Widgets
+~~~~~~~
+
+Properties of all widgets profiles defined in *eqview.widgets*.
+
+Add one profile block per profile.
+
+Example for widget profile europe, where all event with magnitudes greater
+than 2 are shown for Europe.
+
+.. code-block:: properties
+
+   # The widget title as it appears in the widgets titlebar.
+   apps.eqview.widget.europe.title = Europe
+
+   # The minimum latitude of the region.
+   apps.eqview.widget.europe.minimumLatitude = 20
+
+   # The minimum longitude of the region.
+   apps.eqview.widget.europe.minimumLongitude = -20
+
+   # The maximum latitude of the region.
+   apps.eqview.widget.europe.maximumLatitude = 60
+
+   # The maximum longitude of the region.
+   apps.eqview.widget.europe.maximumLongitude = 40.0
+
+   # The time span to be shown in hours.
+   apps.eqview.widget.europe.timeSpan = 120
+
+   # The minimum magnitude to be shown.
+   apps.eqview.widget.europe.minimumMagnitude = 2.0
+
+
+.. _gaps_sv_control:
+
+StationView
+-----------
+
+Provide the :confval:`gaps.mapRegion.*` parameters to customize the region shown
+initially on the map.
+Set the parameter :confval:`apps.logoPath` to show customized logo images.
+
+
+.. _gaps_tv_control:
+
+TraceView
+---------
+
+Filters used in TraceView can be configured by :confval:`apps.traceview.filters`.
+Read the section :cite:t:`filter-grammar` for details on the
+possible filters and filter grammar in |scname|.
+
+.. _fig-gaps_scconfig_olv_trace:
+
+.. figure:: media/gaps_gempa_scconfig_olv_trace.png
+   :align: center
+   :width: 16cm
+
+   scconfig: window for setting the control parameters
+   for OriginLocatorView and TraceView.
+
+Configure the list of filters that are available in TraceView in the form
+``"description;filter_chain","...",...``
+
+.. code-block:: properties
+
+   apps.traceview.filters = "0.7Hz - 2Hz;RMHP(10)>>ITAPER(30)>>BW(4,0.7,2.0)","@4Hz - 8Hz;RMHP(5)>>ITAPER(10)>>BW(4,4,8)"
+
+where the leading "@" defines the default filter.
+
+
+.. _gaps_olv_control:
+
+OriginLocatorView
+-----------------
+
+Configurable among others:
+
+* :confval:`apps.scolv.loadEventDB`: The number of days before present for which
+  events are initially shown in the event list.
+* :confval:`apps.traceview.filters`: Filters available before picking.
+* Seismic phases for which the theoretical arrival times are shown on the
+  traces.
+* :confval:`apps.scolv.useUTC`: Use UTC for time zone instead of that of the
+  local system.
+* Time window parameters: Control the amount of data to load and process in the
+  picker.
+
+See the :ref:`figure<fig-gaps_scconfig_olv_trace>` and filters in
+:ref:`Trace View<gaps_tv_control>` for details.
+
+
+.. _custom-gaps-pages:
+
+Custom pages
+------------
+
+Installing the |appname| server creates the data directory :file:`@DATADIR@/gaps/`
+which contains the template files for creating the websites.
+This data directory will be overwritten with every new installation.
+For manually customizing the websites copy the data directory to another location
+configured by :confval:`mediaDirectory` and make the desired changes in the new
+directory.
+
+New installations might provide new features. Therefore, overwriting the
+files and directories in :confval:`mediaDirectory` with the newly installed
+data directory may be required. Make sure to safe the manual changes before
+and apply them thereafter again.
+
+
+.. _gaps_installation_web_server_integration:
+
+Web server integration (NGINX)
+------------------------------
+
+The following instructions demonstrate how to configure
+`NGINX <https://nginx.org/>`_ as a
+`reverse proxy <https://en.wikipedia.org/wiki/Reverse_proxy>`_ for the |appname|
+and QuakeLink web services. The motivation for this extra effort is:
+
+* ability to use default HTTP/HTTPS port
+
+  * modules typically run under sysop user and are not allowed to bind to privilege port (<1024)
+  * different web apps accessible through the same port: 80/443
+* offload TLS
+
+  * single point to configure certificate and key
+  * no restart of modules for certificate update
+* security improvement, load balancing, DDoS protection
+
+In a typical setup, both |appname| and QuakeLink, are configured under the same
+`server block <https://www.nginx.com/resources/wiki/start/topics/examples/server_blocks/>`_
+(also known as VirtualHost) and are bound to separate locations: ``/gaps`` and
+``/quakelink``. In the following examples the term `HOSTNAME` refers to the IP
+address or the domain name the combined service will be available under.
+
+#. Extend the basic QuakeLink configuration in
+   :file:`${SEISCOMP_ROOT}/etc/quakelink.cfg` and add the following lines:
+
+   .. code-block:: properties
+
+      # Defines the root URL used to generate links. That option is only important if
+      # e.g. Apache/Nginx with reverse proxy is used to forward QuakeLinks web pages.
+      QL.http.rootURL = /quakelink
+
+      # Quakelink uses long polling for POST event requests. To allow returning an
+      # empty document (HTTP 204) rather than waiting forever this parameter can be
+      # used. It applies a no-data timeout in seconds. This setting might be useful
+      # if Quakelink is being ran behind a proxy.
+      QL.http.timeout = 50
+
+#. Extend the basic |appname| configuration in :file:`${SEISCOMP_ROOT}/etc/gaps.cfg`
+   and add/change the following lines:
+
+   .. code-block:: properties
+
+      # The QuakeLink event request URI. This is used as a default for all web
+      # applications.
+      quakelink = "http://HOSTNAME/quakelink/events/query"
+
+      # Port to listen for HTTP request
+      bind = 127.0.0.1:8080
+
+      # Path of the server websocket API for all applications. If not explicitly
+      # configured then the serverAPI path will be used.
+      apps.serverWSAPI = ws://HOSTNAME/gaps/
+
+   .. note::
+
+      If your NGINX is configured with HTTPS support use ``https`` and ``wss``
+      instead of ``http`` and ``ws`` in the lines above.
+
+#. Restart QuakeLink and |appname| to apply the changes
+
+   .. code-block:: sh
+
+      seiscomp restart quakelink gaps
+
+#. Map the WebSocket connection upgrade request header to the NGINX variable
+   ``$connection_upgrade`` in :file:`/etc/nginx/conf.d/connection_upgrade.conf`
+
+   .. code-block:: nginx
+
+      map $http_upgrade $connection_upgrade {
+          default upgrade;
+          '' close;
+      }
+
+#. Configure the QuakeLink and |appname| location in the ``server`` block of your
+   main :file:`/etc/nginx/nginx.conf` configuration file or in a specific
+   configuration file under :file:`/etc/nginx/conf.d` or
+   :file:`/etc/nginx/sites-available`
+
+   .. code-block:: nginx
+
+      location /quakelink/ {
+          proxy_pass http://localhost:18080/;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+
+      location /gaps/ {
+          proxy_pass http://localhost:8080/;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection $connection_upgrade;
+          proxy_set_header Host $host;
+      }
+
+#. Check and reload the NGINX configuration
+
+   .. code-block:: sh
+
+      nginx -t
+      systemctl reload nginx
+
+#. Open a browser and try to open the following URLs:
+
+   * http://HOSTNAME/quakelink/ (QuakeLink)
+   * http://HOSTNAME/gaps/ (|appname|)
+
+
+.. _gaps_server_side_event_processing:
+
+Server-side Event Processing
+============================
+
+Some web applications, currently only :ref:`EQView<gaps_eqview>`, support
+processing a batch of events and return a generated document or image which
+will be displayed in the browser. That way the functionality of an application
+can be enhanced by the operator with custom scripts. One example of an event
+processor is provided in the distribution. It is installed
+:file:`share/gaps/processors/events/cluster-3d.html.py`. A processor script
+takes a CSV event table (see :confval:`processors.event`) as input on stdin
+and outputs the document to stdout. An example configuration looks like this:
+
+.. code-block:: sh
+
+   processors.events = 3d
+   processors.events.3d.title = "DBSCAN Cluster Search 3D"
+   # The script generates a 3d plot based on the selected earthquakes using
+   # plotly (https://plotly.com). It performs a cluster search using DBSCAN
+   # (https://en.wikipedia.org/wiki/DBSCAN). The DBSCAN parameters
+   # "min_samples" and "eps" are defined by the number of selected
+   # earthquakes and the 90-percentile of the inter earthquake distances. The
+   # event markers are colored based on the cluster association.
+   #
+   # To install the required packages the following command should be
+   # executed on the GAPS system
+   #
+   # pip3 install --user scikit-learn plotly pandas
+   processors.events.3d.script = @DATADIR@/gaps/processors/events/cluster-3d.html.py
+   processors.events.3d.type = html
+
+
+.. _gaps_client_modules:
+
+Application: Client Modules
+===========================
+
+The |appname| client modules include:
+
+* :ref:`EQView<gaps_eqview>` (:cite:t:`scesv` equivalent): earthquake locations
+  and seismograms for configurable regions and magnitudes.
+* :ref:`StationView<gaps_stationview>` (:cite:t:`scmv` equivalent): quality of
+  seismograms and peak ground motion at configured stations along with recent
+  seismicity.
+* :ref:`TraceView<gaps_traceview>` (:cite:t:`scrttv` equivalent): viewing raw or
+  filtered seismograms with phase picks for stations selectable on a maps.
+* :ref:`OriginLocatorView<gaps_olv>` (:cite:t:`scolv` equivalent): interactive
+  picking and relocating of earthquakes, commits to the |scname| server system.
+
+The modules can be configured individually (see section :ref:`setup<gaps_setup>`).
+
+
+Common map properties
+---------------------
+
+Common to the client modules are some map functions:
+
+* Zoom in / out: +/- or use mouse wheel
+* Pan left / right or up / down: arrow left / right or arrow up / down
+* Show the coordinates of the current cursor position: shift + cursor
+  (only in :ref:`EQView<gaps_eqview>`, :ref:`StationView<gaps_stationview>`,
+  :ref:`OriginLocatorView<gaps_olv>`)
+
+
+.. _gaps_eqview:
+
+EQView
+------
+
+EQView provides remote access to maps and the list of detected and located
+events as well as to a preview of the seismograms. The colors of the event
+circles and the size represent depth and magnitude, respectively.
+
+Maps with user-specific regions and event profiles can be defined as widgets.
+These maps can be selected and viewed by clicking on the widget shown along with
+the currently selected map. The regions of these maps and of the events therein
+can be customized based on coordinates, magnitude and event time.
+
+The widget "Latest Event" show the details for the latest event within the
+currently active map widget. When clicking on that widget more event details and
+waveforms are shown. Showing the picks of P and S phases can be activated by
+configuration. In addition, the map is zoom around the event. The zoom level
+depends on the event magnitude.
+
+.. _fig-gaps_eqview_map:
+
+.. figure:: media/gaps_gempa_eqview.png
+   :align: center
+   :width: 16cm
+
+   EQView - event map (full-screen mode). Map panels (right) show configured
+   areas which can be selected and enlarged. Circles show event locations.
+   The colors indicate source depth, size indicates magnitudes.
+   Corresponding values are given in the legend (lower left).
+   The overview map (upper left) shows the position of the central map.
+
+
+.. _fig-gaps_eqview_list:
+
+.. figure:: media/gaps_gempa_eqview_list.png
+   :align: center
+   :width: 16cm
+
+   EQView - event list (full-screen mode). Seismograms (left panel) are shown
+   for a selected event.
+
+
+.. _gaps_stationview:
+
+StationView
+-----------
+
+StationView provides information on the state of sensor stations based on
+a MapView and text boxes. The information include quality control parameters,
+e.g. delay, latency, gaps, spikes and offset as well as current ground motion
+and PGD, PGV and PGA on 0.3 Hz high-pass filtered seismograms for the past 10
+seconds and 5 minutes (in brackets). Clicking on a particular station shows the
+parameters in a inset figure.
+
+The maps allow zooming in and out. They may be centered around the most
+recent event. For dense networks, stations are clustered and only the
+number is given at the center of the region. The region shown initially
+on the map can be customized, read the section :ref:`gaps_maps_control`.
+
+.. _fig-gaps_stationview:
+
+.. figure:: media/gaps_gempa_stationview.png
+   :align: center
+   :width: 16cm
+
+   StationView (full-screen mode) showing the location of stations (triangles)
+   with measured ground motion (color), active triggers (bold red circle
+   around station), recent earthquakes (circles) within the
+   configured area and information for one selected station (left panel).
+
+
+.. _gaps_traceview:
+
+TraceView
+---------
+
+The TracveView allows viewing of real-time data collected on the |scname|
+|appname| server along with picks made on these data. The stations for which the
+seismograms are shown can be selected from the map of stations based on the region.
+The region shown initially on the map can be customized, read the section
+:ref:`gaps_maps_control`.
+
+For showing the traces:
+#. Mark "Select stations" in the settings panel to the right,
+#. Select a region by drawing a rectangle on the map using the left mouse bottom,
+#. Click on "Show traces" in the settings panel to the right.
+
+.. figure:: media/gaps_gempa_traceview_2.png
+   :align: center
+   :width: 16cm
+
+   TraceView (full-screen mode) showing the stations (triangles) for
+   which traces can be viewed as
+   well as active detections (bold red triangles).
+   The stations selected for showing traces are marked in yellow.
+
+For adjusting seismogram filtering and zooming within in the trace window,
+select the parameters in the "Settings" panel. The panel can be accessed
+by moving the mouse arrow to the right edge of the TraceView window. The
+filter settings can be customized (see :ref:`setup<gaps_setup>`).
+Use the left mouse button to shift the seismograms in time.
+
+Return to the map window by clicking on "Show map" in the "Settings" panel.
+
+.. figure:: media/gaps_gempa_traceview_1.png
+   :align: center
+   :width: 16cm
+
+   TraceView (full-screen mode) showing the traces for selected stations
+   filtered in the configured frequency band.
+
+
+.. _gaps_olv:
+
+OriginLocatorView
+-----------------
+
+Use the OriginLocatorView for viewing and relocating of events.
+Users with granted permissions (see :ref:`setup<gaps_setup>`) working from
+allowed computers (see :ref:`setup<gaps_setup>`) can view the data and send back
+the results from data processing.
+
+For example, everyone from any computer worldwide may have permission to
+view the data but only authorized staff may be permitted to commit the
+processing results such as picks and locations to the server |scname| system.
+
+Detailed help on the OriginLocatorView can be accessed through "Help"
+button on the upper right on all OriginLocatorView windows.
+
+Individual events can be accessed by clicking on that particular event in
+the :ref:`event list<fig-gaps_olv_list>` or in the :ref:`event map<fig-gaps_olv_map>`.
+Access the event list and map by clicking on the list and map symbol on the
+upper right of the "Events" tab.
+
+.. _fig-gaps_olv_list:
+
+.. figure:: media/gaps_gempa_scolv_list.png
+   :align: center
+   :width: 16cm
+
+   OriginLocatorView showing the list of events. The help module can be
+   accessed through "Help" bottom on the upper right.
+
+
+.. _fig-gaps_olv_map:
+
+.. figure:: media/gaps_gempa_scolv_map.png
+   :align: center
+   :width: 16cm
+
+   OriginLocatorView showing the map of events. The help module can be
+   accessed through "Help" bottom on the upper right.
+
+The "Locator" tab is accessed by clicking on an event in the event list or map.
+In the "Locator" tab the event can be relocated choosing the configured
+locator and locator profile. Phase picks can be selected or unselected.
+Clicking on "Picker" opens the :ref:`picker window<fig-gaps_olv_picker>` where
+existing picks of P and S phases can be reviewed and new picks can be made.
+
+.. _fig-gaps_olv_location:
+
+.. figure:: media/gaps_gempa_scolv_location.png
+   :align: center
+   :width: 16cm
+
+   OriginLocatorView: Location tab.
+
+The picks can be made in the picker window. The pick window can be accessed by
+clinking on the "Picker" button in the :ref:`"Location" tab<fig-gaps_olv_location>`.
+In the picker window arrivals of P and S phases can be picked.
+Results are committed to the server by clicking on "OK". For zooming and
+shifting the data in time, use the mouse wheel and the left mouse button on the
+time axis of the traces.
+
+.. _fig-gaps_olv_picker:
+
+.. figure:: media/gaps_gempa_scolv_picker.png
+   :align: center
+   :width: 16cm
+
+   OriginLocatorView: picker window.
+
+The time window parameters controlling the amount of requested data can be
+changed in the Setup tab. The shorter the time window the faster the data will
+be loaded and processed. The new parameters will be valid during the browser
+session. To keep the time window parameters adjust the |appname| module
+configuration.
+
+.. _fig-gaps_olv_setup:
+
+.. figure:: media/gaps_gempa_scolv_setup.png
+   :align: center
+   :width: 16cm
+
+   OriginLocatorView: setup window.
+
+
+.. _sec-gaps_configuration:
+
+
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/gaps.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/gaps.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/gaps.cfg`
+
+gaps inherits :ref:`global options<global-configuration>`.
+
+.. note::
+
+   Modules/plugins may require a license file. The default path to license
+   files is :file:`@DATADIR@/licenses/` which can be overridden by global
+   configuration of the parameter :confval:`gempa.licensePath`. Example: ::
+
+      gempa.licensePath = @CONFIGDIR@/licenses
+
+
+
+.. confval:: authbind
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Allows to bind sockets to privileged ports \(<1024\).
+
+
+.. confval:: bind
+
+   Default: ``127.0.0.1:8080``
+
+   Type: *host-with-port*
+
+   IP and port to bind the HTTP server to. Use 0.0.0.0
+   to bind to all interfaces. Either the port or the IP
+   address may be omitted, e.g., \"0.0.0.0\" or
+   \":1234\". If set to an empty string the application
+   will run without providing a HTTP server.
+
+
+.. confval:: sbind
+
+   Default: ``127.0.0.1:-1``
+
+   Type: *host-with-port*
+
+   IP and port to bind the HTTPS server to. Use 0.0.0.0
+   to bind to all interfaces. Either the port or the IP
+   address may be omitted, e.g., \"0.0.0.0\" or
+   \":1234\". If set to an empty string the application
+   will run without providing a HTTPS server.
+
+
+.. confval:: offline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to run offline \(no messaging connection\) or online
+   \(messaging connection\). In offline mode either the database
+   connection or the inventory and config XML files must be
+   provided.
+
+
+.. confval:: computePGAVD
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Enable ground motion computation. If set to false then no ground motion
+   amplitudes are being computed.
+
+
+.. confval:: windowPGAVD
+
+   Default: ``10``
+
+   Unit: *s*
+
+   Type: *double*
+
+   Time window in seconds used to compute ground motion amplitudes.
+   The higher the time window the less amplitudes will be computed
+   over time.
+
+
+.. confval:: users
+
+   Default: ``@CONFIGDIR@/gaps/users``
+
+   Type: *file*
+
+   Defines the users file for access control. The user file contains one line
+   per user where each line is of format \"username:encrypted_pwd\".
+   To encrypt a password mkpasswd can be used. It is recommended to
+   apply a strong algorithm such as sha\-256 or sha\-512. E.g., the command
+   \"user\=sysop pw\=`mkpasswd \-m sha\-512` \&\& echo \$user:\$pw\"
+   would generate a line for the user \"sysop\".
+
+
+.. confval:: userProperties
+
+   Default: ``@CONFIGDIR@/gaps/access``
+
+   Type: *file*
+
+   Defines the file used to read user properties. Each line contains
+   the user name and a list of properties in format
+   \"username:prop1,prop2,prop3\". Those properties are
+   used to grant access to certain functionalities in gaps such as
+   sending processing results back. There is currently only one
+   property which is interpreted by GAPS: \"staff\".
+
+
+.. confval:: accessLog
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enables HTTP access logging to \@LOGDIR\@\/gaps\-http\-access.
+   Log files are created for 24h and kept for 7 days using log
+   rotation.
+
+
+.. confval:: indexTemplate
+
+   Default: ``@DATADIR@/gaps/index.cs``
+
+   Type: *string*
+
+   Path to the template that generated index.html.
+
+
+.. confval:: mediaDirectory
+
+   Default: ``@DATADIR@/gaps/apps``
+
+   Type: *string*
+
+   Path to media files \(index.html, .css, .js, .png, ...\) served by GAPS.
+
+
+.. confval:: bufferSize
+
+   Default: ``65536``
+
+   Unit: *b*
+
+   Type: *int*
+
+   Minimum buffer size in bytes per acquisition thread.
+
+
+.. confval:: maximumThreads
+
+   Default: ``10``
+
+   Type: *int*
+
+   Maximum number of acquisition threads. This corresponds to
+   the maximum number of parallel acquisition requests from
+   clients.
+
+
+.. confval:: requestTimeout
+
+   Default: ``10``
+
+   Unit: *s*
+
+   Type: *int*
+
+   Thread request timeout. If data of a thread has not been requested
+   for more than n seconds the thread will be closed and finished.
+
+
+.. confval:: forceHTTP
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Disables usage of WebSocket protocol. Useful, if traffic is tunneled
+   through a web server that cannot handle WebSockets.
+
+
+.. confval:: quakelink
+
+   Default: ``http://localhost:18080/events/query``
+
+   Type: *string*
+
+   The QuakeLink event request URI. This is used as a default for
+   all web applications.
+
+
+.. confval:: quakelinkProxy
+
+   Default: ``ql://localhost:18010``
+
+   Type: *string*
+
+   The QuakeLink proxy connection initiated by GAPS to convert and
+   forward single events from QuakeLink to the browser.
+   Required since QuakeLink delivers only XML format but JSON format is needed.
+
+
+.. confval:: tileDB
+
+   Type: *path*
+
+   Configures the MBTiles tile database if gaps should serve
+   tiles itself. If mapURI is configured with a remote tile
+   server, this is not required.
+
+
+.. confval:: tileLayers
+
+   Type: *list:string*
+
+   List of additional tile layer profiles.
+
+
+.. note::
+   **tileLayers.\***
+   *Configuration of additional tile layers.*
+
+
+
+.. note::
+
+   **tileLayers.$name.\***
+   $name is a placeholder for the name to be used.
+
+
+.. confval:: tileLayers.$name.db
+
+   Type: *path*
+
+   Path to MBTiles database for this tile layer.
+
+
+.. confval:: tileLayers.$name.levels
+
+   Type: *string*
+
+   Range of zoom levels this tile layer is valid for.
+   The format is [min\-level]:[max\-level].
+
+
+.. confval:: tileLayers.$name.rects
+
+   Type: *list:string*
+
+   List of rectangles with respect to column \/ row indexes
+   of the minimum zoom level. The format per rect is
+   either +[min_x]+[min_y]+[max_x]+[max_y] or
+   [column]x[rows]+[min_x]+[min_y].
+
+
+.. confval:: map.location
+
+   Default: ``@DATADIR@/gaps/zoom12.mbtiles``
+
+   Type: *path*
+
+   Alternative configuration parameter for \@tileDB.
+
+
+.. confval:: map.geoFeaturePath
+
+   Type: *path*
+
+   Alternative path to geofeatures displayed on the map. The
+   default paths are \~\/.seiscomp\/bna and \$SEISCOMP_ROOT\/share\/bna. To
+   consider a BNA file for map display the corresponding configuration
+   file \(either map.cfg or gaps.cfg\) in the respective bna directory
+   or sub\-directory must contain \"apps.gaps\=true\".
+
+
+.. confval:: SSL.certificate
+
+   Type: *string*
+
+   Path to SSL certificate file
+
+
+.. confval:: SSL.key
+
+   Type: *string*
+
+   Path to SSL private key file
+
+
+.. note::
+   **apps.\***
+   *Configuration of available web applications.*
+
+
+
+.. confval:: apps.mapURI
+
+   Default: ``../tiles/{z}/{y}/{x}``
+
+   Type: *string*
+
+   Full URL for tiles, e.g., \"http:\/\/example.com:8080\/tiles\/{z}\/{y}\/{x}\".
+   The tile server URL for all applications.
+
+
+.. confval:: apps.mapMaxLevel
+
+   Default: ``10``
+
+   Type: *int*
+
+   Maximum zoom number for which the tiles source has available. The tiles
+   on all zoom levels higher than mapMaxLevel will be loaded
+   from mapMaxLevel level and auto\-scaled.
+
+
+.. confval:: apps.mapMaxZoom
+
+   Default: ``14``
+
+   Type: *int*
+
+   Maximum allowed zoom level in the interactive map.
+
+
+.. confval:: apps.mapShowZoomControl
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to show a zoom control on the map.
+
+
+.. confval:: apps.mapShowLegend
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Whether to show a map legend or not in web apps v2.
+   Some apps might offer to toggle this setting, others not.
+
+
+.. confval:: apps.serverAPI
+
+   Default: ``../``
+
+   Type: *string*
+
+   Path of the server API for all applications. This parameter
+   can be overridden in each application.
+
+
+.. confval:: apps.serverWSAPI
+
+   Type: *string*
+
+   Path of the server WebSocket API for all applications. If not
+   explicitly configured then the serverAPI path will be used.
+
+
+.. confval:: apps.logoPath
+
+   Default: ``share/images/gempa_logo.svg``
+
+   Type: *string*
+
+   Relative path to a logo \(brand\) image shown in
+   web applications. Give path relative to SEISCOMP_ROOT\/share\/gaps\/apps.
+   The image is scaled to the field dimension 157px x 38px preserving
+   the aspect ratio.
+
+
+.. confval:: apps.colorMode
+
+   Default: ``depth``
+
+   Type: *string*
+
+   Available modes are: depth, magnitude, age
+
+
+.. confval:: apps.eventSymbolAnimation
+
+   Default: ``toggle``
+
+   Type: *string*
+
+   Available animations are: toggle, three\-circles
+
+
+.. confval:: apps.colorEventsUpdateInterval
+
+   Default: ``60``
+
+   Unit: *s*
+
+   Type: *int*
+
+   If event symbol colors are derived from the event age then
+   the age must be recomputed at a certain interval. This
+   number defines the interval in seconds to update the event
+   colors. The lower the interval the more often the colors
+   must be updated which can decrease performance.
+
+
+.. note::
+   **apps.mapRegion.\***
+   *Configures the initial region to be shown, e.g., in TraceView*
+   *and StationView.*
+
+
+
+.. confval:: apps.mapRegion.minimumLatitude
+
+   Default: ``-90``
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The minimum latitude of the region.
+
+
+.. confval:: apps.mapRegion.minimumLongitude
+
+   Default: ``-225``
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The minimum longitude of the region.
+
+
+.. confval:: apps.mapRegion.maximumLatitude
+
+   Default: ``90``
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The maximum latitude of the region.
+
+
+.. confval:: apps.mapRegion.maximumLongitude
+
+   Default: ``225``
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The maximum longitude of the region.
+
+
+.. confval:: apps.eqview.geoCodeURL
+
+   Type: *string*
+
+   Configures the URL for geo coding. The placeholders
+   \"{lat}\" and \"{lon}\" will be replaced
+   by the respective earthquake location attributes.
+
+
+.. confval:: apps.eqview.showRegion
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   On startup set central map to initial region \(mapRegion.\*\).
+
+
+.. confval:: apps.eqview.showRegionBounds
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Shows the initial region rectangle \(mapRegion.\*\) in the central map.
+
+
+.. confval:: apps.eqview.showWidgetBounds
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Shows the selected widget region rectangle in the central map.
+   This setting replaces the region rectangle \(showRegionBounds\)
+   if both are set to true.
+
+
+.. confval:: apps.eqview.showWaveSpreading
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Shows the spreading of P\/S wave in the center\-widget.
+
+
+.. confval:: apps.eqview.centerLatestEvent
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Whether map will center around the latest event or not.
+
+
+.. confval:: apps.eqview.singleEventMode
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   If activated then the selected event is being shown
+   exclusively on the map.
+
+
+.. confval:: apps.eqview.useUTC
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Show UTC time in the front end.
+
+
+.. confval:: apps.eqview.externalData
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   If enabled then all waveforms of an event will be
+   requested even if stations are not part of the
+   local inventory. If disabled then only stations are
+   allowed that are configured locally with bindings.
+
+
+.. confval:: apps.eqview.nearestCityMinPopulation
+
+   Default: ``100000``
+
+   Type: *int*
+
+   The minimum population of a city to be taken into
+   account as nearest city to an event.
+
+
+.. confval:: apps.eqview.nearestCityMaxDistance
+
+   Default: ``20``
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The maximum distance of the nearest city from an event.
+
+
+.. confval:: apps.eqview.showLatestMainEvent
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Whether to show the latest event in the top left
+   corner of the widget which is currently active as main widget.
+
+
+.. confval:: apps.eqview.showLatestOverallEvent
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to show the latest overall event of all widgets.
+   It will be shown in the top right corner above the widgets.
+
+
+.. confval:: apps.eqview.overallTimeSpan
+
+   Default: ``24``
+
+   Unit: *hours*
+
+   Type: *integer*
+
+   The time span for which the latest overall event will be
+   selected.
+
+
+.. confval:: apps.eqview.widgets
+
+   Default: ``world``
+
+   Type: *string*
+
+   Defines the available widgets. The first widget listed is taken as primary widget.
+
+
+.. note::
+   **apps.eqview.referencePlace.\***
+   *Defines a reference place / city which is used to compute*
+   *the distance and azimuth from the event shown*
+   *in the event details.*
+
+
+
+.. confval:: apps.eqview.referencePlace.name
+
+   Type: *string*
+
+   The name of the place.
+
+
+.. confval:: apps.eqview.referencePlace.lat
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The latitude of the reference place.
+
+
+.. confval:: apps.eqview.referencePlace.lon
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The longitude of the reference place.
+
+
+.. note::
+   **apps.eqview.widget.\***
+   *The configured widgets.*
+
+
+
+.. note::
+
+   **apps.eqview.widget.$name.\***
+   $name is a placeholder for the name to be used.
+
+
+.. confval:: apps.eqview.widget.$name.title
+
+   Type: *string*
+
+   The widget title as it appears in the widgets title bar.
+
+
+.. confval:: apps.eqview.widget.$name.minimumLatitude
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The minimum latitude of the region.
+
+
+.. confval:: apps.eqview.widget.$name.minimumLongitude
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The minimum longitude of the region.
+
+
+.. confval:: apps.eqview.widget.$name.maximumLatitude
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The maximum latitude of the region.
+
+
+.. confval:: apps.eqview.widget.$name.maximumLongitude
+
+   Unit: *deg*
+
+   Type: *double*
+
+   The maximum longitude of the region.
+
+
+.. confval:: apps.eqview.widget.$name.eventRegion
+
+   Unit: *deg*
+
+   Type: *region*
+
+   This overrides the configured widget region and defines the region
+   of the events to be shown. If not configured then the event region
+   will be the same as the widget region. The format is
+   [lat_width]x[lon_width]+[lat_min]+[lon_min]
+   or +[lat_min]+[lon_min]+[lat_max]+[lon_max].
+
+
+.. confval:: apps.eqview.widget.$name.timeSpan
+
+   Unit: *hours*
+
+   Type: *integer*
+
+   The time span to be shown in hours.
+
+
+.. confval:: apps.eqview.widget.$name.minimumMagnitude
+
+   Type: *double*
+
+   The minimum magnitude to be shown.
+
+
+.. confval:: apps.eqview.widget.$name.maximumMagnitude
+
+   Type: *double*
+
+   The maximum magnitude to be shown.
+
+
+.. confval:: apps.eqview.widget.$name.status
+
+   Type: *list:string*
+
+   Event status code list that is accepted. Each item is a
+   character \(A,M,...\) that maps to the type code in
+   the QuakeLink summary format. To exclude types, a minus
+   can be prepended to each code, e.g., \"\-X\".
+   That would accept all solutions except rejected. An
+   empty list accepts everything.
+
+
+.. confval:: apps.eqview.widget.$name.tracePreOffset
+
+   Default: ``2.0``
+
+   Unit: *min*
+
+   Type: *double*
+
+   The pre\-offset of the traces with respect to the onset.
+
+
+.. confval:: apps.eqview.widget.$name.tracePostOffset
+
+   Default: ``5.0``
+
+   Unit: *min*
+
+   Type: *double*
+
+   The post\-offset of the traces with respect to the onset.
+
+
+.. confval:: apps.eqview.widget.$name.alignOnPredicatedArrivals
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Configures whether traces are aligned on first picked onset
+   or on theoretical arrivals.
+
+
+.. confval:: apps.eqview.widget.$name.showPicks
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Configures if picks are shown in the waveforms.
+
+
+.. confval:: apps.eqview.widget.$name.visualFeedback
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to give visual feedback if a new event has been
+   set as latest in the widget. If enabled then the
+   widget shakes for a short time when the latest
+   event updates.
+
+
+.. confval:: apps.eqview.widget.$name.audioFilePath
+
+   Type: *path*
+
+   Path to an audio file played when adding a new event
+   to the widget. The audio file is played when the
+   event is the most recent one. For older events
+   the audio alert is not played.
+   Give path relative to
+   \$SEISCOMP_ROOT\/share\/gaps\/apps, e.g., share\/audio\/alert.mp3.
+   Preferred format: MP3.
+
+
+.. confval:: apps.traceview.cluster
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Defines whether the station symbols should be clustered by default or not.
+
+
+.. confval:: apps.traceview.filters
+
+   Default: ``"0.7Hz - 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)", "1Hz - 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)", "2Hz - 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)", "4Hz - 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)", "HP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)"``
+
+   Type: *list:string*
+
+   The list of filters available in TraceView, format per
+   item is \"name;filter\-string\".
+
+
+.. confval:: apps.traceview.timeSpan
+
+   Default: ``600``
+
+   Unit: *s*
+
+   Type: *double*
+
+   Timespan for trace display. The default is 10min.
+
+
+.. confval:: apps.traceview.utc
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to show trace times in UTC or local time.
+
+
+.. confval:: apps.mapview.mode
+
+   Default: ``delay``
+
+   Type: *string*
+
+   Defines the default MapView mode that is used to color
+   the station symbols. Valid values are \"delay\",
+   \"latency\" and \"groundmotion\".
+
+
+.. confval:: apps.mapview.cluster
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Defines whether the station symbols should be clustered by default or not.
+
+
+.. confval:: apps.mapview.eventTimeSpan
+
+   Default: ``168``
+
+   Unit: *hours*
+
+   Type: *integer*
+
+   The events time span to be shown in hours.
+
+
+.. confval:: apps.mapview.customStationLink
+
+   Type: *string*
+
+   Defines an additional link that is rendered on the
+   station detail page. It supports two placeholders: \${net}
+   and \${sta} which are replaced during runtime.
+
+
+.. confval:: apps.mapview.customStationLinkName
+
+   Type: *string*
+
+   The name as displayed on the station panel for the custom
+   station link.
+
+
+.. confval:: apps.mapview.fetchGeoIP
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   If enabled then the map will be centered around the clients
+   geolocation \(fetched via web service from www.geoplugin.net\).
+
+
+.. confval:: apps.scolv.loadEventDB
+
+   Default: ``1``
+
+   Unit: *days*
+
+   Type: *double*
+
+   Number of days to preload if scolv is started.
+
+
+.. confval:: apps.scolv.useUTC
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show UTC time in the frontend.
+
+
+.. confval:: apps.scolv.distInKM
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Show distances in km instead of degree.
+
+
+.. confval:: apps.scolv.ttt
+
+   Default: ``libtau, LOCSAT``
+
+   Type: *list:string*
+
+   The list of active travel time table interfaces.
+
+
+.. confval:: apps.scolv.picker.filters
+
+   Default: ``"@0.7Hz - 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)", "1Hz - 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)", "2Hz - 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)", "4Hz - 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)", "HP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)"``
+
+   Type: *list:string*
+
+   List of filters available in the picker. If \@ is prepended
+   to the name of the filter it will be selected as default
+   filter. The format of each entry is \"name;definition\",
+   e.g., \"BP 0.7 \- 2 Hz  3rd order;BW\(3,0.7,2\)\"
+
+
+.. confval:: apps.scolv.picker.phases
+
+   Default: ``P,Pn,Pg,pP,S,Sg,sP``
+
+   Type: *list:string*
+
+   List of phases enabled for picking.
+
+
+.. confval:: apps.scolv.picker.preOffset
+
+   Default: ``300``
+
+   Unit: *s*
+
+   Type: *double*
+
+   Begin of time window before origin time to load waveforms
+   when the picker is opened.
+
+
+.. confval:: apps.scolv.picker.postOffset
+
+   Default: ``600``
+
+   Unit: *s*
+
+   Type: *double*
+
+   End of time window after origin time to load waveforms
+   when the picker is opened.
+
+
+.. confval:: apps.scolv.picker.preAlign
+
+   Default: ``30``
+
+   Unit: *s*
+
+   Type: *double*
+
+   The default time window shown before the trace alignment.
+   Alignment is set interactively by origin time or P\- or S\-phase arrival.
+
+
+.. confval:: apps.scolv.picker.postAlign
+
+   Default: ``90``
+
+   Unit: *s*
+
+   Type: *double*
+
+   The default time window shown after the trace alignment.
+   Alignment is set interactively by origin time or P\- or S\-phase arrival.
+
+
+.. note::
+   **apps.scolv.ttt.\***
+   *Travel time table related configuration. Travel time*
+   *tables can be added via plugins. Built-in interfaces*
+   *are libtau and LOCSAT. For each activated interface*
+   *a list of supported models must be provided.*
+
+
+
+.. note::
+
+   **apps.scolv.ttt.$name.\***
+   $name is a placeholder for the name to be used.
+
+
+.. confval:: apps.scolv.ttt.$name.models
+
+   Type: *list:string*
+
+   The list of supported model names per interface.
+
+
+.. confval:: processors.events
+
+   Type: *list:string*
+
+   Activate event processor profiles, see
+   GAPSEventProcessorProfile.
+
+
+.. note::
+   **processors.events.\***
+   *Configures one or more event processors which are executed*
+   *at server-side and displayed client-side in EQView after*
+   *selecting a set of events with ctrl + left mouse key.*
+
+
+
+.. note::
+
+   **processors.events.$name.\***
+   $name is a placeholder for the name to be used.
+
+
+.. confval:: processors.events.$name.title
+
+   Type: *string*
+
+   The title of the processor shown at the client in
+   the processor selection popup and as header in the
+   output window.
+
+
+.. confval:: processors.events.$name.script
+
+   Type: *path*
+
+   Path to the script to be called when the processor
+   has been triggered. This script must be executable,
+   take the CSV file from stdin and print the result
+   image to stdout. The input CSV file contains the
+   following columns separated by semicolon:
+   
+   \* eventID
+   
+   \* OT
+   
+   \* lat
+   
+   \* lon
+   
+   \* depth in km
+   
+   \* mag
+   
+   \* agency
+   
+   \* status
+   
+   \* phases
+   
+   \* region
+   
+   \* fm.strike
+   
+   \* fm.dip
+   
+   \* fm.rake
+   
+   \* fm.depth
+   
+   \* fm.mag
+   
+   Only results from script runs with exit code zero
+   are taken into account.
+
+
+.. confval:: processors.events.$name.type
+
+   Type: *string*
+
+   The type of the returned product. Valid values are
+   \"txt\",
+   \"html\",
+   \"json\",
+   \"png\",
+   \"jpeg\",
+   \"svg\",
+   \"xml\"
+
+
+.. confval:: processors.events.$name.authorize
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   If enabled then authorization will be requested for
+   this script from the browser. That means that a user
+   has to authenticate first before the result will be
+   displayed. Authorization is granted if an
+   authenticated user is staff member.
+
+
+.. confval:: scheme.colors.stationTypes
+
+   Default: ``BB:008000, SM:0000FF, SP:40E0D0``
+
+   Type: *map*
+
+   Configure the station colors of a particular type. The
+   type is read from Station.type of the inventory. If unset,
+   the parent Network.type is used.
+
+
+.. confval:: scheme.colors.originSymbol.age.gradient
+
+   Default: ``0:ff0000:"1 hour",3600:ff8000:"1 day",86400:ffff00:"1 week",604800:ffffff:"1 month",2592000:808080:"older"``
+
+   Type: *gradient*
+
+   Configure the event age color gradient. Only applied
+   if color mode is \"magnitude\".
+
+
+.. confval:: scheme.colors.originSymbol.magnitude.gradient
+
+   Default: ``0:ff0000:"1 hour",3600:ff8000:"1 day",86400:ffff00:"1 week",604800:ffffff:"1 month",2592000:808080:"older"``
+
+   Type: *gradient*
+
+   Configure the event magnitude color gradient. Only applied
+   if color mode is \"magnitude\".
+
+
+.. confval:: scheme.map.stationShape
+
+   Default: ``hexagon``
+
+   Type: *string*
+
+   The station symbol shape. Valid values are: hexagon,
+   triangle and diamond.
+
+
+.. confval:: scheme.map.stationBorder
+
+   Default: ``3``
+
+   Unit: *px*
+
+   Type: *integer*
+
+   The width in pixels of the station symbol frame.
+
+
+
+Bindings Parameters
+===================
+
+
+.. confval:: enable
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Enable\/disable the usage of a station with web apps.
+
+
+
+
+Command-Line Options
+====================
+
+:program:`gaps [options]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+.. option:: --plugins arg
+
+   Load given plugins.
+
+.. option:: -D, --daemon
+
+   Run as daemon. This means the application will fork itself
+   and doesn't need to be started with \&.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+
+Database
+--------
+
+.. option:: --db-driver-list
+
+   List all supported database drivers.
+
+.. option:: -d, --database arg
+
+   The database connection string, format:
+   service:\/\/user:pwd\@host\/database.
+   \"service\" is the name of the database driver which
+   can be queried with \"\-\-db\-driver\-list\".
+
+.. option:: --inventory-db arg
+
+   Load the inventory from the given database or file, format:
+   [service:\/\/]location .
+
+.. option:: --config-db arg
+
+   Load the configuration from the given database or file,
+   format: [service:\/\/]location .
+
+.. option:: --config-module arg
+
+   The config module to use.
+
+
+Messaging
+---------
+
+.. option:: -u, --user arg
+
+   Overrides configuration parameter :confval:`connection.username`.
+
+.. option:: -H, --host arg
+
+   Overrides configuration parameter :confval:`connection.server`.
+
+.. option:: -t, --timeout arg
+
+   Overrides configuration parameter :confval:`connection.timeout`.
+
+.. option:: -g, --primary-group arg
+
+   Overrides configuration parameter :confval:`connection.primaryGroup`.
+
+.. option:: -S, --subscribe-group arg
+
+   A group to subscribe to.
+   This option can be given more than once.
+
+.. option:: --start-stop-msg arg
+
+   Set sending of a start and a stop message.
+
+
+Records
+-------
+
+.. option:: --record-driver-list
+
+   List all supported record stream drivers.
+
+.. option:: -I, --record-url arg
+
+   The recordstream source URL, format:
+   [service:\/\/]location[#type].
+   \"service\" is the name of the recordstream driver
+   which can be queried with \"\-\-record\-driver\-list\".
+   If \"service\" is not given, \"file:\/\/\" is
+   used.
+
+.. option:: --record-file arg
+
+   Specify a file as record source.
+
+.. option:: --record-type arg
+
+   Specify a type for the records being read.
+
+
+Mode
+----
+
+.. option:: --offline
+
+   Do not connect to a messaging server. The database
+   connection must be provided explicitly.
+
+
+Users
+-----
+
+.. option:: --list-users
+
+   List available users.
+
+.. option:: --list-props arg
+
+   List properties for a user.
+

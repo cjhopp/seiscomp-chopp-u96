@@ -1,0 +1,24 @@
+Introduction
+============
+
+|product| provides modules for interacting with a |scname| system by web browser.
+It ships with a server and highly interactive modern web applications to monitor
+seismic activity and to show real time data of your network or monitor station
+quality. Event information is accessed in real-time and from archive via
+:cite:t:`quakelink`. QuakeLink is therefore provided along with |product|.
+
+|product| is optimized for multiple users, security and high load. It serves
+static files in formats like CSS, HTML, JS and exposes an Ajax API to receive
+|scname| objects like picks, quality parameters as well as data records in real
+time. |product| complements QuakeLink to build interactive and responsive web
+applications for |scname|.
+
+Herein, we discriminate between
+
+* |product| as the name of the gempa software product and
+* |appname| for the module which provides the server and the web frontends and
+  which can be configured and started within a |scname| system.
+
+For requirements, installation and configuration of |appname| start reading the
+section :ref:`gaps_overview` but for a user tutorial read the section
+:ref:`gaps_client_modules`.

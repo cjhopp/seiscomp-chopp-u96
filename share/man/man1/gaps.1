@@ -1,0 +1,2626 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GAPS" "1" "Dec 01, 2023" ".#" "GAPS: Web Applications for SeisComP"
+.SH NAME
+gaps \- GAPS: Web Applications for SeisComP Documentation
+.sp
+\fBgempa application server for the web.\fP
+.SH DESCRIPTION
+.sp
+\fIGAPS\fP provides a collection of web\-based client tools running in a web
+browser anywhere on PCs, tablets or smartphones to interface with a \fISeisComP\fP
+installation that operates the \fIgaps\fP server. Through \fIGAPS\fP, operators
+gain insight into a remote \fISeisComP\fP data acquisition and processing system and
+can interact with it. In full\-screen mode, the modules are excellent for
+demonstrating the performance of the \fISeisComP\fP server system in a show room.
+.sp
+Here we refer to \fIGAPS\fP as the gempa product and to \fIgaps\fP as the provided
+module which can be configured and started within \fISeisComP\fP\&.
+.SH OVERVIEW
+.sp
+When connecting to a \fIgaps\fP server, the \fI\%start page\fP is
+shown. From there the individual web modules can be reached. These are:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%EQView\fP: View event catalogs and detailed parameters in
+custom widgets on a map,
+.IP \(bu 2
+\fI\%StationView\fP: View stations and their parameters along
+with events on a map,
+.IP \(bu 2
+\fI\%TraceView\fP: View raw or filtered waveforms from stations
+along with phase picks
+and event parameters. Select the station interactively on a map,
+.IP \(bu 2
+\fI\%OriginLocatorView\fP: Browse and view event catalogs, select and
+analyze events by viewing or selecting phase detections and processing
+waveforms.
+.UNINDENT
+.sp
+Read the full instructions on using these web modules in section
+\fI\%Application: Client Modules\fP\&.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 1: GAPS start page (full\-screen mode, example from gempa\(aqs
+\fI\%demo website\fP)..UNINDENT
+.UNINDENT
+.sp
+\fIgaps\fP reads event parameters from \fIQuakeLink\fP [\fI\%3\fP] which is provided
+along with \fIGAPS\fP\&. It uses maps stored as tiles \fITiles\fP [\fI\%4\fP]\&.
+The web applications can be customized to show different details on maps and
+catalogs. All may be secured on multiple levels. In
+this way authorized users can process data and commit the results to the
+\fISeisComP\fP server system as if they were directly connected to a \fISeisComP\fP system.
+Read the section \fI\%Installation and Setup\fP to learn about your options.
+.SH SYSTEM REQUIREMENTS
+.INDENT 0.0
+.IP \(bu 2
+\fIQuakeLink\fP [\fI\%3\fP] serves event parameters to \fIgaps\fP\&. In order to have
+\fIgaps\fP functioning, a QuakeLink server must therefore be accessible
+remotely or configured locally along with \fISeisComP\fP and started.
+.IP \(bu 2
+\fIgaps\fP reads maps from tiles provided by the plugin \fImbtiles\fP [\fI\%7\fP]
+provided by gempa\(aqs \fImappprojection\fP package which must be installed.
+.UNINDENT
+.sp
+In a basic setup, the \fIgaps\fP and QuakeLink HTTP interfaces are directly
+accessed by the web browser. Make sure that the interfaces are configured and
+accessible by the client.
+.sp
+The steps for installation and configuration are explained in section
+\fI\%Installation and Setup\fP\&. All configuration parameters are detailed in section
+\fI\%Module Configuration\fP\&.
+.SH INSTALLATION AND SETUP
+.sp
+This chapter describes in detail how to setup \fIgaps\fP for common use cases
+with:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%System requirements\fP,
+.IP \(bu 2
+\fI\%Package installation\fP,
+.IP \(bu 2
+\fI\%QuakeLink\fP configuration,
+.IP \(bu 2
+\fI\%gaps server\fP and customization,
+.IP \(bu 2
+\fI\%Web server integration (NGINX)\fP\&.
+.UNINDENT
+.sp
+For a \fBquick installation and setup on a local machine\fP follow the instruction
+in sections:
+.INDENT 0.0
+.IP 1. 3
+\fI\%Package installation\fP,
+.IP 2. 3
+\fI\%QuakeLink\fP,
+.IP 3. 3
+\fI\%Connect GAPS with QuakeLink\fP\&.
+.UNINDENT
+.sp
+Later you may improve further by following the full procedure set out below.
+E.g. you may set access control rules (read \fI\%Connection and access control\fP) and
+integrate \fIgaps\fP into your web server
+(read \fI\%Web server integration (NGINX)\fP) for visibility from your
+or any public network.
+You may even generate custom web pages as set out in \fI\%Custom pages\fP\&.
+.SS Package installation
+.sp
+\fIGAPS\fP consists of 2 packages that should be installed for full
+functionality:
+.INDENT 0.0
+.IP \(bu 2
+\fIgaps\-server\fP for the \fIgaps\fP server application,
+.IP \(bu 2
+\fIgaps\-frontends/gaps\-frontends\-all\fP for the \fIgaps\fP web apps
+(client applications) without/with OriginLocatorView.
+.UNINDENT
+.sp
+Install the \fIGAPS\fP and the mapprojections packages in addition
+to \fISeisComP\fP via
+\fI\%gsm package manager\fP\&.
+You may install \fIGAPS\fP with or without the OriginLocatorView.
+.INDENT 0.0
+.IP \(bu 2
+Installation \fBwithout\fP OriginLocatorView:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&./gsm install mapprojections gaps\-server gaps\-frontends
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+or
+.IP \(bu 2
+Installation \fBwith\fP OriginLocatorView:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&./gsm install mapprojections gaps\-server gaps\-frontends\-all
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The quakelink package must be installed as well unless you want to
+connect to an external QuakeLink server:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+\&./gsm install quakelink
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS QuakeLink
+.sp
+\fBHINT:\fP
+.INDENT 0.0
+.INDENT 3.5
+This chapter on QuakeLink may be skipped if QuakeLink is already running or
+if another external QuakeLink server shall be used for \fIgaps\fP as described
+in \fI\%Connect GAPS with QuakeLink\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+Configure and start QuakeLink and populate it with event parameters.
+Configure QuakeLink in
+\fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/quakelink.cfg\fP  or use \fIscconfig\fP [\fI\%11\fP]\&.
+.INDENT 0.0
+.IP 1. 3
+Enable QuakeLink HTTP web interface:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# Port to listen for HTTP request
+QL.http.port = 18080
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 2. 3
+Enable and start the services
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+seiscomp enable quakelink
+seiscomp start quakelink
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 3. 3
+For importing event parameters into QuakeLink, either
+.INDENT 3.0
+.IP \(bu 2
+configure, enable and start \fIsc2ql\fP [\fI\%10\fP], \fIql2ql\fP [\fI\%8\fP] or
+\fIfdsnws2ql\fP [\fI\%5\fP] for automatic import or
+.IP \(bu 2
+execute \fIqlpush\fP [\fI\%9\fP] on demand.
+.UNINDENT
+.IP 4. 3
+For testing and an overview over available events open the default QuakeLink
+URL in a web browser:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+http://localhost:18080
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS \fIgaps\fP server
+.sp
+\fIgaps\fP requires to configure:
+.INDENT 0.0
+.IP \(bu 2
+Module parameters for general properties,
+.IP \(bu 2
+Bindings for defining stations visible in the web frontends
+.UNINDENT
+.sp
+in addition to the connection to QuakeLink and the maps.
+.sp
+In order to bind a station to \fIgaps\fP, e.g. showing its symbol in the station
+view, create a \fIgaps\fP binding for that station with parameter enable set to
+\fItrue\fP\&. Stations that have not been bound to \fIgaps\fP will be removed from the
+inventory and therefore not be shown.
+.sp
+Configure \fIgaps\fP in \fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/gaps.cfg\fP or use
+\fIscconfig\fP [\fI\%11\fP]\&. A subset of control parameters is described in this section
+but a complete list can be found in \fI\%Configuration\fP\&.
+More detailed help for all parameters can be found in the configuration of the
+\fIgaps\fP module in \fBscconfig\fP (mouse\-over the respective parameter).
+.SS Connect GAPS with QuakeLink
+.sp
+Configure the connection of \fIgaps\fP to QuakeLink.
+.INDENT 0.0
+.IP 1. 3
+Set the URI for requesting events from QuakeLink in \fI\%quakelink\fP\&.
+This URI is used as a default for all web applications. e.g.:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+quakelink = http://your_server:18080/events/query
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 2. 3
+Set the QuakeLink proxy connection initiated by \fIgaps\fP in
+\fI\%quakelinkProxy\fP: to convert and forward single events from
+QuakeLink to the browser, e.g.:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+quakelinkProxy = ql://your_server:18010
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBHINT:\fP
+.INDENT 3.0
+.INDENT 3.5
+The parameters \fI\%quakelink\fP and \fI\%quakelinkProxy\fP need to
+point to the same server address and must be available to the client.
+Hence, for the server address you may use
+.INDENT 0.0
+.IP \(bu 2
+\fBlocalhost\fP if you are running the \fIgaps\fP frontends on the same
+machine as the \fIgaps\fP server and Quakelink or if the connection to
+QuakeLink and \fIgaps\fP is controlled via
+\fI\%NGINX\fP or another
+web server.
+.IP \(bu 2
+\fBa public IP address or name\fP if \fIgaps\fP and QuakeLink run on a
+publicly available computer.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+Compare also with the settings in \fIsc2ql\fP [\fI\%10\fP]\&.
+.IP 3. 3
+Enable and start the services
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+seiscomp enable gaps
+seiscomp start gaps
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+or restart \fIgaps\fP after applying further configurations later on
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+seiscomp restart gaps
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 4. 3
+For testing the initial setup of \fIgaps\fP try to open the default \fIgaps\fP
+URL in a web browser, e.g \fIfirefox\fP where the
+\fI\%GAPS start page\fP should appear:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+firefox http://localhost:8080
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 3.0
+.INDENT 3.5
+If the \fIgaps\fP front end displays the notification
+\fBCould not reach server, try again in 10 s\fP and the browser console
+(Ctrl+Shift+I) contains CORS error message like
+\fBCross\-Origin Request Blocked: The Same Origin Policy disallows reading the
+remote resource at http://localhost:18080/events/query?archived. (Reason:
+CORS request did not succeed)\fP, it is very likely that the QuakeLink server
+is not up and running. Please check the QuakeLink log file under
+\fB$\fP\fIHOME\fP\fB/.seiscomp/log/quakelink.log\fP
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Map properties
+.sp
+The location of maps stored as \fITiles\fP [\fI\%4\fP]
+as well as the zoom levels can be configured.
+Maps from \fIOpenStreetMap\fP [\fI\%2\fP] or generated by the user can be included.
+High resolution maps can also be purchased from \fIgempa GmbH\fP [\fI\%6\fP]\&.
+\fI\%Contact gempa GmbH\fP for the details.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 2: scconfig: window for setting the map parameters..UNINDENT
+.UNINDENT
+.INDENT 0.0
+.IP 1. 3
+Add the mbtiles plugin to global parameters and configure
+\fI\%map.location\fP and \fBmap.type\fP with the map tile file or URL
+and the map type, respectively.
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+plugins = ${plugins}, mbtiles
+map.location = [file/map URL]
+map.type = [type]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 3.0
+.INDENT 3.5
+These parameters are typically set by global module configuration in
+\fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/global.cfg\fP but they may be overridden in
+\fIgaps\fP in \fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/gaps.cfg\fP\&.
+.UNINDENT
+.UNINDENT
+.IP 2. 3
+The maps are available through global parameters but you may adjust map
+features
+.INDENT 3.0
+.IP \(bu 2
+Set \fI\%tileDB\fP to the MBTiles tile database if \fIgaps\fP should serve
+tiles itself. Leave it empty if mapURI is configured with a remote tile
+server in \fI\%apps.mapURI\fP\&.
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+tileDB = /home/data/maps/world\-11/world\-11.mbtiles
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+For using a remote tile server set \fI\%apps.mapURI\fP\&. Provide start
+values for zoom level {z}, latitude {y} and longitude {x}, e.g.:
+.INDENT 3.0
+.IP \(bu 2
+locally stored maps:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+apps.mapURI = \(dq../tiles/{z}/{y}/{x}\(dq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+a remote server
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+apps.mapURI = \(dqhttp://example.com:8080/tiles/{z}/{x}/{y}\(dq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+or a OpenStreetMap server
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+apps.mapURI = \(dqhttp://tile.openstreetmap.org/{z}/{x}/{y}.png\(dq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 3.0
+.INDENT 3.5
+OpenStreetMap and probably other tile server expect the tile indexes as
+\fIz\fP, \fIx\fP, \fIy\fP whereas the built\-in \fIgaps\fP tile server expects \fIz\fP, \fIy\fP, \fIx\fP\&.
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Set \fI\%apps.mapMaxLevel\fP to the maximum zoom number for which the
+tiles source has available. The tiles
+on all zoom levels higher than \fI\%apps.mapMaxLevel\fP will be loaded
+at \fI\%apps.mapMaxLevel\fP level and auto\-scaled.
+.IP \(bu 2
+Adjust \fI\%apps.mapMaxZoom\fP to fix the maximum allowed zoom level in
+interactive maps. The maximum level must be provided by the maps
+server.
+.IP \(bu 2
+Define the region of the initially shown maps in StationView and TraceView
+by \fBapps.mapRegion.*\fP parameters:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# The minimum latitude of the region.
+apps.mapRegion.minimumLatitude = \-90
+
+# The minimum longitude of the region.
+apps.mapRegion.minimumLongitude = \-225
+
+# The maximum latitude of the region.
+apps.mapRegion.maximumLatitude = 90
+
+# The maximum longitude of the region.
+apps.mapRegion.maximumLongitude = 225
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.IP 3. 3
+Set the parameter \fI\%apps.logoPath\fP to show customized logo images for
+your institution in the EQView or the StationView. By default, \(dqGEMPA\(dq will
+be shown.
+.UNINDENT
+.SS Connection and access control
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 3: scconfig: window for setting the access control parameters..UNINDENT
+.UNINDENT
+.INDENT 0.0
+.IP 1. 3
+\fBConnection control:\fP Control the client access by providing IP and port to
+bind the http server to by \fI\%bind\fP\&.
+Use 0.0.0.0 to bind to all interfaces. Either the port or the IP address may be
+omitted, e.g. \(dq0.0.0.0\(dq or \(dq:1234\(dq. Leave empty to run without providing a
+http server.
+.sp
+Access only from the localhost of the server using port 8080 (default):
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+bind = 127.0.0.1:8080
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Access only from all remote IP addresses using port 8080:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+bind = 0.0.0.0:8080
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For connecting via https configure \fI\%sbind\fP\&. Port \(dq:\-1\(dq (default)
+rejects the usage of https.
+.IP 2. 3
+\fBAccess control:\fP Re\-locating events and committing the results in the
+OriginLocatorView is protected by username and password.
+\fI\%Different roles\fP can be assigned to the users.
+.INDENT 3.0
+.IP \(bu 2
+Configure \fI\%users\fP for defining users names with encrypted
+passwords which may operate the OriginLocatorView. Define the file
+containing user names and encrypted passwords:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+users = @CONFIGDIR@/gaps/users
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The users file contains the user details (name:encrpyted\-password). Add one
+line per user e.g. for user sysop:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+sysop:encrpyted\-password
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Create the content of this file with user name and the encrypted password.
+For encrypting the password it is recommended to apply a strong algorithm
+such as sha\-256 or sha\-512. The password encryption tool may depend on the
+Linux flavour.
+.INDENT 3.0
+.IP \(bu 2
+When \fImkpasswd\fP is available the command
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+user=sysop pw=\(gamkpasswd \-m sha\-512\(ga && echo $user:$pw;
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+generates a line for e.g. user \(dqsysop\(dq.
+.IP \(bu 2
+Alternatively use, e.g. on RHEL or CentOS:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+python \-c \(aqimport crypt,getpass; print(getpass.getpass(\(dqName: \(dq)+\(dq:\(dq+crypt.crypt(getpass.getpass(),crypt.mksalt(crypt.METHOD_SHA512)))\(aq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 3.0
+.IP \(bu 2
+Different \fBuser properties\fP can be assigned to users or the
+OriginLocatorView. Currently, the two properties are interpreted:
+.INDENT 3.0
+.IP \(bu 2
+\fBstaff:\fP full access to relocating events and committing the results
+to the \fISeisComP\fP system.
+.IP \(bu 2
+\fBguest:\fP limited access. Only relocating events is allowed but
+committing the results is prohibited.
+.UNINDENT
+.sp
+The properties are provided in a file defined by \fI\%userProperties\fP,
+e.g.:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+userProperties = @CONFIGDIR@/gaps/access
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Each line contains the user name and a list of properties in format
+\(dqusername:prop1,prop2,prop3\(dq. Those properties are used to grant access
+to specific functionalities in \fIgaps\fP such as sending processing results
+back.
+.sp
+Example of the file \fB@CONFIGDIR@/gaps/access\fP for users sysop,  user1
+and user2 (one line per user):
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+sysop:staff
+user1:staff
+user2:guest
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS EQView
+.sp
+Widgets in the EQView can be configured allowing specific focusing on source
+regions and earthquakes therein with that exceed a given magnitude threshold.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 4: scconfig: window for setting the EQView widget control parameters..UNINDENT
+.UNINDENT
+.sp
+Set the parameter \fI\%apps.logoPath\fP to show customized logo images.
+.SS eqview.widgets
+.sp
+Controls which of the defined widgets profiles are shown, e.g.:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+apps.eqview.widgets = world, europe, chile, indonesia
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS Widgets
+.sp
+Properties of all widgets profiles defined in \fIeqview.widgets\fP\&.
+.sp
+Add one profile block per profile.
+.sp
+Example for widget profile europe, where all event with magnitudes greater
+than 2 are shown for Europe.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# The widget title as it appears in the widgets titlebar.
+apps.eqview.widget.europe.title = Europe
+
+# The minimum latitude of the region.
+apps.eqview.widget.europe.minimumLatitude = 20
+
+# The minimum longitude of the region.
+apps.eqview.widget.europe.minimumLongitude = \-20
+
+# The maximum latitude of the region.
+apps.eqview.widget.europe.maximumLatitude = 60
+
+# The maximum longitude of the region.
+apps.eqview.widget.europe.maximumLongitude = 40.0
+
+# The time span to be shown in hours.
+apps.eqview.widget.europe.timeSpan = 120
+
+# The minimum magnitude to be shown.
+apps.eqview.widget.europe.minimumMagnitude = 2.0
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS StationView
+.sp
+Provide the \fBgaps.mapRegion.*\fP parameters to customize the region shown
+initially on the map.
+Set the parameter \fI\%apps.logoPath\fP to show customized logo images.
+.SS TraceView
+.sp
+Filters used in TraceView can be configured by \fI\%apps.traceview.filters\fP\&.
+Read the section \fIFilter Grammar\fP [\fI\%1\fP] for details on the
+possible filters and filter grammar in \fISeisComP\fP\&.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 5: scconfig: window for setting the control parameters
+for OriginLocatorView and TraceView..UNINDENT
+.UNINDENT
+.sp
+Configure the list of filters that are available in TraceView in the form
+\fB\(dqdescription;filter_chain\(dq,\(dq...\(dq,...\fP
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+apps.traceview.filters = \(dq0.7Hz \- 2Hz;RMHP(10)>>ITAPER(30)>>BW(4,0.7,2.0)\(dq,\(dq@4Hz \- 8Hz;RMHP(5)>>ITAPER(10)>>BW(4,4,8)\(dq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where the leading \(dq@\(dq defines the default filter.
+.SS OriginLocatorView
+.sp
+Configurable among others:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%apps.scolv.loadEventDB\fP: The number of days before present for which
+events are initially shown in the event list.
+.IP \(bu 2
+\fI\%apps.traceview.filters\fP: Filters available before picking.
+.IP \(bu 2
+Seismic phases for which the theoretical arrival times are shown on the
+traces.
+.IP \(bu 2
+\fI\%apps.scolv.useUTC\fP: Use UTC for time zone instead of that of the
+local system.
+.IP \(bu 2
+Time window parameters: Control the amount of data to load and process in the
+picker.
+.UNINDENT
+.sp
+See the \fI\%figure\fP and filters in
+\fI\%Trace View\fP for details.
+.SS Custom pages
+.sp
+Installing the \fIgaps\fP server creates the data directory \fB@DATADIR@/gaps/\fP
+which contains the template files for creating the websites.
+This data directory will be overwritten with every new installation.
+For manually customizing the websites copy the data directory to another location
+configured by \fI\%mediaDirectory\fP and make the desired changes in the new
+directory.
+.sp
+New installations might provide new features. Therefore, overwriting the
+files and directories in \fI\%mediaDirectory\fP with the newly installed
+data directory may be required. Make sure to safe the manual changes before
+and apply them thereafter again.
+.SS Web server integration (NGINX)
+.sp
+The following instructions demonstrate how to configure
+\fI\%NGINX\fP as a
+\fI\%reverse proxy\fP for the \fIgaps\fP
+and QuakeLink web services. The motivation for this extra effort is:
+.INDENT 0.0
+.IP \(bu 2
+ability to use default HTTP/HTTPS port
+.INDENT 2.0
+.IP \(bu 2
+modules typically run under sysop user and are not allowed to bind to privilege port (<1024)
+.IP \(bu 2
+different web apps accessible through the same port: 80/443
+.UNINDENT
+.IP \(bu 2
+offload TLS
+.INDENT 2.0
+.IP \(bu 2
+single point to configure certificate and key
+.IP \(bu 2
+no restart of modules for certificate update
+.UNINDENT
+.IP \(bu 2
+security improvement, load balancing, DDoS protection
+.UNINDENT
+.sp
+In a typical setup, both \fIgaps\fP and QuakeLink, are configured under the same
+\fI\%server block\fP
+(also known as VirtualHost) and are bound to separate locations: \fB/gaps\fP and
+\fB/quakelink\fP\&. In the following examples the term \fIHOSTNAME\fP refers to the IP
+address or the domain name the combined service will be available under.
+.INDENT 0.0
+.IP 1. 3
+Extend the basic QuakeLink configuration in
+\fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/quakelink.cfg\fP and add the following lines:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# Defines the root URL used to generate links. That option is only important if
+# e.g. Apache/Nginx with reverse proxy is used to forward QuakeLinks web pages.
+QL.http.rootURL = /quakelink
+
+# Quakelink uses long polling for POST event requests. To allow returning an
+# empty document (HTTP 204) rather than waiting forever this parameter can be
+# used. It applies a no\-data timeout in seconds. This setting might be useful
+# if Quakelink is being ran behind a proxy.
+QL.http.timeout = 50
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 2. 3
+Extend the basic \fIgaps\fP configuration in \fB$\fP\fISEISCOMP_ROOT\fP\fB/etc/gaps.cfg\fP
+and add/change the following lines:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# The QuakeLink event request URI. This is used as a default for all web
+# applications.
+quakelink = \(dqhttp://HOSTNAME/quakelink/events/query\(dq
+
+# Port to listen for HTTP request
+bind = 127.0.0.1:8080
+
+# Path of the server websocket API for all applications. If not explicitly
+# configured then the serverAPI path will be used.
+apps.serverWSAPI = ws://HOSTNAME/gaps/
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 3.0
+.INDENT 3.5
+If your NGINX is configured with HTTPS support use \fBhttps\fP and \fBwss\fP
+instead of \fBhttp\fP and \fBws\fP in the lines above.
+.UNINDENT
+.UNINDENT
+.IP 3. 3
+Restart QuakeLink and \fIgaps\fP to apply the changes
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+seiscomp restart quakelink gaps
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 4. 3
+Map the WebSocket connection upgrade request header to the NGINX variable
+\fB$connection_upgrade\fP in \fB/etc/nginx/conf.d/connection_upgrade.conf\fP
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    \(aq\(aq close;
+}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 5. 3
+Configure the QuakeLink and \fIgaps\fP location in the \fBserver\fP block of your
+main \fB/etc/nginx/nginx.conf\fP configuration file or in a specific
+configuration file under \fB/etc/nginx/conf.d\fP or
+\fB/etc/nginx/sites\-available\fP
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+location /quakelink/ {
+    proxy_pass http://localhost:18080/;
+    proxy_set_header X\-Forwarded\-For $proxy_add_x_forwarded_for;
+}
+
+location /gaps/ {
+    proxy_pass http://localhost:8080/;
+    proxy_set_header X\-Forwarded\-For $proxy_add_x_forwarded_for;
+
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_set_header Host $host;
+}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 6. 3
+Check and reload the NGINX configuration
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+nginx \-t
+systemctl reload nginx
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP 7. 3
+Open a browser and try to open the following URLs:
+.INDENT 3.0
+.IP \(bu 2
+\fI\%http://HOSTNAME/quakelink/\fP (QuakeLink)
+.IP \(bu 2
+\fI\%http://HOSTNAME/gaps/\fP (\fIgaps\fP)
+.UNINDENT
+.UNINDENT
+.SH SERVER-SIDE EVENT PROCESSING
+.sp
+Some web applications, currently only \fI\%EQView\fP, support
+processing a batch of events and return a generated document or image which
+will be displayed in the browser. That way the functionality of an application
+can be enhanced by the operator with custom scripts. One example of an event
+processor is provided in the distribution. It is installed
+\fBshare/gaps/processors/events/cluster\-3d.html.py\fP\&. A processor script
+takes a CSV event table (see \fBprocessors.event\fP) as input on stdin
+and outputs the document to stdout. An example configuration looks like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+processors.events = 3d
+processors.events.3d.title = \(dqDBSCAN Cluster Search 3D\(dq
+# The script generates a 3d plot based on the selected earthquakes using
+# plotly (https://plotly.com). It performs a cluster search using DBSCAN
+# (https://en.wikipedia.org/wiki/DBSCAN). The DBSCAN parameters
+# \(dqmin_samples\(dq and \(dqeps\(dq are defined by the number of selected
+# earthquakes and the 90\-percentile of the inter earthquake distances. The
+# event markers are colored based on the cluster association.
+#
+# To install the required packages the following command should be
+# executed on the GAPS system
+#
+# pip3 install \-\-user scikit\-learn plotly pandas
+processors.events.3d.script = @DATADIR@/gaps/processors/events/cluster\-3d.html.py
+processors.events.3d.type = html
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH APPLICATION: CLIENT MODULES
+.sp
+The \fIgaps\fP client modules include:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%EQView\fP (\fIscesv\fP [\fI\%12\fP] equivalent): earthquake locations
+and seismograms for configurable regions and magnitudes.
+.IP \(bu 2
+\fI\%StationView\fP (\fIscmv\fP [\fI\%13\fP] equivalent): quality of
+seismograms and peak ground motion at configured stations along with recent
+seismicity.
+.IP \(bu 2
+\fI\%TraceView\fP (\fIscrttv\fP [\fI\%15\fP] equivalent): viewing raw or
+filtered seismograms with phase picks for stations selectable on a maps.
+.IP \(bu 2
+\fI\%OriginLocatorView\fP (\fIscolv\fP [\fI\%14\fP] equivalent): interactive
+picking and relocating of earthquakes, commits to the \fISeisComP\fP server system.
+.UNINDENT
+.sp
+The modules can be configured individually (see section \fI\%setup\fP).
+.SS Common map properties
+.sp
+Common to the client modules are some map functions:
+.INDENT 0.0
+.IP \(bu 2
+Zoom in / out: +/\- or use mouse wheel
+.IP \(bu 2
+Pan left / right or up / down: arrow left / right or arrow up / down
+.IP \(bu 2
+Show the coordinates of the current cursor position: shift + cursor
+(only in \fI\%EQView\fP, \fI\%StationView\fP,
+\fI\%OriginLocatorView\fP)
+.UNINDENT
+.SS EQView
+.sp
+EQView provides remote access to maps and the list of detected and located
+events as well as to a preview of the seismograms. The colors of the event
+circles and the size represent depth and magnitude, respectively.
+.sp
+Maps with user\-specific regions and event profiles can be defined as widgets.
+These maps can be selected and viewed by clicking on the widget shown along with
+the currently selected map. The regions of these maps and of the events therein
+can be customized based on coordinates, magnitude and event time.
+.sp
+The widget \(dqLatest Event\(dq show the details for the latest event within the
+currently active map widget. When clicking on that widget more event details and
+waveforms are shown. Showing the picks of P and S phases can be activated by
+configuration. In addition, the map is zoom around the event. The zoom level
+depends on the event magnitude.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 6: EQView \- event map (full\-screen mode). Map panels (right) show configured
+areas which can be selected and enlarged. Circles show event locations.
+The colors indicate source depth, size indicates magnitudes.
+Corresponding values are given in the legend (lower left).
+The overview map (upper left) shows the position of the central map..UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 7: EQView \- event list (full\-screen mode). Seismograms (left panel) are shown
+for a selected event..UNINDENT
+.UNINDENT
+.SS StationView
+.sp
+StationView provides information on the state of sensor stations based on
+a MapView and text boxes. The information include quality control parameters,
+e.g. delay, latency, gaps, spikes and offset as well as current ground motion
+and PGD, PGV and PGA on 0.3 Hz high\-pass filtered seismograms for the past 10
+seconds and 5 minutes (in brackets). Clicking on a particular station shows the
+parameters in a inset figure.
+.sp
+The maps allow zooming in and out. They may be centered around the most
+recent event. For dense networks, stations are clustered and only the
+number is given at the center of the region. The region shown initially
+on the map can be customized, read the section \fI\%Map properties\fP\&.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 8: StationView (full\-screen mode) showing the location of stations (triangles)
+with measured ground motion (color), active triggers (bold red circle
+around station), recent earthquakes (circles) within the
+configured area and information for one selected station (left panel)..UNINDENT
+.UNINDENT
+.SS TraceView
+.sp
+The TracveView allows viewing of real\-time data collected on the \fISeisComP\fP
+\fIgaps\fP server along with picks made on these data. The stations for which the
+seismograms are shown can be selected from the map of stations based on the region.
+The region shown initially on the map can be customized, read the section
+\fI\%Map properties\fP\&.
+.sp
+For showing the traces:
+#. Mark \(dqSelect stations\(dq in the settings panel to the right,
+#. Select a region by drawing a rectangle on the map using the left mouse bottom,
+#. Click on \(dqShow traces\(dq in the settings panel to the right.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 9: TraceView (full\-screen mode) showing the stations (triangles) for
+which traces can be viewed as
+well as active detections (bold red triangles).
+The stations selected for showing traces are marked in yellow..UNINDENT
+.UNINDENT
+.sp
+For adjusting seismogram filtering and zooming within in the trace window,
+select the parameters in the \(dqSettings\(dq panel. The panel can be accessed
+by moving the mouse arrow to the right edge of the TraceView window. The
+filter settings can be customized (see \fI\%setup\fP).
+Use the left mouse button to shift the seismograms in time.
+.sp
+Return to the map window by clicking on \(dqShow map\(dq in the \(dqSettings\(dq panel.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 10: TraceView (full\-screen mode) showing the traces for selected stations
+filtered in the configured frequency band..UNINDENT
+.UNINDENT
+.SS OriginLocatorView
+.sp
+Use the OriginLocatorView for viewing and relocating of events.
+Users with granted permissions (see \fI\%setup\fP) working from
+allowed computers (see \fI\%setup\fP) can view the data and send back
+the results from data processing.
+.sp
+For example, everyone from any computer worldwide may have permission to
+view the data but only authorized staff may be permitted to commit the
+processing results such as picks and locations to the server \fISeisComP\fP system.
+.sp
+Detailed help on the OriginLocatorView can be accessed through \(dqHelp\(dq
+button on the upper right on all OriginLocatorView windows.
+.sp
+Individual events can be accessed by clicking on that particular event in
+the \fI\%event list\fP or in the \fI\%event map\fP\&.
+Access the event list and map by clicking on the list and map symbol on the
+upper right of the \(dqEvents\(dq tab.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 11: OriginLocatorView showing the list of events. The help module can be
+accessed through \(dqHelp\(dq bottom on the upper right..UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 12: OriginLocatorView showing the map of events. The help module can be
+accessed through \(dqHelp\(dq bottom on the upper right..UNINDENT
+.UNINDENT
+.sp
+The \(dqLocator\(dq tab is accessed by clicking on an event in the event list or map.
+In the \(dqLocator\(dq tab the event can be relocated choosing the configured
+locator and locator profile. Phase picks can be selected or unselected.
+Clicking on \(dqPicker\(dq opens the \fI\%picker window\fP where
+existing picks of P and S phases can be reviewed and new picks can be made.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 13: OriginLocatorView: Location tab..UNINDENT
+.UNINDENT
+.sp
+The picks can be made in the picker window. The pick window can be accessed by
+clinking on the \(dqPicker\(dq button in the \fI\%\(dqLocation\(dq tab\fP\&.
+In the picker window arrivals of P and S phases can be picked.
+Results are committed to the server by clicking on \(dqOK\(dq. For zooming and
+shifting the data in time, use the mouse wheel and the left mouse button on the
+time axis of the traces.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 14: OriginLocatorView: picker window..UNINDENT
+.UNINDENT
+.sp
+The time window parameters controlling the amount of requested data can be
+changed in the Setup tab. The shorter the time window the faster the data will
+be loaded and processed. The new parameters will be valid during the browser
+session. To keep the time window parameters adjust the \fIgaps\fP module
+configuration.
+.INDENT 0.0
+.INDENT 2.5
+[image]
+Figure 15: OriginLocatorView: setup window..UNINDENT
+.UNINDENT
+.SH MODULE CONFIGURATION
+.nf
+\fBetc/defaults/global.cfg\fP
+\fBetc/defaults/gaps.cfg\fP
+\fBetc/global.cfg\fP
+\fBetc/gaps.cfg\fP
+\fB~/.seiscomp/global.cfg\fP
+\fB~/.seiscomp/gaps.cfg\fP
+.fi
+.sp
+.sp
+gaps inherits \fI\%global options\fP\&.
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+Modules/plugins may require a license file. The default path to license
+files is \fB@DATADIR@/licenses/\fP which can be overridden by global
+configuration of the parameter \fBgempa.licensePath\fP\&. Example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+gempa.licensePath = @CONFIGDIR@/licenses
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B authbind
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Allows to bind sockets to privileged ports (<1024).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bind
+Default: \fB127.0.0.1:8080\fP
+.sp
+Type: \fIhost\-with\-port\fP
+.sp
+IP and port to bind the HTTP server to. Use 0.0.0.0
+to bind to all interfaces. Either the port or the IP
+address may be omitted, e.g., \(dq0.0.0.0\(dq or
+\(dq:1234\(dq. If set to an empty string the application
+will run without providing a HTTP server.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B sbind
+Default: \fB127.0.0.1:\-1\fP
+.sp
+Type: \fIhost\-with\-port\fP
+.sp
+IP and port to bind the HTTPS server to. Use 0.0.0.0
+to bind to all interfaces. Either the port or the IP
+address may be omitted, e.g., \(dq0.0.0.0\(dq or
+\(dq:1234\(dq. If set to an empty string the application
+will run without providing a HTTPS server.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B offline
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to run offline (no messaging connection) or online
+(messaging connection). In offline mode either the database
+connection or the inventory and config XML files must be
+provided.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B computePGAVD
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Enable ground motion computation. If set to false then no ground motion
+amplitudes are being computed.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B windowPGAVD
+Default: \fB10\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Time window in seconds used to compute ground motion amplitudes.
+The higher the time window the less amplitudes will be computed
+over time.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B users
+Default: \fB@CONFIGDIR@/gaps/users\fP
+.sp
+Type: \fIfile\fP
+.sp
+Defines the users file for access control. The user file contains one line
+per user where each line is of format \(dqusername:encrypted_pwd\(dq.
+To encrypt a password mkpasswd can be used. It is recommended to
+apply a strong algorithm such as sha\-256 or sha\-512. E.g., the command
+\(dquser=sysop pw=\(gamkpasswd \-m sha\-512\(ga && echo $user:$pw\(dq
+would generate a line for the user \(dqsysop\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B userProperties
+Default: \fB@CONFIGDIR@/gaps/access\fP
+.sp
+Type: \fIfile\fP
+.sp
+Defines the file used to read user properties. Each line contains
+the user name and a list of properties in format
+\(dqusername:prop1,prop2,prop3\(dq. Those properties are
+used to grant access to certain functionalities in gaps such as
+sending processing results back. There is currently only one
+property which is interpreted by GAPS: \(dqstaff\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B accessLog
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Enables HTTP access logging to @LOGDIR@/gaps\-http\-access.
+Log files are created for 24h and kept for 7 days using log
+rotation.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B indexTemplate
+Default: \fB@DATADIR@/gaps/index.cs\fP
+.sp
+Type: \fIstring\fP
+.sp
+Path to the template that generated index.html.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B mediaDirectory
+Default: \fB@DATADIR@/gaps/apps\fP
+.sp
+Type: \fIstring\fP
+.sp
+Path to media files (index.html, .css, .js, .png, ...) served by GAPS.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B bufferSize
+Default: \fB65536\fP
+.sp
+Unit: \fIb\fP
+.sp
+Type: \fIint\fP
+.sp
+Minimum buffer size in bytes per acquisition thread.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B maximumThreads
+Default: \fB10\fP
+.sp
+Type: \fIint\fP
+.sp
+Maximum number of acquisition threads. This corresponds to
+the maximum number of parallel acquisition requests from
+clients.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B requestTimeout
+Default: \fB10\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIint\fP
+.sp
+Thread request timeout. If data of a thread has not been requested
+for more than n seconds the thread will be closed and finished.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B forceHTTP
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Disables usage of WebSocket protocol. Useful, if traffic is tunneled
+through a web server that cannot handle WebSockets.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B quakelink
+Default: \fBhttp://localhost:18080/events/query\fP
+.sp
+Type: \fIstring\fP
+.sp
+The QuakeLink event request URI. This is used as a default for
+all web applications.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B quakelinkProxy
+Default: \fBql://localhost:18010\fP
+.sp
+Type: \fIstring\fP
+.sp
+The QuakeLink proxy connection initiated by GAPS to convert and
+forward single events from QuakeLink to the browser.
+Required since QuakeLink delivers only XML format but JSON format is needed.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B tileDB
+Type: \fIpath\fP
+.sp
+Configures the MBTiles tile database if gaps should serve
+tiles itself. If mapURI is configured with a remote tile
+server, this is not required.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B tileLayers
+Type: \fIlist:string\fP
+.sp
+List of additional tile layer profiles.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBtileLayers.*\fP
+\fIConfiguration of additional tile layers.\fP
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBtileLayers.$name.*\fP
+$name is a placeholder for the name to be used.
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B tileLayers.$name.db
+Type: \fIpath\fP
+.sp
+Path to MBTiles database for this tile layer.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B tileLayers.$name.levels
+Type: \fIstring\fP
+.sp
+Range of zoom levels this tile layer is valid for.
+The format is [min\-level]:[max\-level].
+.UNINDENT
+.INDENT 0.0
+.TP
+.B tileLayers.$name.rects
+Type: \fIlist:string\fP
+.sp
+List of rectangles with respect to column / row indexes
+of the minimum zoom level. The format per rect is
+either +[min_x]+[min_y]+[max_x]+[max_y] or
+[column]x[rows]+[min_x]+[min_y].
+.UNINDENT
+.INDENT 0.0
+.TP
+.B map.location
+Default: \fB@DATADIR@/gaps/zoom12.mbtiles\fP
+.sp
+Type: \fIpath\fP
+.sp
+Alternative configuration parameter for @tileDB.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B map.geoFeaturePath
+Type: \fIpath\fP
+.sp
+Alternative path to geofeatures displayed on the map. The
+default paths are ~/.seiscomp/bna and $SEISCOMP_ROOT/share/bna. To
+consider a BNA file for map display the corresponding configuration
+file (either map.cfg or gaps.cfg) in the respective bna directory
+or sub\-directory must contain \(dqapps.gaps=true\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B SSL.certificate
+Type: \fIstring\fP
+.sp
+Path to SSL certificate file
+.UNINDENT
+.INDENT 0.0
+.TP
+.B SSL.key
+Type: \fIstring\fP
+.sp
+Path to SSL private key file
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.*\fP
+\fIConfiguration of available web applications.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapURI
+Default: \fB\&../tiles/{z}/{y}/{x}\fP
+.sp
+Type: \fIstring\fP
+.sp
+Full URL for tiles, e.g., \(dq\fI\%http://example.com:8080/tiles\fP/{z}/{y}/{x}\(dq.
+The tile server URL for all applications.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapMaxLevel
+Default: \fB10\fP
+.sp
+Type: \fIint\fP
+.sp
+Maximum zoom number for which the tiles source has available. The tiles
+on all zoom levels higher than mapMaxLevel will be loaded
+from mapMaxLevel level and auto\-scaled.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapMaxZoom
+Default: \fB14\fP
+.sp
+Type: \fIint\fP
+.sp
+Maximum allowed zoom level in the interactive map.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapShowZoomControl
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to show a zoom control on the map.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapShowLegend
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to show a map legend or not in web apps v2.
+Some apps might offer to toggle this setting, others not.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.serverAPI
+Default: \fB\&../\fP
+.sp
+Type: \fIstring\fP
+.sp
+Path of the server API for all applications. This parameter
+can be overridden in each application.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.serverWSAPI
+Type: \fIstring\fP
+.sp
+Path of the server WebSocket API for all applications. If not
+explicitly configured then the serverAPI path will be used.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.logoPath
+Default: \fBshare/images/gempa_logo.svg\fP
+.sp
+Type: \fIstring\fP
+.sp
+Relative path to a logo (brand) image shown in
+web applications. Give path relative to SEISCOMP_ROOT/share/gaps/apps.
+The image is scaled to the field dimension 157px x 38px preserving
+the aspect ratio.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.colorMode
+Default: \fBdepth\fP
+.sp
+Type: \fIstring\fP
+.sp
+Available modes are: depth, magnitude, age
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eventSymbolAnimation
+Default: \fBtoggle\fP
+.sp
+Type: \fIstring\fP
+.sp
+Available animations are: toggle, three\-circles
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.colorEventsUpdateInterval
+Default: \fB60\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIint\fP
+.sp
+If event symbol colors are derived from the event age then
+the age must be recomputed at a certain interval. This
+number defines the interval in seconds to update the event
+colors. The lower the interval the more often the colors
+must be updated which can decrease performance.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.mapRegion.*\fP
+\fIConfigures the initial region to be shown, e.g., in TraceView\fP
+\fIand StationView.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapRegion.minimumLatitude
+Default: \fB\-90\fP
+.sp
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The minimum latitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapRegion.minimumLongitude
+Default: \fB\-225\fP
+.sp
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The minimum longitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapRegion.maximumLatitude
+Default: \fB90\fP
+.sp
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The maximum latitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapRegion.maximumLongitude
+Default: \fB225\fP
+.sp
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The maximum longitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.geoCodeURL
+Type: \fIstring\fP
+.sp
+Configures the URL for geo coding. The placeholders
+\(dq{lat}\(dq and \(dq{lon}\(dq will be replaced
+by the respective earthquake location attributes.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showRegion
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+On startup set central map to initial region (mapRegion.*).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showRegionBounds
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Shows the initial region rectangle (mapRegion.*) in the central map.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showWidgetBounds
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Shows the selected widget region rectangle in the central map.
+This setting replaces the region rectangle (showRegionBounds)
+if both are set to true.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showWaveSpreading
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Shows the spreading of P/S wave in the center\-widget.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.centerLatestEvent
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether map will center around the latest event or not.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.singleEventMode
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+If activated then the selected event is being shown
+exclusively on the map.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.useUTC
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Show UTC time in the front end.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.externalData
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+If enabled then all waveforms of an event will be
+requested even if stations are not part of the
+local inventory. If disabled then only stations are
+allowed that are configured locally with bindings.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.nearestCityMinPopulation
+Default: \fB100000\fP
+.sp
+Type: \fIint\fP
+.sp
+The minimum population of a city to be taken into
+account as nearest city to an event.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.nearestCityMaxDistance
+Default: \fB20\fP
+.sp
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The maximum distance of the nearest city from an event.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showLatestMainEvent
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to show the latest event in the top left
+corner of the widget which is currently active as main widget.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.showLatestOverallEvent
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to show the latest overall event of all widgets.
+It will be shown in the top right corner above the widgets.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.overallTimeSpan
+Default: \fB24\fP
+.sp
+Unit: \fIhours\fP
+.sp
+Type: \fIinteger\fP
+.sp
+The time span for which the latest overall event will be
+selected.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widgets
+Default: \fBworld\fP
+.sp
+Type: \fIstring\fP
+.sp
+Defines the available widgets. The first widget listed is taken as primary widget.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.eqview.referencePlace.*\fP
+\fIDefines a reference place / city which is used to compute\fP
+\fIthe distance and azimuth from the event shown\fP
+\fIin the event details.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.referencePlace.name
+Type: \fIstring\fP
+.sp
+The name of the place.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.referencePlace.lat
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The latitude of the reference place.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.referencePlace.lon
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The longitude of the reference place.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.eqview.widget.*\fP
+\fIThe configured widgets.\fP
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.eqview.widget.$name.*\fP
+$name is a placeholder for the name to be used.
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.title
+Type: \fIstring\fP
+.sp
+The widget title as it appears in the widgets title bar.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.minimumLatitude
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The minimum latitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.minimumLongitude
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The minimum longitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.maximumLatitude
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The maximum latitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.maximumLongitude
+Unit: \fIdeg\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The maximum longitude of the region.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.eventRegion
+Unit: \fIdeg\fP
+.sp
+Type: \fIregion\fP
+.sp
+This overrides the configured widget region and defines the region
+of the events to be shown. If not configured then the event region
+will be the same as the widget region. The format is
+[lat_width]x[lon_width]+[lat_min]+[lon_min]
+or +[lat_min]+[lon_min]+[lat_max]+[lon_max].
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.timeSpan
+Unit: \fIhours\fP
+.sp
+Type: \fIinteger\fP
+.sp
+The time span to be shown in hours.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.minimumMagnitude
+Type: \fIdouble\fP
+.sp
+The minimum magnitude to be shown.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.maximumMagnitude
+Type: \fIdouble\fP
+.sp
+The maximum magnitude to be shown.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.status
+Type: \fIlist:string\fP
+.sp
+Event status code list that is accepted. Each item is a
+character (A,M,...) that maps to the type code in
+the QuakeLink summary format. To exclude types, a minus
+can be prepended to each code, e.g., \(dq\-X\(dq.
+That would accept all solutions except rejected. An
+empty list accepts everything.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.tracePreOffset
+Default: \fB2.0\fP
+.sp
+Unit: \fImin\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The pre\-offset of the traces with respect to the onset.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.tracePostOffset
+Default: \fB5.0\fP
+.sp
+Unit: \fImin\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The post\-offset of the traces with respect to the onset.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.alignOnPredicatedArrivals
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Configures whether traces are aligned on first picked onset
+or on theoretical arrivals.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.showPicks
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Configures if picks are shown in the waveforms.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.visualFeedback
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to give visual feedback if a new event has been
+set as latest in the widget. If enabled then the
+widget shakes for a short time when the latest
+event updates.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.eqview.widget.$name.audioFilePath
+Type: \fIpath\fP
+.sp
+Path to an audio file played when adding a new event
+to the widget. The audio file is played when the
+event is the most recent one. For older events
+the audio alert is not played.
+Give path relative to
+$SEISCOMP_ROOT/share/gaps/apps, e.g., share/audio/alert.mp3.
+Preferred format: MP3.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.traceview.cluster
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Defines whether the station symbols should be clustered by default or not.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.traceview.filters
+Default: \fB\(dq0.7Hz \- 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)\(dq, \(dq1Hz \- 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)\(dq, \(dq2Hz \- 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)\(dq, \(dq4Hz \- 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)\(dq, \(dqHP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)\(dq\fP
+.sp
+Type: \fIlist:string\fP
+.sp
+The list of filters available in TraceView, format per
+item is \(dqname;filter\-string\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.traceview.timeSpan
+Default: \fB600\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Timespan for trace display. The default is 10min.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.traceview.utc
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Whether to show trace times in UTC or local time.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.mode
+Default: \fBdelay\fP
+.sp
+Type: \fIstring\fP
+.sp
+Defines the default MapView mode that is used to color
+the station symbols. Valid values are \(dqdelay\(dq,
+\(dqlatency\(dq and \(dqgroundmotion\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.cluster
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Defines whether the station symbols should be clustered by default or not.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.eventTimeSpan
+Default: \fB168\fP
+.sp
+Unit: \fIhours\fP
+.sp
+Type: \fIinteger\fP
+.sp
+The events time span to be shown in hours.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.customStationLink
+Type: \fIstring\fP
+.sp
+Defines an additional link that is rendered on the
+station detail page. It supports two placeholders: ${net}
+and ${sta} which are replaced during runtime.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.customStationLinkName
+Type: \fIstring\fP
+.sp
+The name as displayed on the station panel for the custom
+station link.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.mapview.fetchGeoIP
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+If enabled then the map will be centered around the clients
+geolocation (fetched via web service from www.geoplugin.net).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.loadEventDB
+Default: \fB1\fP
+.sp
+Unit: \fIdays\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Number of days to preload if scolv is started.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.useUTC
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Show UTC time in the frontend.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.distInKM
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Show distances in km instead of degree.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.ttt
+Default: \fBlibtau, LOCSAT\fP
+.sp
+Type: \fIlist:string\fP
+.sp
+The list of active travel time table interfaces.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.filters
+Default: \fB\(dq@0.7Hz \- 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)\(dq, \(dq1Hz \- 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)\(dq, \(dq2Hz \- 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)\(dq, \(dq4Hz \- 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)\(dq, \(dqHP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)\(dq\fP
+.sp
+Type: \fIlist:string\fP
+.sp
+List of filters available in the picker. If @ is prepended
+to the name of the filter it will be selected as default
+filter. The format of each entry is \(dqname;definition\(dq,
+e.g., \(dqBP 0.7 \- 2 Hz  3rd order;BW(3,0.7,2)\(dq
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.phases
+Default: \fBP,Pn,Pg,pP,S,Sg,sP\fP
+.sp
+Type: \fIlist:string\fP
+.sp
+List of phases enabled for picking.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.preOffset
+Default: \fB300\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Begin of time window before origin time to load waveforms
+when the picker is opened.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.postOffset
+Default: \fB600\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+End of time window after origin time to load waveforms
+when the picker is opened.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.preAlign
+Default: \fB30\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The default time window shown before the trace alignment.
+Alignment is set interactively by origin time or P\- or S\-phase arrival.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.picker.postAlign
+Default: \fB90\fP
+.sp
+Unit: \fIs\fP
+.sp
+Type: \fIdouble\fP
+.sp
+The default time window shown after the trace alignment.
+Alignment is set interactively by origin time or P\- or S\-phase arrival.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.scolv.ttt.*\fP
+\fITravel time table related configuration. Travel time\fP
+\fItables can be added via plugins. Built\-in interfaces\fP
+\fIare libtau and LOCSAT. For each activated interface\fP
+\fIa list of supported models must be provided.\fP
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBapps.scolv.ttt.$name.*\fP
+$name is a placeholder for the name to be used.
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B apps.scolv.ttt.$name.models
+Type: \fIlist:string\fP
+.sp
+The list of supported model names per interface.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B processors.events
+Type: \fIlist:string\fP
+.sp
+Activate event processor profiles, see
+GAPSEventProcessorProfile.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBprocessors.events.*\fP
+\fIConfigures one or more event processors which are executed\fP
+\fIat server\-side and displayed client\-side in EQView after\fP
+\fIselecting a set of events with ctrl + left mouse key.\fP
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBprocessors.events.$name.*\fP
+$name is a placeholder for the name to be used.
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B processors.events.$name.title
+Type: \fIstring\fP
+.sp
+The title of the processor shown at the client in
+the processor selection popup and as header in the
+output window.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B processors.events.$name.script
+Type: \fIpath\fP
+.sp
+Path to the script to be called when the processor
+has been triggered. This script must be executable,
+take the CSV file from stdin and print the result
+image to stdout. The input CSV file contains the
+following columns separated by semicolon:
+.sp
+* eventID
+.sp
+* OT
+.sp
+* lat
+.sp
+* lon
+.sp
+* depth in km
+.sp
+* mag
+.sp
+* agency
+.sp
+* status
+.sp
+* phases
+.sp
+* region
+.sp
+* fm.strike
+.sp
+* fm.dip
+.sp
+* fm.rake
+.sp
+* fm.depth
+.sp
+* fm.mag
+.sp
+Only results from script runs with exit code zero
+are taken into account.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B processors.events.$name.type
+Type: \fIstring\fP
+.sp
+The type of the returned product. Valid values are
+\(dqtxt\(dq,
+\(dqhtml\(dq,
+\(dqjson\(dq,
+\(dqpng\(dq,
+\(dqjpeg\(dq,
+\(dqsvg\(dq,
+\(dqxml\(dq
+.UNINDENT
+.INDENT 0.0
+.TP
+.B processors.events.$name.authorize
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+If enabled then authorization will be requested for
+this script from the browser. That means that a user
+has to authenticate first before the result will be
+displayed. Authorization is granted if an
+authenticated user is staff member.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scheme.colors.stationTypes
+Default: \fBBB:008000, SM:0000FF, SP:40E0D0\fP
+.sp
+Type: \fImap\fP
+.sp
+Configure the station colors of a particular type. The
+type is read from Station.type of the inventory. If unset,
+the parent Network.type is used.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scheme.colors.originSymbol.age.gradient
+Default: \fB0:ff0000:\(dq1 hour\(dq,3600:ff8000:\(dq1 day\(dq,86400:ffff00:\(dq1 week\(dq,604800:ffffff:\(dq1 month\(dq,2592000:808080:\(dqolder\(dq\fP
+.sp
+Type: \fIgradient\fP
+.sp
+Configure the event age color gradient. Only applied
+if color mode is \(dqmagnitude\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scheme.colors.originSymbol.magnitude.gradient
+Default: \fB0:ff0000:\(dq1 hour\(dq,3600:ff8000:\(dq1 day\(dq,86400:ffff00:\(dq1 week\(dq,604800:ffffff:\(dq1 month\(dq,2592000:808080:\(dqolder\(dq\fP
+.sp
+Type: \fIgradient\fP
+.sp
+Configure the event magnitude color gradient. Only applied
+if color mode is \(dqmagnitude\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scheme.map.stationShape
+Default: \fBhexagon\fP
+.sp
+Type: \fIstring\fP
+.sp
+The station symbol shape. Valid values are: hexagon,
+triangle and diamond.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scheme.map.stationBorder
+Default: \fB3\fP
+.sp
+Unit: \fIpx\fP
+.sp
+Type: \fIinteger\fP
+.sp
+The width in pixels of the station symbol frame.
+.UNINDENT
+.SH BINDINGS PARAMETERS
+.INDENT 0.0
+.TP
+.B enable
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Enable/disable the usage of a station with web apps.
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBgaps [options]\fP
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-file arg
+Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick \-> scautopick2.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-plugins arg
+Load given plugins.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D, \-\-daemon
+Run as daemon. This means the application will fork itself
+and doesn\(aqt need to be started with &.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-\-verbosity arg
+Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Quiet mode: no logging output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-component arg
+Limit the logging to a certain component. This option can
+be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-syslog
+Use syslog logging backend. The output usually goes to
+/var/lib/messages.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-l, \-\-lockfile arg
+Path to lock file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-console arg
+Send log output to stdout.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-log\-file arg
+Use alternative log file.
+.UNINDENT
+.SS Database
+.INDENT 0.0
+.TP
+.B \-\-db\-driver\-list
+List all supported database drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-d, \-\-database arg
+The database connection string, format:
+\fI\%service://user:pwd@host/database\fP\&.
+\(dqservice\(dq is the name of the database driver which
+can be queried with \(dq\-\-db\-driver\-list\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-inventory\-db arg
+Load the inventory from the given database or file, format:
+[\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-db arg
+Load the configuration from the given database or file,
+format: [\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-module arg
+The config module to use.
+.UNINDENT
+.SS Messaging
+.INDENT 0.0
+.TP
+.B \-u, \-\-user arg
+Overrides configuration parameter \fI\%connection.username\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-H, \-\-host arg
+Overrides configuration parameter \fI\%connection.server\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-t, \-\-timeout arg
+Overrides configuration parameter \fI\%connection.timeout\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-g, \-\-primary\-group arg
+Overrides configuration parameter \fI\%connection.primaryGroup\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-S, \-\-subscribe\-group arg
+A group to subscribe to.
+This option can be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-start\-stop\-msg arg
+Set sending of a start and a stop message.
+.UNINDENT
+.SS Records
+.INDENT 0.0
+.TP
+.B \-\-record\-driver\-list
+List all supported record stream drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-I, \-\-record\-url arg
+The recordstream source URL, format:
+[\fI\%service://\fP]location[#type].
+\(dqservice\(dq is the name of the recordstream driver
+which can be queried with \(dq\-\-record\-driver\-list\(dq.
+If \(dqservice\(dq is not given, \(dq\fI\%file://\fP\(dq is
+used.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-record\-file arg
+Specify a file as record source.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-record\-type arg
+Specify a type for the records being read.
+.UNINDENT
+.SS Mode
+.INDENT 0.0
+.TP
+.B \-\-offline
+Do not connect to a messaging server. The database
+connection must be provided explicitly.
+.UNINDENT
+.SS Users
+.INDENT 0.0
+.TP
+.B \-\-list\-users
+List available users.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-list\-props arg
+List properties for a user.
+.UNINDENT
+.SH AUTHOR
+GFZ Potsdam
+.SH COPYRIGHT
+2014, gempa GmbH
+.\" Generated by docutils manpage writer.
+.

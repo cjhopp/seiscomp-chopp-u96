@@ -1,0 +1,192 @@
+.. highlight:: rst
+
+.. _scevtls:
+
+#######
+scevtls
+#######
+
+**List event IDs from database.**
+
+
+Description
+===========
+
+*scevtls* lists all available event IDs within a given time range to stdout.
+
+Use :ref:`scorgls` for listing all origin IDs. In extension to *scevtls* and
+:ref:`scorgls` :ref:`scquery` can search for parameters based on complex
+custom queries.
+
+
+Examples
+========
+
+* Print all event IDs for the complete year 2012:
+
+  .. code-block:: sh
+
+     scevtls -d mysql://sysop:sysop@localhost/seiscomp \
+             --begin "2012-01-01 00:00:00" \
+             --end "2013-01-01 00:00:00"
+
+* Print all event IDs along with the ID of the preferred origin:
+
+  .. code-block:: sh
+
+     scevtls -d localhost -p
+
+
+.. _scevtls_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/scevtls.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/scevtls.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/scevtls.cfg`
+
+scevtls inherits :ref:`global options<global-configuration>`.
+
+
+
+
+Command-Line Options
+====================
+
+.. program:: scevtls
+
+:program:`scevtls [options]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+
+Database
+--------
+
+.. option:: --db-driver-list
+
+   List all supported database drivers.
+
+.. option:: -d, --database arg
+
+   The database connection string, format:
+   service:\/\/user:pwd\@host\/database.
+   \"service\" is the name of the database driver which
+   can be queried with \"\-\-db\-driver\-list\".
+
+.. option:: --config-module arg
+
+   The config module to use.
+
+.. option:: --inventory-db arg
+
+   Load the inventory from the given database or file, format:
+   [service:\/\/]location .
+
+.. option:: --db-disable
+
+   Do not use the database at all
+
+
+Events
+------
+
+.. option:: --begin time
+
+   Specify the lower bound of the time interval. Format is
+   \"2012\-01\-01 00:00:00\".
+
+.. option:: --end time
+
+   Specify the upper bound of the time interval. Format is
+   \"2012\-01\-01 00:00:00\".
+
+.. option:: --hours arg
+
+   Start searching given hours before now. If set, \-\-begin and
+   \-\-end are ignored.
+
+.. option:: --modified-after time
+
+   Print IDs or events modified after the specified time.
+
+
+Output
+------
+
+.. option:: -D, --delimiter string
+
+   Specify the delimiter of the resulting event IDs.
+
+.. option:: -p, --preferred-origin
+
+   Print the ID of the preferred origin along with the event
+   ID.
+

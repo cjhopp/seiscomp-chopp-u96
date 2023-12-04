@@ -1,0 +1,2338 @@
+<!doctype html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>gaps &#8212; GAPS: Web Applications for SeisComP  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gempa.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/gempa.css?v=c960eebf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/gempa.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Glossary" href="../base/glossary.html" />
+    <link rel="prev" title="Introduction" href="../base/introduction.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <img class="background" src="../_static/icon.png"/>
+        <div class="content">
+           <span class="title">GAPS: Web Applications for SeisComP </span>
+           <span class="version">.#</span></h1>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="../base/glossary.html" title="Glossary"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="../base/introduction.html" title="Introduction"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="gaps">
+<span id="id1"></span><h1>gaps<a class="headerlink" href="#gaps" title="Permalink to this heading">¶</a></h1>
+<p><strong>gempa application server for the web.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p><cite>GAPS</cite> provides a collection of web-based client tools running in a web
+browser anywhere on PCs, tablets or smartphones to interface with a <cite>SeisComP</cite>
+installation that operates the <cite>gaps</cite> server. Through <cite>GAPS</cite>, operators
+gain insight into a remote <cite>SeisComP</cite> data acquisition and processing system and
+can interact with it. In full-screen mode, the modules are excellent for
+demonstrating the performance of the <cite>SeisComP</cite> server system in a show room.</p>
+<p>Here we refer to <cite>GAPS</cite> as the gempa product and to <cite>gaps</cite> as the provided
+module which can be configured and started within <cite>SeisComP</cite>.</p>
+</section>
+<section id="overview">
+<span id="gaps-overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
+<p>When connecting to a <cite>gaps</cite> server, the <a class="reference internal" href="#fig-gaps-start"><span class="std std-ref">start page</span></a> is
+shown. From there the individual web modules can be reached. These are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#gaps-eqview"><span class="std std-ref">EQView</span></a>: View event catalogs and detailed parameters in
+custom widgets on a map,</p></li>
+<li><p><a class="reference internal" href="#gaps-stationview"><span class="std std-ref">StationView</span></a>: View stations and their parameters along
+with events on a map,</p></li>
+<li><p><a class="reference internal" href="#gaps-traceview"><span class="std std-ref">TraceView</span></a>: View raw or filtered waveforms from stations
+along with phase picks
+and event parameters. Select the station interactively on a map,</p></li>
+<li><p><a class="reference internal" href="#gaps-olv"><span class="std std-ref">OriginLocatorView</span></a>: Browse and view event catalogs, select and
+analyze events by viewing or selecting phase detections and processing
+waveforms.</p></li>
+</ul>
+<p>Read the full instructions on using these web modules in section
+<a class="reference internal" href="#gaps-client-modules"><span class="std std-ref">Application: Client Modules</span></a>.</p>
+<figure class="align-center" id="id25">
+<span id="fig-gaps-start"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_start.png"><img alt="../_images/gaps_gempa_start.png" src="../_images/gaps_gempa_start.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 1: GAPS start page (full-screen mode, example from gempa’s
+<a class="reference external" href="https://demo.gempa.de">demo website</a>).</span><a class="headerlink" href="#id25" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><cite>gaps</cite> reads event parameters from <span id="id2"><em>QuakeLink</em> [<a class="reference internal" href="../base/references.html#id187" title="QuakeLink. gempa module. URL: https://docs.gempa.de/quakelink/current/index.html.">3</a>]</span> which is provided
+along with <cite>GAPS</cite>. It uses maps stored as tiles <span id="id3"><em>Tiles</em> [<a class="reference internal" href="../base/references.html#id272" title="Tiles. OpenStreetMap. URL: http://wiki.openstreetmap.org/wiki/Tiles.">4</a>]</span>.
+The web applications can be customized to show different details on maps and
+catalogs. All may be secured on multiple levels. In
+this way authorized users can process data and commit the results to the
+<cite>SeisComP</cite> server system as if they were directly connected to a <cite>SeisComP</cite> system.
+Read the section <a class="reference internal" href="#gaps-installation"><span class="std std-ref">Installation and Setup</span></a> to learn about your options.</p>
+</section>
+<section id="system-requirements">
+<span id="gaps-system-requirements"></span><h2>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><span id="id4"><em>QuakeLink</em> [<a class="reference internal" href="../base/references.html#id187" title="QuakeLink. gempa module. URL: https://docs.gempa.de/quakelink/current/index.html.">3</a>]</span> serves event parameters to <cite>gaps</cite>. In order to have
+<cite>gaps</cite> functioning, a QuakeLink server must therefore be accessible
+remotely or configured locally along with <cite>SeisComP</cite> and started.</p></li>
+<li><p><cite>gaps</cite> reads maps from tiles provided by the plugin <span id="id5"><em>mbtiles</em> [<a class="reference internal" href="../base/references.html#id151" title="mbtiles. gempa map plugin. URL: https://docs.gempa.de/plugins/current/base/global_mbtiles.html.">7</a>]</span>
+provided by gempa’s <em>mappprojection</em> package which must be installed.</p></li>
+</ul>
+<p>In a basic setup, the <cite>gaps</cite> and QuakeLink HTTP interfaces are directly
+accessed by the web browser. Make sure that the interfaces are configured and
+accessible by the client.</p>
+<p>The steps for installation and configuration are explained in section
+<a class="reference internal" href="#gaps-installation"><span class="std std-ref">Installation and Setup</span></a>. All configuration parameters are detailed in section
+<a class="reference internal" href="#sec-gaps-configuration"><span class="std std-ref">Module Configuration</span></a>.</p>
+</section>
+<section id="installation-and-setup">
+<span id="gaps-installation"></span><h2>Installation and Setup<a class="headerlink" href="#installation-and-setup" title="Permalink to this heading">¶</a></h2>
+<p>This chapter describes in detail how to setup <cite>gaps</cite> for common use cases
+with:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#gaps-system-requirements"><span class="std std-ref">System requirements</span></a>,</p></li>
+<li><p><a class="reference internal" href="#gaps-installation-basic-setup"><span class="std std-ref">Package installation</span></a>,</p></li>
+<li><p><a class="reference internal" href="#gaps-quakelink"><span class="std std-ref">QuakeLink</span></a> configuration,</p></li>
+<li><p><a class="reference internal" href="#gaps-setup"><span class="std std-ref">gaps server</span></a> and customization,</p></li>
+<li><p><a class="reference internal" href="#gaps-installation-web-server-integration"><span class="std std-ref">Web server integration (NGINX)</span></a>.</p></li>
+</ul>
+<p>For a <strong>quick installation and setup on a local machine</strong> follow the instruction
+in sections:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#gaps-installation-basic-setup"><span class="std std-ref">Package installation</span></a>,</p></li>
+<li><p><a class="reference internal" href="#gaps-quakelink"><span class="std std-ref">QuakeLink</span></a>,</p></li>
+<li><p><a class="reference internal" href="#gaps-quakelink-connection"><span class="std std-ref">Connect GAPS with QuakeLink</span></a>.</p></li>
+</ol>
+<p>Later you may improve further by following the full procedure set out below.
+E.g. you may set access control rules (read <a class="reference internal" href="#gaps-connection-access"><span class="std std-ref">Connection and access control</span></a>) and
+integrate <cite>gaps</cite> into your web server
+(read <a class="reference internal" href="#gaps-installation-web-server-integration"><span class="std std-ref">Web server integration (NGINX)</span></a>) for visibility from your
+or any public network.
+You may even generate custom web pages as set out in <a class="reference internal" href="#custom-gaps-pages"><span class="std std-ref">Custom pages</span></a>.</p>
+<section id="package-installation">
+<span id="gaps-installation-basic-setup"></span><h3>Package installation<a class="headerlink" href="#package-installation" title="Permalink to this heading">¶</a></h3>
+<p><cite>GAPS</cite> consists of 2 packages that should be installed for full
+functionality:</p>
+<ul class="simple">
+<li><p><em>gaps-server</em> for the <cite>gaps</cite> server application,</p></li>
+<li><p><em>gaps-frontends/gaps-frontends-all</em> for the <cite>gaps</cite> web apps
+(client applications) without/with OriginLocatorView.</p></li>
+</ul>
+<p>Install the <cite>GAPS</cite> and the mapprojections packages in addition
+to <cite>SeisComP</cite> via
+<a class="reference external" href="https://data.gempa.de/gsm/gempa-gsm.tar.gz">gsm package manager</a>.
+You may install <cite>GAPS</cite> with or without the OriginLocatorView.</p>
+<ul>
+<li><p>Installation <strong>without</strong> OriginLocatorView:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gsm<span class="w"> </span>install<span class="w"> </span>mapprojections<span class="w"> </span>gaps-server<span class="w"> </span>gaps-frontends
+</pre></div>
+</div>
+<p>or</p>
+</li>
+<li><p>Installation <strong>with</strong> OriginLocatorView:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gsm<span class="w"> </span>install<span class="w"> </span>mapprojections<span class="w"> </span>gaps-server<span class="w"> </span>gaps-frontends-all
+</pre></div>
+</div>
+</li>
+</ul>
+<p>The quakelink package must be installed as well unless you want to
+connect to an external QuakeLink server:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gsm<span class="w"> </span>install<span class="w"> </span>quakelink
+</pre></div>
+</div>
+</section>
+<section id="quakelink">
+<span id="gaps-quakelink"></span><h3>QuakeLink<a class="headerlink" href="#quakelink" title="Permalink to this heading">¶</a></h3>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>This chapter on QuakeLink may be skipped if QuakeLink is already running or
+if another external QuakeLink server shall be used for <cite>gaps</cite> as described
+in <a class="reference internal" href="#gaps-quakelink-connection"><span class="std std-ref">Connect GAPS with QuakeLink</span></a>.</p>
+</div>
+<p>Configure and start QuakeLink and populate it with event parameters.
+Configure QuakeLink in
+<code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/quakelink.cfg</span></code>  or use <span id="id6"><em>scconfig</em> [<a class="reference internal" href="../base/references.html#id204" title="scconfig. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scconfig.html.">11</a>]</span>.</p>
+<ol class="arabic">
+<li><p>Enable QuakeLink HTTP web interface:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># Port to listen for HTTP request</span>
+<span class="na">QL.http.port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">18080</span>
+</pre></div>
+</div>
+</li>
+<li><p>Enable and start the services</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>quakelink
+seiscomp<span class="w"> </span>start<span class="w"> </span>quakelink
+</pre></div>
+</div>
+</li>
+<li><p>For importing event parameters into QuakeLink, either</p>
+<ul class="simple">
+<li><p>configure, enable and start <span id="id7"><em>sc2ql</em> [<a class="reference internal" href="../base/references.html#id193" title="sc2ql. gempa module. URL: https://docs.gempa.de/quakelink/current/apps/sc2ql.html.">10</a>]</span>, <span id="id8"><em>ql2ql</em> [<a class="reference internal" href="../base/references.html#id182" title="ql2ql. gempa plugin. URL: https://docs.gempa.de/quakelink/current/apps/ql2ql.html.">8</a>]</span> or
+<span id="id9"><em>fdsnws2ql</em> [<a class="reference internal" href="../base/references.html#id110" title="fdsnws2ql. gempa plugin. URL: https://docs.gempa.de/quakelink/current/apps/fdsnws2ql.html.">5</a>]</span> for automatic import or</p></li>
+<li><p>execute <span id="id10"><em>qlpush</em> [<a class="reference internal" href="../base/references.html#id185" title="qlpush. gempa module. URL: https://docs.gempa.de/quakelink/current/apps/qlpush.html.">9</a>]</span> on demand.</p></li>
+</ul>
+</li>
+<li><p>For testing and an overview over available events open the default QuakeLink
+URL in a web browser:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>http://localhost:18080
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="appname-server">
+<span id="gaps-setup"></span><h3><cite>gaps</cite> server<a class="headerlink" href="#appname-server" title="Permalink to this heading">¶</a></h3>
+<p><cite>gaps</cite> requires to configure:</p>
+<ul class="simple">
+<li><p>Module parameters for general properties,</p></li>
+<li><p>Bindings for defining stations visible in the web frontends</p></li>
+</ul>
+<p>in addition to the connection to QuakeLink and the maps.</p>
+<p>In order to bind a station to <cite>gaps</cite>, e.g. showing its symbol in the station
+view, create a <cite>gaps</cite> binding for that station with parameter enable set to
+<em>true</em>. Stations that have not been bound to <cite>gaps</cite> will be removed from the
+inventory and therefore not be shown.</p>
+<p>Configure <cite>gaps</cite> in <code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/gaps.cfg</span></code> or use
+<span id="id11"><em>scconfig</em> [<a class="reference internal" href="../base/references.html#id204" title="scconfig. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scconfig.html.">11</a>]</span>. A subset of control parameters is described in this section
+but a complete list can be found in <a class="reference internal" href="#sec-gaps-configuration"><span class="std std-ref">Configuration</span></a>.
+More detailed help for all parameters can be found in the configuration of the
+<cite>gaps</cite> module in <strong class="program">scconfig</strong> (mouse-over the respective parameter).</p>
+<section id="connect-gaps-with-quakelink">
+<span id="gaps-quakelink-connection"></span><h4>Connect GAPS with QuakeLink<a class="headerlink" href="#connect-gaps-with-quakelink" title="Permalink to this heading">¶</a></h4>
+<p>Configure the connection of <cite>gaps</cite> to QuakeLink.</p>
+<ol class="arabic">
+<li><p>Set the URI for requesting events from QuakeLink in <a class="reference internal" href="#confval-quakelink"><code class="xref std std-confval docutils literal notranslate"><span class="pre">quakelink</span></code></a>.
+This URI is used as a default for all web applications. e.g.:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">quakelink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">http://your_server:18080/events/query</span>
+</pre></div>
+</div>
+</li>
+<li><p>Set the QuakeLink proxy connection initiated by <cite>gaps</cite> in
+<a class="reference internal" href="#confval-quakelinkProxy"><code class="xref std std-confval docutils literal notranslate"><span class="pre">quakelinkProxy</span></code></a>: to convert and forward single events from
+QuakeLink to the browser, e.g.:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">quakelinkProxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ql://your_server:18010</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The parameters <a class="reference internal" href="#confval-quakelink"><code class="xref std std-confval docutils literal notranslate"><span class="pre">quakelink</span></code></a> and <a class="reference internal" href="#confval-quakelinkProxy"><code class="xref std std-confval docutils literal notranslate"><span class="pre">quakelinkProxy</span></code></a> need to
+point to the same server address and must be available to the client.
+Hence, for the server address you may use</p>
+<ul class="simple">
+<li><p><strong>localhost</strong> if you are running the <cite>gaps</cite> frontends on the same
+machine as the <cite>gaps</cite> server and Quakelink or if the connection to
+QuakeLink and <cite>gaps</cite> is controlled via
+<a class="reference internal" href="#gaps-installation-web-server-integration"><span class="std std-ref">NGINX</span></a> or another
+web server.</p></li>
+<li><p><strong>a public IP address or name</strong> if <cite>gaps</cite> and QuakeLink run on a
+publicly available computer.</p></li>
+</ul>
+</div>
+<p>Compare also with the settings in <span id="id12"><em>sc2ql</em> [<a class="reference internal" href="../base/references.html#id193" title="sc2ql. gempa module. URL: https://docs.gempa.de/quakelink/current/apps/sc2ql.html.">10</a>]</span>.</p>
+</li>
+<li><p>Enable and start the services</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>gaps
+seiscomp<span class="w"> </span>start<span class="w"> </span>gaps
+</pre></div>
+</div>
+<p>or restart <cite>gaps</cite> after applying further configurations later on</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span>restart<span class="w"> </span>gaps
+</pre></div>
+</div>
+</li>
+<li><p>For testing the initial setup of <cite>gaps</cite> try to open the default <cite>gaps</cite>
+URL in a web browser, e.g <em>firefox</em> where the
+<a class="reference internal" href="#fig-gaps-start"><span class="std std-ref">GAPS start page</span></a> should appear:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>firefox<span class="w"> </span>http://localhost:8080
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the <cite>gaps</cite> front end displays the notification
+<code class="docutils literal notranslate"><span class="pre">Could</span> <span class="pre">not</span> <span class="pre">reach</span> <span class="pre">server,</span> <span class="pre">try</span> <span class="pre">again</span> <span class="pre">in</span> <span class="pre">10</span> <span class="pre">s</span></code> and the browser console
+(Ctrl+Shift+I) contains CORS error message like
+<code class="docutils literal notranslate"><span class="pre">Cross-Origin</span> <span class="pre">Request</span> <span class="pre">Blocked:</span> <span class="pre">The</span> <span class="pre">Same</span> <span class="pre">Origin</span> <span class="pre">Policy</span> <span class="pre">disallows</span> <span class="pre">reading</span> <span class="pre">the</span>
+<span class="pre">remote</span> <span class="pre">resource</span> <span class="pre">at</span> <span class="pre">http://localhost:18080/events/query?archived.</span> <span class="pre">(Reason:</span>
+<span class="pre">CORS</span> <span class="pre">request</span> <span class="pre">did</span> <span class="pre">not</span> <span class="pre">succeed)</span></code>, it is very likely that the QuakeLink server
+is not up and running. Please check the QuakeLink log file under
+<code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">HOME</span></em><span class="pre">/.seiscomp/log/quakelink.log</span></code></p>
+</div>
+</li>
+</ol>
+</section>
+<section id="map-properties">
+<span id="gaps-maps-control"></span><h4>Map properties<a class="headerlink" href="#map-properties" title="Permalink to this heading">¶</a></h4>
+<p>The location of maps stored as <span id="id13"><em>Tiles</em> [<a class="reference internal" href="../base/references.html#id272" title="Tiles. OpenStreetMap. URL: http://wiki.openstreetmap.org/wiki/Tiles.">4</a>]</span>
+as well as the zoom levels can be configured.
+Maps from <span id="id14"><em>OpenStreetMap</em> [<a class="reference internal" href="../base/references.html#id174" title="OpenStreetMap. URL: http://www.openstreetmap.org.">2</a>]</span> or generated by the user can be included.
+High resolution maps can also be purchased from <span id="id15"><em>gempa GmbH</em> [<a class="reference internal" href="../base/references.html#id118" title="gempa GmbH. The SeisComP development and maintenance company. URL: https://www.gempa.de/.">6</a>]</span>.
+<a class="reference external" href="https://www.gempa.de/contact/">Contact gempa GmbH</a> for the details.</p>
+<figure class="align-center" id="id26">
+<span id="fig-gaps-scconfig-maps"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scconfig_maps.png"><img alt="../_images/gaps_gempa_scconfig_maps.png" src="../_images/gaps_gempa_scconfig_maps.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 2: scconfig: window for setting the map parameters.</span><a class="headerlink" href="#id26" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic">
+<li><p>Add the mbtiles plugin to global parameters and configure
+<a class="reference internal" href="#confval-map.location"><code class="xref std std-confval docutils literal notranslate"><span class="pre">map.location</span></code></a> and <code class="xref std std-confval docutils literal notranslate"><span class="pre">map.type</span></code> with the map tile file or URL
+and the map type, respectively.</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${plugins}, mbtiles</span>
+<span class="na">map.location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[file/map URL]</span>
+<span class="na">map.type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[type]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These parameters are typically set by global module configuration in
+<code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/global.cfg</span></code> but they may be overridden in
+<cite>gaps</cite> in <code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/gaps.cfg</span></code>.</p>
+</div>
+</li>
+<li><p>The maps are available through global parameters but you may adjust map
+features</p>
+<ul>
+<li><p>Set <a class="reference internal" href="#confval-tileDB"><code class="xref std std-confval docutils literal notranslate"><span class="pre">tileDB</span></code></a> to the MBTiles tile database if <cite>gaps</cite> should serve
+tiles itself. Leave it empty if mapURI is configured with a remote tile
+server in <a class="reference internal" href="#confval-apps.mapURI"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapURI</span></code></a>.</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">tileDB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/home/data/maps/world-11/world-11.mbtiles</span>
+</pre></div>
+</div>
+</li>
+<li><p>For using a remote tile server set <a class="reference internal" href="#confval-apps.mapURI"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapURI</span></code></a>. Provide start
+values for zoom level {z}, latitude {y} and longitude {x}, e.g.:</p>
+<ul>
+<li><p>locally stored maps:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">apps.mapURI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;../tiles/{z}/{y}/{x}&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>a remote server</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">apps.mapURI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;http://example.com:8080/tiles/{z}/{x}/{y}&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>or a OpenStreetMap server</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">apps.mapURI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;http://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>OpenStreetMap and probably other tile server expect the tile indexes as
+<em>z</em>, <em>x</em>, <em>y</em> whereas the built-in <cite>gaps</cite> tile server expects <em>z</em>, <em>y</em>, <em>x</em>.</p>
+</div>
+</li>
+<li><p>Set <a class="reference internal" href="#confval-apps.mapMaxLevel"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapMaxLevel</span></code></a> to the maximum zoom number for which the
+tiles source has available. The tiles
+on all zoom levels higher than <a class="reference internal" href="#confval-apps.mapMaxLevel"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapMaxLevel</span></code></a> will be loaded
+at <a class="reference internal" href="#confval-apps.mapMaxLevel"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapMaxLevel</span></code></a> level and auto-scaled.</p></li>
+<li><p>Adjust <a class="reference internal" href="#confval-apps.mapMaxZoom"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapMaxZoom</span></code></a> to fix the maximum allowed zoom level in
+interactive maps. The maximum level must be provided by the maps
+server.</p></li>
+<li><p>Define the region of the initially shown maps in StationView and TraceView
+by <code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.mapRegion.*</span></code> parameters:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># The minimum latitude of the region.</span>
+<span class="na">apps.mapRegion.minimumLatitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">-90</span>
+
+<span class="c1"># The minimum longitude of the region.</span>
+<span class="na">apps.mapRegion.minimumLongitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">-225</span>
+
+<span class="c1"># The maximum latitude of the region.</span>
+<span class="na">apps.mapRegion.maximumLatitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">90</span>
+
+<span class="c1"># The maximum longitude of the region.</span>
+<span class="na">apps.mapRegion.maximumLongitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">225</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Set the parameter <a class="reference internal" href="#confval-apps.logoPath"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.logoPath</span></code></a> to show customized logo images for
+your institution in the EQView or the StationView. By default, “GEMPA” will
+be shown.</p></li>
+</ol>
+</section>
+<section id="connection-and-access-control">
+<span id="gaps-connection-access"></span><h4>Connection and access control<a class="headerlink" href="#connection-and-access-control" title="Permalink to this heading">¶</a></h4>
+<figure class="align-center" id="id27">
+<span id="fig-gaps-scconfig"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scconfig_1.png"><img alt="../_images/gaps_gempa_scconfig_1.png" src="../_images/gaps_gempa_scconfig_1.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 3: scconfig: window for setting the access control parameters.</span><a class="headerlink" href="#id27" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<ol class="arabic">
+<li><p><strong>Connection control:</strong> Control the client access by providing IP and port to
+bind the http server to by <a class="reference internal" href="#confval-bind"><code class="xref std std-confval docutils literal notranslate"><span class="pre">bind</span></code></a>.
+Use 0.0.0.0 to bind to all interfaces. Either the port or the IP address may be
+omitted, e.g. “0.0.0.0” or “:1234”. Leave empty to run without providing a
+http server.</p>
+<p>Access only from the localhost of the server using port 8080 (default):</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1:8080</span>
+</pre></div>
+</div>
+<p>Access only from all remote IP addresses using port 8080:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.0.0:8080</span>
+</pre></div>
+</div>
+<p>For connecting via https configure <a class="reference internal" href="#confval-sbind"><code class="xref std std-confval docutils literal notranslate"><span class="pre">sbind</span></code></a>. Port “:-1” (default)
+rejects the usage of https.</p>
+</li>
+<li><p><strong>Access control:</strong> Re-locating events and committing the results in the
+OriginLocatorView is protected by username and password.
+<a class="reference internal" href="#gaps-users-properties"><span class="std std-ref">Different roles</span></a> can be assigned to the users.</p>
+<ul>
+<li><p>Configure <a class="reference internal" href="#confval-users"><code class="xref std std-confval docutils literal notranslate"><span class="pre">users</span></code></a> for defining users names with encrypted
+passwords which may operate the OriginLocatorView. Define the file
+containing user names and encrypted passwords:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@CONFIGDIR@/gaps/users</span>
+</pre></div>
+</div>
+<p>The users file contains the user details (name:encrpyted-password). Add one
+line per user e.g. for user sysop:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">sysop</span><span class="o">:</span><span class="s">encrpyted-password</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create the content of this file with user name and the encrypted password.
+For encrypting the password it is recommended to apply a strong algorithm
+such as sha-256 or sha-512. The password encryption tool may depend on the
+Linux flavour.</p>
+<ul>
+<li><p>When <em>mkpasswd</em> is available the command</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">user</span><span class="o">=</span>sysop<span class="w"> </span><span class="nv">pw</span><span class="o">=</span><span class="sb">`</span>mkpasswd<span class="w"> </span>-m<span class="w"> </span>sha-512<span class="sb">`</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$user</span>:<span class="nv">$pw</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>generates a line for e.g. user “sysop”.</p>
+</li>
+<li><p>Alternatively use, e.g. on RHEL or CentOS:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import crypt,getpass; print(getpass.getpass(&quot;Name: &quot;)+&quot;:&quot;+crypt.crypt(getpass.getpass(),crypt.mksalt(crypt.METHOD_SHA512)))&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<ul id="gaps-users-properties">
+<li><p>Different <strong>user properties</strong> can be assigned to users or the
+OriginLocatorView. Currently, the two properties are interpreted:</p>
+<ul class="simple">
+<li><p><strong>staff:</strong> full access to relocating events and committing the results
+to the <cite>SeisComP</cite> system.</p></li>
+<li><p><strong>guest:</strong> limited access. Only relocating events is allowed but
+committing the results is prohibited.</p></li>
+</ul>
+<p>The properties are provided in a file defined by <a class="reference internal" href="#confval-userProperties"><code class="xref std std-confval docutils literal notranslate"><span class="pre">userProperties</span></code></a>,
+e.g.:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">userProperties</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">@CONFIGDIR@/gaps/access</span>
+</pre></div>
+</div>
+<p>Each line contains the user name and a list of properties in format
+“username:prop1,prop2,prop3”. Those properties are used to grant access
+to specific functionalities in <cite>gaps</cite> such as sending processing results
+back.</p>
+<p>Example of the file <code class="file docutils literal notranslate"><span class="pre">&#64;CONFIGDIR&#64;/gaps/access</span></code> for users sysop,  user1
+and user2 (one line per user):</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">sysop</span><span class="o">:</span><span class="s">staff</span>
+<span class="na">user1</span><span class="o">:</span><span class="s">staff</span>
+<span class="na">user2</span><span class="o">:</span><span class="s">guest</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="eqview">
+<span id="gaps-eqview-control"></span><h3>EQView<a class="headerlink" href="#eqview" title="Permalink to this heading">¶</a></h3>
+<p>Widgets in the EQView can be configured allowing specific focusing on source
+regions and earthquakes therein with that exceed a given magnitude threshold.</p>
+<figure class="align-center" id="id28">
+<span id="fig-gaps-scconfig-eqview"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scconfig_eqview.png"><img alt="../_images/gaps_gempa_scconfig_eqview.png" src="../_images/gaps_gempa_scconfig_eqview.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 4: scconfig: window for setting the EQView widget control parameters.</span><a class="headerlink" href="#id28" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Set the parameter <a class="reference internal" href="#confval-apps.logoPath"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.logoPath</span></code></a> to show customized logo images.</p>
+<section id="eqview-widgets">
+<h4>eqview.widgets<a class="headerlink" href="#eqview-widgets" title="Permalink to this heading">¶</a></h4>
+<p>Controls which of the defined widgets profiles are shown, e.g.:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">apps.eqview.widgets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">world, europe, chile, indonesia</span>
+</pre></div>
+</div>
+</section>
+<section id="widgets">
+<h4>Widgets<a class="headerlink" href="#widgets" title="Permalink to this heading">¶</a></h4>
+<p>Properties of all widgets profiles defined in <em>eqview.widgets</em>.</p>
+<p>Add one profile block per profile.</p>
+<p>Example for widget profile europe, where all event with magnitudes greater
+than 2 are shown for Europe.</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># The widget title as it appears in the widgets titlebar.</span>
+<span class="na">apps.eqview.widget.europe.title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Europe</span>
+
+<span class="c1"># The minimum latitude of the region.</span>
+<span class="na">apps.eqview.widget.europe.minimumLatitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">20</span>
+
+<span class="c1"># The minimum longitude of the region.</span>
+<span class="na">apps.eqview.widget.europe.minimumLongitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">-20</span>
+
+<span class="c1"># The maximum latitude of the region.</span>
+<span class="na">apps.eqview.widget.europe.maximumLatitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">60</span>
+
+<span class="c1"># The maximum longitude of the region.</span>
+<span class="na">apps.eqview.widget.europe.maximumLongitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">40.0</span>
+
+<span class="c1"># The time span to be shown in hours.</span>
+<span class="na">apps.eqview.widget.europe.timeSpan</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">120</span>
+
+<span class="c1"># The minimum magnitude to be shown.</span>
+<span class="na">apps.eqview.widget.europe.minimumMagnitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2.0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="stationview">
+<span id="gaps-sv-control"></span><h3>StationView<a class="headerlink" href="#stationview" title="Permalink to this heading">¶</a></h3>
+<p>Provide the <code class="xref std std-confval docutils literal notranslate"><span class="pre">gaps.mapRegion.*</span></code> parameters to customize the region shown
+initially on the map.
+Set the parameter <a class="reference internal" href="#confval-apps.logoPath"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.logoPath</span></code></a> to show customized logo images.</p>
+</section>
+<section id="traceview">
+<span id="gaps-tv-control"></span><h3>TraceView<a class="headerlink" href="#traceview" title="Permalink to this heading">¶</a></h3>
+<p>Filters used in TraceView can be configured by <a class="reference internal" href="#confval-apps.traceview.filters"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.traceview.filters</span></code></a>.
+Read the section <span id="id16"><em>Filter Grammar</em> [<a class="reference internal" href="../base/references.html#id113" title="Filter Grammar. SeisComP filter. URL: https://docs.gempa.de/seiscomp/current/base/filter-grammar.html.">1</a>]</span> for details on the
+possible filters and filter grammar in <cite>SeisComP</cite>.</p>
+<figure class="align-center" id="id29">
+<span id="fig-gaps-scconfig-olv-trace"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scconfig_olv_trace.png"><img alt="../_images/gaps_gempa_scconfig_olv_trace.png" src="../_images/gaps_gempa_scconfig_olv_trace.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 5: scconfig: window for setting the control parameters
+for OriginLocatorView and TraceView.</span><a class="headerlink" href="#id29" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Configure the list of filters that are available in TraceView in the form
+<code class="docutils literal notranslate"><span class="pre">&quot;description;filter_chain&quot;,&quot;...&quot;,...</span></code></p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="na">apps.traceview.filters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0.7Hz - 2Hz;RMHP(10)&gt;&gt;ITAPER(30)&gt;&gt;BW(4,0.7,2.0)&quot;,&quot;@4Hz - 8Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(4,4,8)&quot;</span>
+</pre></div>
+</div>
+<p>where the leading “&#64;” defines the default filter.</p>
+</section>
+<section id="originlocatorview">
+<span id="gaps-olv-control"></span><h3>OriginLocatorView<a class="headerlink" href="#originlocatorview" title="Permalink to this heading">¶</a></h3>
+<p>Configurable among others:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#confval-apps.scolv.loadEventDB"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.scolv.loadEventDB</span></code></a>: The number of days before present for which
+events are initially shown in the event list.</p></li>
+<li><p><a class="reference internal" href="#confval-apps.traceview.filters"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.traceview.filters</span></code></a>: Filters available before picking.</p></li>
+<li><p>Seismic phases for which the theoretical arrival times are shown on the
+traces.</p></li>
+<li><p><a class="reference internal" href="#confval-apps.scolv.useUTC"><code class="xref std std-confval docutils literal notranslate"><span class="pre">apps.scolv.useUTC</span></code></a>: Use UTC for time zone instead of that of the
+local system.</p></li>
+<li><p>Time window parameters: Control the amount of data to load and process in the
+picker.</p></li>
+</ul>
+<p>See the <a class="reference internal" href="#fig-gaps-scconfig-olv-trace"><span class="std std-ref">figure</span></a> and filters in
+<a class="reference internal" href="#gaps-tv-control"><span class="std std-ref">Trace View</span></a> for details.</p>
+</section>
+<section id="custom-pages">
+<span id="custom-gaps-pages"></span><h3>Custom pages<a class="headerlink" href="#custom-pages" title="Permalink to this heading">¶</a></h3>
+<p>Installing the <cite>gaps</cite> server creates the data directory <code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/gaps/</span></code>
+which contains the template files for creating the websites.
+This data directory will be overwritten with every new installation.
+For manually customizing the websites copy the data directory to another location
+configured by <a class="reference internal" href="#confval-mediaDirectory"><code class="xref std std-confval docutils literal notranslate"><span class="pre">mediaDirectory</span></code></a> and make the desired changes in the new
+directory.</p>
+<p>New installations might provide new features. Therefore, overwriting the
+files and directories in <a class="reference internal" href="#confval-mediaDirectory"><code class="xref std std-confval docutils literal notranslate"><span class="pre">mediaDirectory</span></code></a> with the newly installed
+data directory may be required. Make sure to safe the manual changes before
+and apply them thereafter again.</p>
+</section>
+<section id="web-server-integration-nginx">
+<span id="gaps-installation-web-server-integration"></span><h3>Web server integration (NGINX)<a class="headerlink" href="#web-server-integration-nginx" title="Permalink to this heading">¶</a></h3>
+<p>The following instructions demonstrate how to configure
+<a class="reference external" href="https://nginx.org/">NGINX</a> as a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Reverse_proxy">reverse proxy</a> for the <cite>gaps</cite>
+and QuakeLink web services. The motivation for this extra effort is:</p>
+<ul class="simple">
+<li><p>ability to use default HTTP/HTTPS port</p>
+<ul>
+<li><p>modules typically run under sysop user and are not allowed to bind to privilege port (&lt;1024)</p></li>
+<li><p>different web apps accessible through the same port: 80/443</p></li>
+</ul>
+</li>
+<li><p>offload TLS</p>
+<ul>
+<li><p>single point to configure certificate and key</p></li>
+<li><p>no restart of modules for certificate update</p></li>
+</ul>
+</li>
+<li><p>security improvement, load balancing, DDoS protection</p></li>
+</ul>
+<p>In a typical setup, both <cite>gaps</cite> and QuakeLink, are configured under the same
+<a class="reference external" href="https://www.nginx.com/resources/wiki/start/topics/examples/server_blocks/">server block</a>
+(also known as VirtualHost) and are bound to separate locations: <code class="docutils literal notranslate"><span class="pre">/gaps</span></code> and
+<code class="docutils literal notranslate"><span class="pre">/quakelink</span></code>. In the following examples the term <cite>HOSTNAME</cite> refers to the IP
+address or the domain name the combined service will be available under.</p>
+<ol class="arabic">
+<li><p>Extend the basic QuakeLink configuration in
+<code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/quakelink.cfg</span></code> and add the following lines:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># Defines the root URL used to generate links. That option is only important if</span>
+<span class="c1"># e.g. Apache/Nginx with reverse proxy is used to forward QuakeLinks web pages.</span>
+<span class="na">QL.http.rootURL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">/quakelink</span>
+
+<span class="c1"># Quakelink uses long polling for POST event requests. To allow returning an</span>
+<span class="c1"># empty document (HTTP 204) rather than waiting forever this parameter can be</span>
+<span class="c1"># used. It applies a no-data timeout in seconds. This setting might be useful</span>
+<span class="c1"># if Quakelink is being ran behind a proxy.</span>
+<span class="na">QL.http.timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">50</span>
+</pre></div>
+</div>
+</li>
+<li><p>Extend the basic <cite>gaps</cite> configuration in <code class="file docutils literal notranslate"><span class="pre">$</span><em><span class="pre">SEISCOMP_ROOT</span></em><span class="pre">/etc/gaps.cfg</span></code>
+and add/change the following lines:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># The QuakeLink event request URI. This is used as a default for all web</span>
+<span class="c1"># applications.</span>
+<span class="na">quakelink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;http://HOSTNAME/quakelink/events/query&quot;</span>
+
+<span class="c1"># Port to listen for HTTP request</span>
+<span class="na">bind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">127.0.0.1:8080</span>
+
+<span class="c1"># Path of the server websocket API for all applications. If not explicitly</span>
+<span class="c1"># configured then the serverAPI path will be used.</span>
+<span class="na">apps.serverWSAPI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ws://HOSTNAME/gaps/</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your NGINX is configured with HTTPS support use <code class="docutils literal notranslate"><span class="pre">https</span></code> and <code class="docutils literal notranslate"><span class="pre">wss</span></code>
+instead of <code class="docutils literal notranslate"><span class="pre">http</span></code> and <code class="docutils literal notranslate"><span class="pre">ws</span></code> in the lines above.</p>
+</div>
+</li>
+<li><p>Restart QuakeLink and <cite>gaps</cite> to apply the changes</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span>restart<span class="w"> </span>quakelink<span class="w"> </span>gaps
+</pre></div>
+</div>
+</li>
+<li><p>Map the WebSocket connection upgrade request header to the NGINX variable
+<code class="docutils literal notranslate"><span class="pre">$connection_upgrade</span></code> in <code class="file docutils literal notranslate"><span class="pre">/etc/nginx/conf.d/connection_upgrade.conf</span></code></p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">map</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="w"> </span><span class="nv">$connection_upgrade</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">upgrade</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">&#39;&#39;</span><span class="w"> </span><span class="s">close</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Configure the QuakeLink and <cite>gaps</cite> location in the <code class="docutils literal notranslate"><span class="pre">server</span></code> block of your
+main <code class="file docutils literal notranslate"><span class="pre">/etc/nginx/nginx.conf</span></code> configuration file or in a specific
+configuration file under <code class="file docutils literal notranslate"><span class="pre">/etc/nginx/conf.d</span></code> or
+<code class="file docutils literal notranslate"><span class="pre">/etc/nginx/sites-available</span></code></p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/quakelink/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:18080/</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-For</span><span class="w"> </span><span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">location</span><span class="w"> </span><span class="s">/gaps/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://localhost:8080/</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-For</span><span class="w"> </span><span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Upgrade</span><span class="w"> </span><span class="nv">$http_upgrade</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="nv">$connection_upgrade</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check and reload the NGINX configuration</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>nginx<span class="w"> </span>-t
+systemctl<span class="w"> </span>reload<span class="w"> </span>nginx
+</pre></div>
+</div>
+</li>
+<li><p>Open a browser and try to open the following URLs:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://HOSTNAME/quakelink/">http://HOSTNAME/quakelink/</a> (QuakeLink)</p></li>
+<li><p><a class="reference external" href="http://HOSTNAME/gaps/">http://HOSTNAME/gaps/</a> (<cite>gaps</cite>)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="server-side-event-processing">
+<span id="gaps-server-side-event-processing"></span><h2>Server-side Event Processing<a class="headerlink" href="#server-side-event-processing" title="Permalink to this heading">¶</a></h2>
+<p>Some web applications, currently only <a class="reference internal" href="#gaps-eqview"><span class="std std-ref">EQView</span></a>, support
+processing a batch of events and return a generated document or image which
+will be displayed in the browser. That way the functionality of an application
+can be enhanced by the operator with custom scripts. One example of an event
+processor is provided in the distribution. It is installed
+<code class="file docutils literal notranslate"><span class="pre">share/gaps/processors/events/cluster-3d.html.py</span></code>. A processor script
+takes a CSV event table (see <code class="xref std std-confval docutils literal notranslate"><span class="pre">processors.event</span></code>) as input on stdin
+and outputs the document to stdout. An example configuration looks like this:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>processors.events<span class="w"> </span><span class="o">=</span><span class="w"> </span>3d
+processors.events.3d.title<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DBSCAN Cluster Search 3D&quot;</span>
+<span class="c1"># The script generates a 3d plot based on the selected earthquakes using</span>
+<span class="c1"># plotly (https://plotly.com). It performs a cluster search using DBSCAN</span>
+<span class="c1"># (https://en.wikipedia.org/wiki/DBSCAN). The DBSCAN parameters</span>
+<span class="c1"># &quot;min_samples&quot; and &quot;eps&quot; are defined by the number of selected</span>
+<span class="c1"># earthquakes and the 90-percentile of the inter earthquake distances. The</span>
+<span class="c1"># event markers are colored based on the cluster association.</span>
+<span class="c1">#</span>
+<span class="c1"># To install the required packages the following command should be</span>
+<span class="c1"># executed on the GAPS system</span>
+<span class="c1">#</span>
+<span class="c1"># pip3 install --user scikit-learn plotly pandas</span>
+processors.events.3d.script<span class="w"> </span><span class="o">=</span><span class="w"> </span>@DATADIR@/gaps/processors/events/cluster-3d.html.py
+processors.events.3d.type<span class="w"> </span><span class="o">=</span><span class="w"> </span>html
+</pre></div>
+</div>
+</section>
+<section id="application-client-modules">
+<span id="gaps-client-modules"></span><h2>Application: Client Modules<a class="headerlink" href="#application-client-modules" title="Permalink to this heading">¶</a></h2>
+<p>The <cite>gaps</cite> client modules include:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#gaps-eqview"><span class="std std-ref">EQView</span></a> (<span id="id17"><em>scesv</em> [<a class="reference internal" href="../base/references.html#id210" title="scesv. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scesv.html.">12</a>]</span> equivalent): earthquake locations
+and seismograms for configurable regions and magnitudes.</p></li>
+<li><p><a class="reference internal" href="#gaps-stationview"><span class="std std-ref">StationView</span></a> (<span id="id18"><em>scmv</em> [<a class="reference internal" href="../base/references.html#id226" title="scmv. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scmv.html.">13</a>]</span> equivalent): quality of
+seismograms and peak ground motion at configured stations along with recent
+seismicity.</p></li>
+<li><p><a class="reference internal" href="#gaps-traceview"><span class="std std-ref">TraceView</span></a> (<span id="id19"><em>scrttv</em> [<a class="reference internal" href="../base/references.html#id235" title="scrttv. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scrttv.html.">15</a>]</span> equivalent): viewing raw or
+filtered seismograms with phase picks for stations selectable on a maps.</p></li>
+<li><p><a class="reference internal" href="#gaps-olv"><span class="std std-ref">OriginLocatorView</span></a> (<span id="id20"><em>scolv</em> [<a class="reference internal" href="../base/references.html#id227" title="scolv. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scolv.html.">14</a>]</span> equivalent): interactive
+picking and relocating of earthquakes, commits to the <cite>SeisComP</cite> server system.</p></li>
+</ul>
+<p>The modules can be configured individually (see section <a class="reference internal" href="#gaps-setup"><span class="std std-ref">setup</span></a>).</p>
+<section id="common-map-properties">
+<h3>Common map properties<a class="headerlink" href="#common-map-properties" title="Permalink to this heading">¶</a></h3>
+<p>Common to the client modules are some map functions:</p>
+<ul class="simple">
+<li><p>Zoom in / out: +/- or use mouse wheel</p></li>
+<li><p>Pan left / right or up / down: arrow left / right or arrow up / down</p></li>
+<li><p>Show the coordinates of the current cursor position: shift + cursor
+(only in <a class="reference internal" href="#gaps-eqview"><span class="std std-ref">EQView</span></a>, <a class="reference internal" href="#gaps-stationview"><span class="std std-ref">StationView</span></a>,
+<a class="reference internal" href="#gaps-olv"><span class="std std-ref">OriginLocatorView</span></a>)</p></li>
+</ul>
+</section>
+<section id="gaps-eqview">
+<span id="id21"></span><h3>EQView<a class="headerlink" href="#gaps-eqview" title="Permalink to this heading">¶</a></h3>
+<p>EQView provides remote access to maps and the list of detected and located
+events as well as to a preview of the seismograms. The colors of the event
+circles and the size represent depth and magnitude, respectively.</p>
+<p>Maps with user-specific regions and event profiles can be defined as widgets.
+These maps can be selected and viewed by clicking on the widget shown along with
+the currently selected map. The regions of these maps and of the events therein
+can be customized based on coordinates, magnitude and event time.</p>
+<p>The widget “Latest Event” show the details for the latest event within the
+currently active map widget. When clicking on that widget more event details and
+waveforms are shown. Showing the picks of P and S phases can be activated by
+configuration. In addition, the map is zoom around the event. The zoom level
+depends on the event magnitude.</p>
+<figure class="align-center" id="id30">
+<span id="fig-gaps-eqview-map"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_eqview.png"><img alt="../_images/gaps_gempa_eqview.png" src="../_images/gaps_gempa_eqview.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 6: EQView - event map (full-screen mode). Map panels (right) show configured
+areas which can be selected and enlarged. Circles show event locations.
+The colors indicate source depth, size indicates magnitudes.
+Corresponding values are given in the legend (lower left).
+The overview map (upper left) shows the position of the central map.</span><a class="headerlink" href="#id30" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id31">
+<span id="fig-gaps-eqview-list"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_eqview_list.png"><img alt="../_images/gaps_gempa_eqview_list.png" src="../_images/gaps_gempa_eqview_list.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 7: EQView - event list (full-screen mode). Seismograms (left panel) are shown
+for a selected event.</span><a class="headerlink" href="#id31" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="gaps-stationview">
+<span id="id22"></span><h3>StationView<a class="headerlink" href="#gaps-stationview" title="Permalink to this heading">¶</a></h3>
+<p>StationView provides information on the state of sensor stations based on
+a MapView and text boxes. The information include quality control parameters,
+e.g. delay, latency, gaps, spikes and offset as well as current ground motion
+and PGD, PGV and PGA on 0.3 Hz high-pass filtered seismograms for the past 10
+seconds and 5 minutes (in brackets). Clicking on a particular station shows the
+parameters in a inset figure.</p>
+<p>The maps allow zooming in and out. They may be centered around the most
+recent event. For dense networks, stations are clustered and only the
+number is given at the center of the region. The region shown initially
+on the map can be customized, read the section <a class="reference internal" href="#gaps-maps-control"><span class="std std-ref">Map properties</span></a>.</p>
+<figure class="align-center" id="id32">
+<span id="fig-gaps-stationview"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_stationview.png"><img alt="../_images/gaps_gempa_stationview.png" src="../_images/gaps_gempa_stationview.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 8: StationView (full-screen mode) showing the location of stations (triangles)
+with measured ground motion (color), active triggers (bold red circle
+around station), recent earthquakes (circles) within the
+configured area and information for one selected station (left panel).</span><a class="headerlink" href="#id32" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="gaps-traceview">
+<span id="id23"></span><h3>TraceView<a class="headerlink" href="#gaps-traceview" title="Permalink to this heading">¶</a></h3>
+<p>The TracveView allows viewing of real-time data collected on the <cite>SeisComP</cite>
+<cite>gaps</cite> server along with picks made on these data. The stations for which the
+seismograms are shown can be selected from the map of stations based on the region.
+The region shown initially on the map can be customized, read the section
+<a class="reference internal" href="#gaps-maps-control"><span class="std std-ref">Map properties</span></a>.</p>
+<p>For showing the traces:
+#. Mark “Select stations” in the settings panel to the right,
+#. Select a region by drawing a rectangle on the map using the left mouse bottom,
+#. Click on “Show traces” in the settings panel to the right.</p>
+<figure class="align-center" id="id33">
+<a class="reference internal image-reference" href="../_images/gaps_gempa_traceview_2.png"><img alt="../_images/gaps_gempa_traceview_2.png" src="../_images/gaps_gempa_traceview_2.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 9: TraceView (full-screen mode) showing the stations (triangles) for
+which traces can be viewed as
+well as active detections (bold red triangles).
+The stations selected for showing traces are marked in yellow.</span><a class="headerlink" href="#id33" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>For adjusting seismogram filtering and zooming within in the trace window,
+select the parameters in the “Settings” panel. The panel can be accessed
+by moving the mouse arrow to the right edge of the TraceView window. The
+filter settings can be customized (see <a class="reference internal" href="#gaps-setup"><span class="std std-ref">setup</span></a>).
+Use the left mouse button to shift the seismograms in time.</p>
+<p>Return to the map window by clicking on “Show map” in the “Settings” panel.</p>
+<figure class="align-center" id="id34">
+<a class="reference internal image-reference" href="../_images/gaps_gempa_traceview_1.png"><img alt="../_images/gaps_gempa_traceview_1.png" src="../_images/gaps_gempa_traceview_1.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 10: TraceView (full-screen mode) showing the traces for selected stations
+filtered in the configured frequency band.</span><a class="headerlink" href="#id34" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="gaps-olv">
+<span id="id24"></span><h3>OriginLocatorView<a class="headerlink" href="#gaps-olv" title="Permalink to this heading">¶</a></h3>
+<p>Use the OriginLocatorView for viewing and relocating of events.
+Users with granted permissions (see <a class="reference internal" href="#gaps-setup"><span class="std std-ref">setup</span></a>) working from
+allowed computers (see <a class="reference internal" href="#gaps-setup"><span class="std std-ref">setup</span></a>) can view the data and send back
+the results from data processing.</p>
+<p>For example, everyone from any computer worldwide may have permission to
+view the data but only authorized staff may be permitted to commit the
+processing results such as picks and locations to the server <cite>SeisComP</cite> system.</p>
+<p>Detailed help on the OriginLocatorView can be accessed through “Help”
+button on the upper right on all OriginLocatorView windows.</p>
+<p>Individual events can be accessed by clicking on that particular event in
+the <a class="reference internal" href="#fig-gaps-olv-list"><span class="std std-ref">event list</span></a> or in the <a class="reference internal" href="#fig-gaps-olv-map"><span class="std std-ref">event map</span></a>.
+Access the event list and map by clicking on the list and map symbol on the
+upper right of the “Events” tab.</p>
+<figure class="align-center" id="id35">
+<span id="fig-gaps-olv-list"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scolv_list.png"><img alt="../_images/gaps_gempa_scolv_list.png" src="../_images/gaps_gempa_scolv_list.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 11: OriginLocatorView showing the list of events. The help module can be
+accessed through “Help” bottom on the upper right.</span><a class="headerlink" href="#id35" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id36">
+<span id="fig-gaps-olv-map"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scolv_map.png"><img alt="../_images/gaps_gempa_scolv_map.png" src="../_images/gaps_gempa_scolv_map.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 12: OriginLocatorView showing the map of events. The help module can be
+accessed through “Help” bottom on the upper right.</span><a class="headerlink" href="#id36" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The “Locator” tab is accessed by clicking on an event in the event list or map.
+In the “Locator” tab the event can be relocated choosing the configured
+locator and locator profile. Phase picks can be selected or unselected.
+Clicking on “Picker” opens the <a class="reference internal" href="#fig-gaps-olv-picker"><span class="std std-ref">picker window</span></a> where
+existing picks of P and S phases can be reviewed and new picks can be made.</p>
+<figure class="align-center" id="id37">
+<span id="fig-gaps-olv-location"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scolv_location.png"><img alt="../_images/gaps_gempa_scolv_location.png" src="../_images/gaps_gempa_scolv_location.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 13: OriginLocatorView: Location tab.</span><a class="headerlink" href="#id37" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The picks can be made in the picker window. The pick window can be accessed by
+clinking on the “Picker” button in the <a class="reference internal" href="#fig-gaps-olv-location"><span class="std std-ref">“Location” tab</span></a>.
+In the picker window arrivals of P and S phases can be picked.
+Results are committed to the server by clicking on “OK”. For zooming and
+shifting the data in time, use the mouse wheel and the left mouse button on the
+time axis of the traces.</p>
+<figure class="align-center" id="id38">
+<span id="fig-gaps-olv-picker"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scolv_picker.png"><img alt="../_images/gaps_gempa_scolv_picker.png" src="../_images/gaps_gempa_scolv_picker.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 14: OriginLocatorView: picker window.</span><a class="headerlink" href="#id38" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The time window parameters controlling the amount of requested data can be
+changed in the Setup tab. The shorter the time window the faster the data will
+be loaded and processed. The new parameters will be valid during the browser
+session. To keep the time window parameters adjust the <cite>gaps</cite> module
+configuration.</p>
+<figure class="align-center" id="id39">
+<span id="fig-gaps-olv-setup"></span><a class="reference internal image-reference" href="../_images/gaps_gempa_scolv_setup.png"><img alt="../_images/gaps_gempa_scolv_setup.png" src="../_images/gaps_gempa_scolv_setup.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 15: OriginLocatorView: setup window.</span><a class="headerlink" href="#id39" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="module-configuration">
+<span id="sec-gaps-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/gaps.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/gaps.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/gaps.cfg</span></code></div>
+</div>
+<p>gaps inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modules/plugins may require a license file. The default path to license
+files is <code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/licenses/</span></code> which can be overridden by global
+configuration of the parameter <code class="xref std std-confval docutils literal notranslate"><span class="pre">gempa.licensePath</span></code>. Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>gempa.licensePath = @CONFIGDIR@/licenses
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-authbind">
+<span class="sig-name descname"><span class="pre">authbind</span></span><a class="headerlink" href="#confval-authbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Allows to bind sockets to privileged ports (&lt;1024).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-bind">
+<span class="sig-name descname"><span class="pre">bind</span></span><a class="headerlink" href="#confval-bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1:8080</span></code></p>
+<p>Type: <em>host-with-port</em></p>
+<p>IP and port to bind the HTTP server to. Use 0.0.0.0
+to bind to all interfaces. Either the port or the IP
+address may be omitted, e.g., &quot;0.0.0.0&quot; or
+&quot;:1234&quot;. If set to an empty string the application
+will run without providing a HTTP server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sbind">
+<span class="sig-name descname"><span class="pre">sbind</span></span><a class="headerlink" href="#confval-sbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">127.0.0.1:-1</span></code></p>
+<p>Type: <em>host-with-port</em></p>
+<p>IP and port to bind the HTTPS server to. Use 0.0.0.0
+to bind to all interfaces. Either the port or the IP
+address may be omitted, e.g., &quot;0.0.0.0&quot; or
+&quot;:1234&quot;. If set to an empty string the application
+will run without providing a HTTPS server.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offline">
+<span class="sig-name descname"><span class="pre">offline</span></span><a class="headerlink" href="#confval-offline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to run offline (no messaging connection) or online
+(messaging connection). In offline mode either the database
+connection or the inventory and config XML files must be
+provided.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-computePGAVD">
+<span class="sig-name descname"><span class="pre">computePGAVD</span></span><a class="headerlink" href="#confval-computePGAVD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enable ground motion computation. If set to false then no ground motion
+amplitudes are being computed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-windowPGAVD">
+<span class="sig-name descname"><span class="pre">windowPGAVD</span></span><a class="headerlink" href="#confval-windowPGAVD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>Time window in seconds used to compute ground motion amplitudes.
+The higher the time window the less amplitudes will be computed
+over time.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-users">
+<span class="sig-name descname"><span class="pre">users</span></span><a class="headerlink" href="#confval-users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;CONFIGDIR&#64;/gaps/users</span></code></p>
+<p>Type: <em>file</em></p>
+<p>Defines the users file for access control. The user file contains one line
+per user where each line is of format &quot;username:encrypted_pwd&quot;.
+To encrypt a password mkpasswd can be used. It is recommended to
+apply a strong algorithm such as sha-256 or sha-512. E.g., the command
+&quot;user=sysop pw=`mkpasswd -m sha-512` &amp;&amp; echo $user:$pw&quot;
+would generate a line for the user &quot;sysop&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-userProperties">
+<span class="sig-name descname"><span class="pre">userProperties</span></span><a class="headerlink" href="#confval-userProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;CONFIGDIR&#64;/gaps/access</span></code></p>
+<p>Type: <em>file</em></p>
+<p>Defines the file used to read user properties. Each line contains
+the user name and a list of properties in format
+&quot;username:prop1,prop2,prop3&quot;. Those properties are
+used to grant access to certain functionalities in gaps such as
+sending processing results back. There is currently only one
+property which is interpreted by GAPS: &quot;staff&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-accessLog">
+<span class="sig-name descname"><span class="pre">accessLog</span></span><a class="headerlink" href="#confval-accessLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enables HTTP access logging to &#64;LOGDIR&#64;/gaps-http-access.
+Log files are created for 24h and kept for 7 days using log
+rotation.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-indexTemplate">
+<span class="sig-name descname"><span class="pre">indexTemplate</span></span><a class="headerlink" href="#confval-indexTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/gaps/index.cs</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Path to the template that generated index.html.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-mediaDirectory">
+<span class="sig-name descname"><span class="pre">mediaDirectory</span></span><a class="headerlink" href="#confval-mediaDirectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/gaps/apps</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Path to media files (index.html, .css, .js, .png, …) served by GAPS.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-bufferSize">
+<span class="sig-name descname"><span class="pre">bufferSize</span></span><a class="headerlink" href="#confval-bufferSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">65536</span></code></p>
+<p>Unit: <em>b</em></p>
+<p>Type: <em>int</em></p>
+<p>Minimum buffer size in bytes per acquisition thread.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-maximumThreads">
+<span class="sig-name descname"><span class="pre">maximumThreads</span></span><a class="headerlink" href="#confval-maximumThreads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum number of acquisition threads. This corresponds to
+the maximum number of parallel acquisition requests from
+clients.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-requestTimeout">
+<span class="sig-name descname"><span class="pre">requestTimeout</span></span><a class="headerlink" href="#confval-requestTimeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>int</em></p>
+<p>Thread request timeout. If data of a thread has not been requested
+for more than n seconds the thread will be closed and finished.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-forceHTTP">
+<span class="sig-name descname"><span class="pre">forceHTTP</span></span><a class="headerlink" href="#confval-forceHTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Disables usage of WebSocket protocol. Useful, if traffic is tunneled
+through a web server that cannot handle WebSockets.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-quakelink">
+<span class="sig-name descname"><span class="pre">quakelink</span></span><a class="headerlink" href="#confval-quakelink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">http://localhost:18080/events/query</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The QuakeLink event request URI. This is used as a default for
+all web applications.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-quakelinkProxy">
+<span class="sig-name descname"><span class="pre">quakelinkProxy</span></span><a class="headerlink" href="#confval-quakelinkProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">ql://localhost:18010</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The QuakeLink proxy connection initiated by GAPS to convert and
+forward single events from QuakeLink to the browser.
+Required since QuakeLink delivers only XML format but JSON format is needed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-tileDB">
+<span class="sig-name descname"><span class="pre">tileDB</span></span><a class="headerlink" href="#confval-tileDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+<p>Configures the MBTiles tile database if gaps should serve
+tiles itself. If mapURI is configured with a remote tile
+server, this is not required.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-tileLayers">
+<span class="sig-name descname"><span class="pre">tileLayers</span></span><a class="headerlink" href="#confval-tileLayers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of additional tile layer profiles.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>tileLayers.*</strong>
+<em>Configuration of additional tile layers.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>tileLayers.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-tileLayers.-name.db">
+<span class="sig-name descname"><span class="pre">tileLayers.$name.db</span></span><a class="headerlink" href="#confval-tileLayers.-name.db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+<p>Path to MBTiles database for this tile layer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-tileLayers.-name.levels">
+<span class="sig-name descname"><span class="pre">tileLayers.$name.levels</span></span><a class="headerlink" href="#confval-tileLayers.-name.levels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Range of zoom levels this tile layer is valid for.
+The format is [min-level]:[max-level].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-tileLayers.-name.rects">
+<span class="sig-name descname"><span class="pre">tileLayers.$name.rects</span></span><a class="headerlink" href="#confval-tileLayers.-name.rects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of rectangles with respect to column / row indexes
+of the minimum zoom level. The format per rect is
+either +[min_x]+[min_y]+[max_x]+[max_y] or
+[column]x[rows]+[min_x]+[min_y].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-map.location">
+<span class="sig-name descname"><span class="pre">map.location</span></span><a class="headerlink" href="#confval-map.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/gaps/zoom12.mbtiles</span></code></p>
+<p>Type: <em>path</em></p>
+<p>Alternative configuration parameter for &#64;tileDB.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-map.geoFeaturePath">
+<span class="sig-name descname"><span class="pre">map.geoFeaturePath</span></span><a class="headerlink" href="#confval-map.geoFeaturePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+<p>Alternative path to geofeatures displayed on the map. The
+default paths are ~/.seiscomp/bna and $SEISCOMP_ROOT/share/bna. To
+consider a BNA file for map display the corresponding configuration
+file (either map.cfg or gaps.cfg) in the respective bna directory
+or sub-directory must contain &quot;apps.gaps=true&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-SSL.certificate">
+<span class="sig-name descname"><span class="pre">SSL.certificate</span></span><a class="headerlink" href="#confval-SSL.certificate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path to SSL certificate file</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-SSL.key">
+<span class="sig-name descname"><span class="pre">SSL.key</span></span><a class="headerlink" href="#confval-SSL.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path to SSL private key file</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.*</strong>
+<em>Configuration of available web applications.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapURI">
+<span class="sig-name descname"><span class="pre">apps.mapURI</span></span><a class="headerlink" href="#confval-apps.mapURI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">../tiles/{z}/{y}/{x}</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Full URL for tiles, e.g., &quot;<a class="reference external" href="http://example.com:8080/tiles">http://example.com:8080/tiles</a>/{z}/{y}/{x}&quot;.
+The tile server URL for all applications.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapMaxLevel">
+<span class="sig-name descname"><span class="pre">apps.mapMaxLevel</span></span><a class="headerlink" href="#confval-apps.mapMaxLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum zoom number for which the tiles source has available. The tiles
+on all zoom levels higher than mapMaxLevel will be loaded
+from mapMaxLevel level and auto-scaled.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapMaxZoom">
+<span class="sig-name descname"><span class="pre">apps.mapMaxZoom</span></span><a class="headerlink" href="#confval-apps.mapMaxZoom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">14</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Maximum allowed zoom level in the interactive map.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapShowZoomControl">
+<span class="sig-name descname"><span class="pre">apps.mapShowZoomControl</span></span><a class="headerlink" href="#confval-apps.mapShowZoomControl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to show a zoom control on the map.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapShowLegend">
+<span class="sig-name descname"><span class="pre">apps.mapShowLegend</span></span><a class="headerlink" href="#confval-apps.mapShowLegend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to show a map legend or not in web apps v2.
+Some apps might offer to toggle this setting, others not.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.serverAPI">
+<span class="sig-name descname"><span class="pre">apps.serverAPI</span></span><a class="headerlink" href="#confval-apps.serverAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">../</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Path of the server API for all applications. This parameter
+can be overridden in each application.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.serverWSAPI">
+<span class="sig-name descname"><span class="pre">apps.serverWSAPI</span></span><a class="headerlink" href="#confval-apps.serverWSAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path of the server WebSocket API for all applications. If not
+explicitly configured then the serverAPI path will be used.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.logoPath">
+<span class="sig-name descname"><span class="pre">apps.logoPath</span></span><a class="headerlink" href="#confval-apps.logoPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">share/images/gempa_logo.svg</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Relative path to a logo (brand) image shown in
+web applications. Give path relative to SEISCOMP_ROOT/share/gaps/apps.
+The image is scaled to the field dimension 157px x 38px preserving
+the aspect ratio.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.colorMode">
+<span class="sig-name descname"><span class="pre">apps.colorMode</span></span><a class="headerlink" href="#confval-apps.colorMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">depth</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Available modes are: depth, magnitude, age</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eventSymbolAnimation">
+<span class="sig-name descname"><span class="pre">apps.eventSymbolAnimation</span></span><a class="headerlink" href="#confval-apps.eventSymbolAnimation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">toggle</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Available animations are: toggle, three-circles</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.colorEventsUpdateInterval">
+<span class="sig-name descname"><span class="pre">apps.colorEventsUpdateInterval</span></span><a class="headerlink" href="#confval-apps.colorEventsUpdateInterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">60</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>int</em></p>
+<p>If event symbol colors are derived from the event age then
+the age must be recomputed at a certain interval. This
+number defines the interval in seconds to update the event
+colors. The lower the interval the more often the colors
+must be updated which can decrease performance.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.mapRegion.*</strong>
+<em>Configures the initial region to be shown, e.g., in TraceView</em>
+<em>and StationView.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapRegion.minimumLatitude">
+<span class="sig-name descname"><span class="pre">apps.mapRegion.minimumLatitude</span></span><a class="headerlink" href="#confval-apps.mapRegion.minimumLatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-90</span></code></p>
+<p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The minimum latitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapRegion.minimumLongitude">
+<span class="sig-name descname"><span class="pre">apps.mapRegion.minimumLongitude</span></span><a class="headerlink" href="#confval-apps.mapRegion.minimumLongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-225</span></code></p>
+<p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The minimum longitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapRegion.maximumLatitude">
+<span class="sig-name descname"><span class="pre">apps.mapRegion.maximumLatitude</span></span><a class="headerlink" href="#confval-apps.mapRegion.maximumLatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">90</span></code></p>
+<p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The maximum latitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapRegion.maximumLongitude">
+<span class="sig-name descname"><span class="pre">apps.mapRegion.maximumLongitude</span></span><a class="headerlink" href="#confval-apps.mapRegion.maximumLongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">225</span></code></p>
+<p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The maximum longitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.geoCodeURL">
+<span class="sig-name descname"><span class="pre">apps.eqview.geoCodeURL</span></span><a class="headerlink" href="#confval-apps.eqview.geoCodeURL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Configures the URL for geo coding. The placeholders
+&quot;{lat}&quot; and &quot;{lon}&quot; will be replaced
+by the respective earthquake location attributes.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showRegion">
+<span class="sig-name descname"><span class="pre">apps.eqview.showRegion</span></span><a class="headerlink" href="#confval-apps.eqview.showRegion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>On startup set central map to initial region (mapRegion.*).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showRegionBounds">
+<span class="sig-name descname"><span class="pre">apps.eqview.showRegionBounds</span></span><a class="headerlink" href="#confval-apps.eqview.showRegionBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Shows the initial region rectangle (mapRegion.*) in the central map.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showWidgetBounds">
+<span class="sig-name descname"><span class="pre">apps.eqview.showWidgetBounds</span></span><a class="headerlink" href="#confval-apps.eqview.showWidgetBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Shows the selected widget region rectangle in the central map.
+This setting replaces the region rectangle (showRegionBounds)
+if both are set to true.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showWaveSpreading">
+<span class="sig-name descname"><span class="pre">apps.eqview.showWaveSpreading</span></span><a class="headerlink" href="#confval-apps.eqview.showWaveSpreading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Shows the spreading of P/S wave in the center-widget.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.centerLatestEvent">
+<span class="sig-name descname"><span class="pre">apps.eqview.centerLatestEvent</span></span><a class="headerlink" href="#confval-apps.eqview.centerLatestEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether map will center around the latest event or not.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.singleEventMode">
+<span class="sig-name descname"><span class="pre">apps.eqview.singleEventMode</span></span><a class="headerlink" href="#confval-apps.eqview.singleEventMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If activated then the selected event is being shown
+exclusively on the map.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.useUTC">
+<span class="sig-name descname"><span class="pre">apps.eqview.useUTC</span></span><a class="headerlink" href="#confval-apps.eqview.useUTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Show UTC time in the front end.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.externalData">
+<span class="sig-name descname"><span class="pre">apps.eqview.externalData</span></span><a class="headerlink" href="#confval-apps.eqview.externalData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled then all waveforms of an event will be
+requested even if stations are not part of the
+local inventory. If disabled then only stations are
+allowed that are configured locally with bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.nearestCityMinPopulation">
+<span class="sig-name descname"><span class="pre">apps.eqview.nearestCityMinPopulation</span></span><a class="headerlink" href="#confval-apps.eqview.nearestCityMinPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">100000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>The minimum population of a city to be taken into
+account as nearest city to an event.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.nearestCityMaxDistance">
+<span class="sig-name descname"><span class="pre">apps.eqview.nearestCityMaxDistance</span></span><a class="headerlink" href="#confval-apps.eqview.nearestCityMaxDistance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20</span></code></p>
+<p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The maximum distance of the nearest city from an event.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showLatestMainEvent">
+<span class="sig-name descname"><span class="pre">apps.eqview.showLatestMainEvent</span></span><a class="headerlink" href="#confval-apps.eqview.showLatestMainEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to show the latest event in the top left
+corner of the widget which is currently active as main widget.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.showLatestOverallEvent">
+<span class="sig-name descname"><span class="pre">apps.eqview.showLatestOverallEvent</span></span><a class="headerlink" href="#confval-apps.eqview.showLatestOverallEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to show the latest overall event of all widgets.
+It will be shown in the top right corner above the widgets.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.overallTimeSpan">
+<span class="sig-name descname"><span class="pre">apps.eqview.overallTimeSpan</span></span><a class="headerlink" href="#confval-apps.eqview.overallTimeSpan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">24</span></code></p>
+<p>Unit: <em>hours</em></p>
+<p>Type: <em>integer</em></p>
+<p>The time span for which the latest overall event will be
+selected.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widgets">
+<span class="sig-name descname"><span class="pre">apps.eqview.widgets</span></span><a class="headerlink" href="#confval-apps.eqview.widgets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">world</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Defines the available widgets. The first widget listed is taken as primary widget.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.eqview.referencePlace.*</strong>
+<em>Defines a reference place / city which is used to compute</em>
+<em>the distance and azimuth from the event shown</em>
+<em>in the event details.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.referencePlace.name">
+<span class="sig-name descname"><span class="pre">apps.eqview.referencePlace.name</span></span><a class="headerlink" href="#confval-apps.eqview.referencePlace.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The name of the place.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.referencePlace.lat">
+<span class="sig-name descname"><span class="pre">apps.eqview.referencePlace.lat</span></span><a class="headerlink" href="#confval-apps.eqview.referencePlace.lat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The latitude of the reference place.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.referencePlace.lon">
+<span class="sig-name descname"><span class="pre">apps.eqview.referencePlace.lon</span></span><a class="headerlink" href="#confval-apps.eqview.referencePlace.lon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The longitude of the reference place.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.eqview.widget.*</strong>
+<em>The configured widgets.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.eqview.widget.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.title">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.title</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The widget title as it appears in the widgets title bar.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.minimumLatitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.minimumLatitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.minimumLatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The minimum latitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.minimumLongitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.minimumLongitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.minimumLongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The minimum longitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.maximumLatitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.maximumLatitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.maximumLatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The maximum latitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.maximumLongitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.maximumLongitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.maximumLongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>double</em></p>
+<p>The maximum longitude of the region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.eventRegion">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.eventRegion</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.eventRegion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>deg</em></p>
+<p>Type: <em>region</em></p>
+<p>This overrides the configured widget region and defines the region
+of the events to be shown. If not configured then the event region
+will be the same as the widget region. The format is
+[lat_width]x[lon_width]+[lat_min]+[lon_min]
+or +[lat_min]+[lon_min]+[lat_max]+[lon_max].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.timeSpan">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.timeSpan</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.timeSpan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unit: <em>hours</em></p>
+<p>Type: <em>integer</em></p>
+<p>The time span to be shown in hours.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.minimumMagnitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.minimumMagnitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.minimumMagnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>The minimum magnitude to be shown.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.maximumMagnitude">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.maximumMagnitude</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.maximumMagnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>The maximum magnitude to be shown.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.status">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.status</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Event status code list that is accepted. Each item is a
+character (A,M,…) that maps to the type code in
+the QuakeLink summary format. To exclude types, a minus
+can be prepended to each code, e.g., &quot;-X&quot;.
+That would accept all solutions except rejected. An
+empty list accepts everything.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.tracePreOffset">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.tracePreOffset</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.tracePreOffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">2.0</span></code></p>
+<p>Unit: <em>min</em></p>
+<p>Type: <em>double</em></p>
+<p>The pre-offset of the traces with respect to the onset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.tracePostOffset">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.tracePostOffset</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.tracePostOffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">5.0</span></code></p>
+<p>Unit: <em>min</em></p>
+<p>Type: <em>double</em></p>
+<p>The post-offset of the traces with respect to the onset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.alignOnPredicatedArrivals">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.alignOnPredicatedArrivals</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.alignOnPredicatedArrivals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Configures whether traces are aligned on first picked onset
+or on theoretical arrivals.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.showPicks">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.showPicks</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.showPicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Configures if picks are shown in the waveforms.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.visualFeedback">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.visualFeedback</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.visualFeedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to give visual feedback if a new event has been
+set as latest in the widget. If enabled then the
+widget shakes for a short time when the latest
+event updates.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.eqview.widget.-name.audioFilePath">
+<span class="sig-name descname"><span class="pre">apps.eqview.widget.$name.audioFilePath</span></span><a class="headerlink" href="#confval-apps.eqview.widget.-name.audioFilePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+<p>Path to an audio file played when adding a new event
+to the widget. The audio file is played when the
+event is the most recent one. For older events
+the audio alert is not played.
+Give path relative to
+$SEISCOMP_ROOT/share/gaps/apps, e.g., share/audio/alert.mp3.
+Preferred format: MP3.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.traceview.cluster">
+<span class="sig-name descname"><span class="pre">apps.traceview.cluster</span></span><a class="headerlink" href="#confval-apps.traceview.cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Defines whether the station symbols should be clustered by default or not.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.traceview.filters">
+<span class="sig-name descname"><span class="pre">apps.traceview.filters</span></span><a class="headerlink" href="#confval-apps.traceview.filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;0.7Hz</span> <span class="pre">-</span> <span class="pre">2Hz;RMHP(10)&gt;&gt;ITAPER(30)&gt;&gt;BW(3,0.7,2.0)&quot;,</span> <span class="pre">&quot;1Hz</span> <span class="pre">-</span> <span class="pre">3Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,1,3)&quot;,</span> <span class="pre">&quot;2Hz</span> <span class="pre">-</span> <span class="pre">4Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,2,4)&quot;,</span> <span class="pre">&quot;4Hz</span> <span class="pre">-</span> <span class="pre">8Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,4,8)&quot;,</span> <span class="pre">&quot;HP</span> <span class="pre">3</span> <span class="pre">Hz;RMHP(1)&gt;&gt;ITAPER(2)&gt;&gt;BW_HP(3,3)&quot;</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>The list of filters available in TraceView, format per
+item is &quot;name;filter-string&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.traceview.timeSpan">
+<span class="sig-name descname"><span class="pre">apps.traceview.timeSpan</span></span><a class="headerlink" href="#confval-apps.traceview.timeSpan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">600</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>Timespan for trace display. The default is 10min.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.traceview.utc">
+<span class="sig-name descname"><span class="pre">apps.traceview.utc</span></span><a class="headerlink" href="#confval-apps.traceview.utc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to show trace times in UTC or local time.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.mode">
+<span class="sig-name descname"><span class="pre">apps.mapview.mode</span></span><a class="headerlink" href="#confval-apps.mapview.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">delay</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Defines the default MapView mode that is used to color
+the station symbols. Valid values are &quot;delay&quot;,
+&quot;latency&quot; and &quot;groundmotion&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.cluster">
+<span class="sig-name descname"><span class="pre">apps.mapview.cluster</span></span><a class="headerlink" href="#confval-apps.mapview.cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Defines whether the station symbols should be clustered by default or not.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.eventTimeSpan">
+<span class="sig-name descname"><span class="pre">apps.mapview.eventTimeSpan</span></span><a class="headerlink" href="#confval-apps.mapview.eventTimeSpan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">168</span></code></p>
+<p>Unit: <em>hours</em></p>
+<p>Type: <em>integer</em></p>
+<p>The events time span to be shown in hours.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.customStationLink">
+<span class="sig-name descname"><span class="pre">apps.mapview.customStationLink</span></span><a class="headerlink" href="#confval-apps.mapview.customStationLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defines an additional link that is rendered on the
+station detail page. It supports two placeholders: ${net}
+and ${sta} which are replaced during runtime.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.customStationLinkName">
+<span class="sig-name descname"><span class="pre">apps.mapview.customStationLinkName</span></span><a class="headerlink" href="#confval-apps.mapview.customStationLinkName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The name as displayed on the station panel for the custom
+station link.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.mapview.fetchGeoIP">
+<span class="sig-name descname"><span class="pre">apps.mapview.fetchGeoIP</span></span><a class="headerlink" href="#confval-apps.mapview.fetchGeoIP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled then the map will be centered around the clients
+geolocation (fetched via web service from www.geoplugin.net).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.loadEventDB">
+<span class="sig-name descname"><span class="pre">apps.scolv.loadEventDB</span></span><a class="headerlink" href="#confval-apps.scolv.loadEventDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Unit: <em>days</em></p>
+<p>Type: <em>double</em></p>
+<p>Number of days to preload if scolv is started.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.useUTC">
+<span class="sig-name descname"><span class="pre">apps.scolv.useUTC</span></span><a class="headerlink" href="#confval-apps.scolv.useUTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Show UTC time in the frontend.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.distInKM">
+<span class="sig-name descname"><span class="pre">apps.scolv.distInKM</span></span><a class="headerlink" href="#confval-apps.scolv.distInKM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Show distances in km instead of degree.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.ttt">
+<span class="sig-name descname"><span class="pre">apps.scolv.ttt</span></span><a class="headerlink" href="#confval-apps.scolv.ttt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">libtau,</span> <span class="pre">LOCSAT</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>The list of active travel time table interfaces.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.filters">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.filters</span></span><a class="headerlink" href="#confval-apps.scolv.picker.filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;&#64;0.7Hz</span> <span class="pre">-</span> <span class="pre">2Hz;RMHP(10)&gt;&gt;ITAPER(30)&gt;&gt;BW(3,0.7,2.0)&quot;,</span> <span class="pre">&quot;1Hz</span> <span class="pre">-</span> <span class="pre">3Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,1,3)&quot;,</span> <span class="pre">&quot;2Hz</span> <span class="pre">-</span> <span class="pre">4Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,2,4)&quot;,</span> <span class="pre">&quot;4Hz</span> <span class="pre">-</span> <span class="pre">8Hz;RMHP(5)&gt;&gt;ITAPER(10)&gt;&gt;BW(3,4,8)&quot;,</span> <span class="pre">&quot;HP</span> <span class="pre">3</span> <span class="pre">Hz;RMHP(1)&gt;&gt;ITAPER(2)&gt;&gt;BW_HP(3,3)&quot;</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>List of filters available in the picker. If &#64; is prepended
+to the name of the filter it will be selected as default
+filter. The format of each entry is &quot;name;definition&quot;,
+e.g., &quot;BP 0.7 - 2 Hz  3rd order;BW(3,0.7,2)&quot;</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.phases">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.phases</span></span><a class="headerlink" href="#confval-apps.scolv.picker.phases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">P,Pn,Pg,pP,S,Sg,sP</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>List of phases enabled for picking.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.preOffset">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.preOffset</span></span><a class="headerlink" href="#confval-apps.scolv.picker.preOffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">300</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>Begin of time window before origin time to load waveforms
+when the picker is opened.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.postOffset">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.postOffset</span></span><a class="headerlink" href="#confval-apps.scolv.picker.postOffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">600</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>End of time window after origin time to load waveforms
+when the picker is opened.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.preAlign">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.preAlign</span></span><a class="headerlink" href="#confval-apps.scolv.picker.preAlign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">30</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>The default time window shown before the trace alignment.
+Alignment is set interactively by origin time or P- or S-phase arrival.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.picker.postAlign">
+<span class="sig-name descname"><span class="pre">apps.scolv.picker.postAlign</span></span><a class="headerlink" href="#confval-apps.scolv.picker.postAlign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">90</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>double</em></p>
+<p>The default time window shown after the trace alignment.
+Alignment is set interactively by origin time or P- or S-phase arrival.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.scolv.ttt.*</strong>
+<em>Travel time table related configuration. Travel time</em>
+<em>tables can be added via plugins. Built-in interfaces</em>
+<em>are libtau and LOCSAT. For each activated interface</em>
+<em>a list of supported models must be provided.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>apps.scolv.ttt.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-apps.scolv.ttt.-name.models">
+<span class="sig-name descname"><span class="pre">apps.scolv.ttt.$name.models</span></span><a class="headerlink" href="#confval-apps.scolv.ttt.-name.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The list of supported model names per interface.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-processors.events">
+<span class="sig-name descname"><span class="pre">processors.events</span></span><a class="headerlink" href="#confval-processors.events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Activate event processor profiles, see
+GAPSEventProcessorProfile.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>processors.events.*</strong>
+<em>Configures one or more event processors which are executed</em>
+<em>at server-side and displayed client-side in EQView after</em>
+<em>selecting a set of events with ctrl + left mouse key.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>processors.events.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-processors.events.-name.title">
+<span class="sig-name descname"><span class="pre">processors.events.$name.title</span></span><a class="headerlink" href="#confval-processors.events.-name.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The title of the processor shown at the client in
+the processor selection popup and as header in the
+output window.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-processors.events.-name.script">
+<span class="sig-name descname"><span class="pre">processors.events.$name.script</span></span><a class="headerlink" href="#confval-processors.events.-name.script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+<p>Path to the script to be called when the processor
+has been triggered. This script must be executable,
+take the CSV file from stdin and print the result
+image to stdout. The input CSV file contains the
+following columns separated by semicolon:</p>
+<p>* eventID</p>
+<p>* OT</p>
+<p>* lat</p>
+<p>* lon</p>
+<p>* depth in km</p>
+<p>* mag</p>
+<p>* agency</p>
+<p>* status</p>
+<p>* phases</p>
+<p>* region</p>
+<p>* fm.strike</p>
+<p>* fm.dip</p>
+<p>* fm.rake</p>
+<p>* fm.depth</p>
+<p>* fm.mag</p>
+<p>Only results from script runs with exit code zero
+are taken into account.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-processors.events.-name.type">
+<span class="sig-name descname"><span class="pre">processors.events.$name.type</span></span><a class="headerlink" href="#confval-processors.events.-name.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The type of the returned product. Valid values are
+&quot;txt&quot;,
+&quot;html&quot;,
+&quot;json&quot;,
+&quot;png&quot;,
+&quot;jpeg&quot;,
+&quot;svg&quot;,
+&quot;xml&quot;</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-processors.events.-name.authorize">
+<span class="sig-name descname"><span class="pre">processors.events.$name.authorize</span></span><a class="headerlink" href="#confval-processors.events.-name.authorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled then authorization will be requested for
+this script from the browser. That means that a user
+has to authenticate first before the result will be
+displayed. Authorization is granted if an
+authenticated user is staff member.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scheme.colors.stationTypes">
+<span class="sig-name descname"><span class="pre">scheme.colors.stationTypes</span></span><a class="headerlink" href="#confval-scheme.colors.stationTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">BB:008000,</span> <span class="pre">SM:0000FF,</span> <span class="pre">SP:40E0D0</span></code></p>
+<p>Type: <em>map</em></p>
+<p>Configure the station colors of a particular type. The
+type is read from Station.type of the inventory. If unset,
+the parent Network.type is used.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scheme.colors.originSymbol.age.gradient">
+<span class="sig-name descname"><span class="pre">scheme.colors.originSymbol.age.gradient</span></span><a class="headerlink" href="#confval-scheme.colors.originSymbol.age.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0:ff0000:&quot;1</span> <span class="pre">hour&quot;,3600:ff8000:&quot;1</span> <span class="pre">day&quot;,86400:ffff00:&quot;1</span> <span class="pre">week&quot;,604800:ffffff:&quot;1</span> <span class="pre">month&quot;,2592000:808080:&quot;older&quot;</span></code></p>
+<p>Type: <em>gradient</em></p>
+<p>Configure the event age color gradient. Only applied
+if color mode is &quot;magnitude&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scheme.colors.originSymbol.magnitude.gradient">
+<span class="sig-name descname"><span class="pre">scheme.colors.originSymbol.magnitude.gradient</span></span><a class="headerlink" href="#confval-scheme.colors.originSymbol.magnitude.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0:ff0000:&quot;1</span> <span class="pre">hour&quot;,3600:ff8000:&quot;1</span> <span class="pre">day&quot;,86400:ffff00:&quot;1</span> <span class="pre">week&quot;,604800:ffffff:&quot;1</span> <span class="pre">month&quot;,2592000:808080:&quot;older&quot;</span></code></p>
+<p>Type: <em>gradient</em></p>
+<p>Configure the event magnitude color gradient. Only applied
+if color mode is &quot;magnitude&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scheme.map.stationShape">
+<span class="sig-name descname"><span class="pre">scheme.map.stationShape</span></span><a class="headerlink" href="#confval-scheme.map.stationShape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">hexagon</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The station symbol shape. Valid values are: hexagon,
+triangle and diamond.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scheme.map.stationBorder">
+<span class="sig-name descname"><span class="pre">scheme.map.stationBorder</span></span><a class="headerlink" href="#confval-scheme.map.stationBorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">3</span></code></p>
+<p>Unit: <em>px</em></p>
+<p>Type: <em>integer</em></p>
+<p>The width in pixels of the station symbol frame.</p>
+</dd></dl>
+
+</section>
+<section id="bindings-parameters">
+<h2>Bindings Parameters<a class="headerlink" href="#bindings-parameters" title="Permalink to this heading">¶</a></h2>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-enable">
+<span class="sig-name descname"><span class="pre">enable</span></span><a class="headerlink" href="#confval-enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enable/disable the usage of a station with web apps.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">gaps [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-h">
+<span id="cmdoption-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-V">
+<span id="cmdoption-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-D">
+<span id="cmdoption-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-v">
+<span id="cmdoption-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-q">
+<span id="cmdoption-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-s">
+<span id="cmdoption-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-l">
+<span id="cmdoption-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-d">
+<span id="cmdoption-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-config-db">
+<span class="sig-name descname"><span class="pre">--config-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-config-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the configuration from the given database or file,
+format: [<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-u">
+<span id="cmdoption-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-H">
+<span id="cmdoption-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-t">
+<span id="cmdoption-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-g">
+<span id="cmdoption-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-S">
+<span id="cmdoption-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="records">
+<h3>Records<a class="headerlink" href="#records" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-record-driver-list">
+<span class="sig-name descname"><span class="pre">--record-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-record-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported record stream drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-I">
+<span id="cmdoption-record-url"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--record-url</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-I" title="Permalink to this definition">¶</a></dt>
+<dd><p>The recordstream source URL, format:
+[<a class="reference external" href="service://">service://</a>]location[#type].
+&quot;service&quot; is the name of the recordstream driver
+which can be queried with &quot;--record-driver-list&quot;.
+If &quot;service&quot; is not given, &quot;<a class="reference external" href="file://">file://</a>&quot; is
+used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-record-file">
+<span class="sig-name descname"><span class="pre">--record-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-record-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a file as record source.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-record-type">
+<span class="sig-name descname"><span class="pre">--record-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-record-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a type for the records being read.</p>
+</dd></dl>
+
+</section>
+<section id="mode">
+<h3>Mode<a class="headerlink" href="#mode" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-offline">
+<span class="sig-name descname"><span class="pre">--offline</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-offline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not connect to a messaging server. The database
+connection must be provided explicitly.</p>
+</dd></dl>
+
+</section>
+<section id="users">
+<h3>Users<a class="headerlink" href="#users" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-list-users">
+<span class="sig-name descname"><span class="pre">--list-users</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-list-users" title="Permalink to this definition">¶</a></dt>
+<dd><p>List available users.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-list-props">
+<span class="sig-name descname"><span class="pre">--list-props</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-list-props" title="Permalink to this definition">¶</a></dt>
+<dd><p>List properties for a user.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">gaps</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#system-requirements">System requirements</a></li>
+<li><a class="reference internal" href="#installation-and-setup">Installation and Setup</a><ul>
+<li><a class="reference internal" href="#package-installation">Package installation</a></li>
+<li><a class="reference internal" href="#quakelink">QuakeLink</a></li>
+<li><a class="reference internal" href="#appname-server"><cite>gaps</cite> server</a><ul>
+<li><a class="reference internal" href="#connect-gaps-with-quakelink">Connect GAPS with QuakeLink</a></li>
+<li><a class="reference internal" href="#map-properties">Map properties</a></li>
+<li><a class="reference internal" href="#connection-and-access-control">Connection and access control</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#eqview">EQView</a><ul>
+<li><a class="reference internal" href="#eqview-widgets">eqview.widgets</a></li>
+<li><a class="reference internal" href="#widgets">Widgets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stationview">StationView</a></li>
+<li><a class="reference internal" href="#traceview">TraceView</a></li>
+<li><a class="reference internal" href="#originlocatorview">OriginLocatorView</a></li>
+<li><a class="reference internal" href="#custom-pages">Custom pages</a></li>
+<li><a class="reference internal" href="#web-server-integration-nginx">Web server integration (NGINX)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#server-side-event-processing">Server-side Event Processing</a></li>
+<li><a class="reference internal" href="#application-client-modules">Application: Client Modules</a><ul>
+<li><a class="reference internal" href="#common-map-properties">Common map properties</a></li>
+<li><a class="reference internal" href="#gaps-eqview">EQView</a></li>
+<li><a class="reference internal" href="#gaps-stationview">StationView</a></li>
+<li><a class="reference internal" href="#gaps-traceview">TraceView</a></li>
+<li><a class="reference internal" href="#gaps-olv">OriginLocatorView</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#bindings-parameters">Bindings Parameters</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#records">Records</a></li>
+<li><a class="reference internal" href="#mode">Mode</a></li>
+<li><a class="reference internal" href="#users">Users</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../base/introduction.html"
+                          title="previous chapter">Introduction</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../base/glossary.html"
+                          title="next chapter">Glossary</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/gaps.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="content">
+        Release <b></b> version <b>.#</b>
+          <div class="copyright">
+            &copy; Copyright <a href="https://www.gempa.de">2014, gempa GmbH.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+# Activate deconvolution for this station. If no responses are configured, an
+# error is raised and the data is not processed. This flag will be overridden
+# by the type specific flag (see Amplitude type profile).
+amplitudes.enableResponses = true
+
+# The minimum frequency of the considered spectrum.
+# After data is converted into the frequency domain that minimum frequency
+# defines the end of the left-side cosine taper applied to the spectrum. The
+# taper applies from 0 Hz to {minFreq} Hz. A value of 0 or lower disables that
+# taper.
+amplitudes.resp.minFreq = 2.0
+
+# The maximum frequency of the considered spectrum.
+# After data are converted in to the frequency domain that maximum frequency
+# defines the start of the right-side cosine taper applied to the spectrum. The
+# taper applies from {maxFreq} Hz to {fNyquist} Hz. A value of 0 or lower
+# disables that taper.
+amplitudes.resp.maxFreq = 225
+
+# Configure the filter used to process the horizontal components traces before
+# computing the L2-norm.
+spicker.L2.filter = BW(4,3,30)
+
+# Configure the detector filter applied on the filtered L2 trace.
+spicker.L2.detecFilter = STALTA(0.1,5)
+
+# Minimum SNR as returned from AIC for accepting picks.
+spicker.L2.minSNR = 5
+
+# Start time of the S-phase detector relative to the triggering P pick.
+# Delaying the detector ignores P-coda and early signals, e.g. due to P-S phase
+# conversions at shallow depths.
+spicker.AIC.signalBegin = 0.2
+
+# End time of the S-phase detector relative to the triggering P pick.
+spicker.AIC.signalEnd = 20
+
+# Filter applied on the raw horizontal traces to compute the L2 trace. As a
+# minimum remove offsets. S-AIC-V, filters the raw vertical trace computing the
+# filtered vertical trace.
+spicker.AIC.filter = "RMHP(1)>>ITAPER(2)>>BW(3,3,15)"
+
+# The AIC time window stepping in seconds. For every step the window is
+# expanded by step and the AIC is computed.
+spicker.AIC.step = 0.2
+
+# Defines the pick time uncertainty. Either a symmetric uncertainty as single
+# number or an asymmetric uncertainty in the following format: "(0.5,0.25)".
+# The first value: uncertainty befor the pick, second value: uncertainty after
+# the pick.
+spicker.AIC.uncertainty = 0.05
+
+# Defines the filter to be used for picking.
+detecFilter = RMHP(1)>>ITAPER(5)>>BW(4,3,30)>>STALTA(0.1,5)
+
+# The time correction applied to a pick.
+timeCorr = 0.0

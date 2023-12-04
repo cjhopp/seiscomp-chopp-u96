@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scesv &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scheli" href="scheli.html" />
+    <link rel="prev" title="Graphical User Interfaces" href="../gui.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scheli.html" title="scheli"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="../gui.html" title="Graphical User Interfaces"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../gui.html" accesskey="U">Graphical User Interfaces</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scesv">
+<span id="id1"></span><h1>scesv<a class="headerlink" href="#scesv" title="Permalink to this heading">¶</a></h1>
+<p><strong>Event summary view.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scesv is the summary display of the event parameters. It shows the primary information
+about the current event including location, time, strength, type and processing status.
+Additional to the current event older events can also be chosen from the eventlist in the
+events tab.</p>
+<p>The two tabs of scesv are</p>
+<ul class="simple">
+<li><p>Events tab showing the list of loaded events, compare Fig. <a class="reference internal" href="#fig-events"><span class="std std-ref">Eventlist tab</span></a></p></li>
+<li><p>Summary tab with the details of the selected event, see Fig. <a class="reference internal" href="#fig-summary"><span class="std std-ref">Summary tab</span></a>.</p></li>
+</ul>
+</section>
+<section id="events-tab">
+<span id="scesv-events-tab"></span><h2>Events Tab<a class="headerlink" href="#events-tab" title="Permalink to this heading">¶</a></h2>
+<p>The Events tab shows the eventlist of the time span defined on the bottom side of
+the window. A the Events tab is also available for other GUIs, such as <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>
+it can be configured in the global module configuration.
+The <a class="reference internal" href="scolv.html#scolv-events-tab"><span class="std std-ref">description of the Events tab in scolv</span></a> provides more
+details.</p>
+<figure class="align-center" id="id2">
+<span id="fig-events"></span><a class="reference internal image-reference" href="../_images/scesv-events.png"><img alt="../_images/scesv-events.png" src="../_images/scesv-events.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Eventlist tab</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<p>Tab1-2: Summary/Events tab, EventList: list of the last events with summarized information,
+List options: Show fake events, Reading 1: spinbox to limit timespan of displayed events (in days),
+Reading 2: spinboxes to limit timespan of displayed events (specified dates), Status: connection status</p>
+</div>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As for <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a> filtering of the event list and custom information can be
+added to the event list by configuration. Read the scolv documentation on
+<a class="reference internal" href="scolv.html#scolv-events-filtering"><span class="std std-ref">event filtering</span></a> and <a class="reference internal" href="scolv.html#scolv-custom-actions"><span class="std std-ref">custom action</span></a>
+for the details.</p>
+</div>
+</section>
+<section id="summary-tab">
+<span id="scesv-summary-tab"></span><h2>Summary Tab<a class="headerlink" href="#summary-tab" title="Permalink to this heading">¶</a></h2>
+<p>The most recent (default) or the event selected from the event list is shown in
+the Summary tab, see Fig. <a class="reference internal" href="#fig-summary"><span class="std std-ref">Summary tab</span></a>.
+Here the information are highlighted in four sections:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>section</p></th>
+<th class="head"><p>description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Time</p></td>
+<td><p>Orign time in UTC and relative to now</p></td>
+</tr>
+<tr class="row-odd"><td><p>Region</p></td>
+<td><p>A map of the region and location with the event and stations</p></td>
+</tr>
+<tr class="row-even"><td><p>Magnitude</p></td>
+<td><p>Different magnitude types, the values and counts</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hypocenter</p></td>
+<td><p>Origin information with location, depth, azimuthal gap etc.</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-center" id="id3">
+<span id="fig-summary"></span><a class="reference internal image-reference" href="../_images/scesv-summary.png"><img alt="../_images/scesv-summary.png" src="../_images/scesv-summary.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Summary tab</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<p>Tab1-2: Summary/Events tab, Origin Time: origin time in UTC and relative to now, Map: map with region
+and location and stations, Magnitude: different magnitude types with values and counts,
+Origin Info: hypocenter information with position, phase count and azimuthal gap,
+Event: earthquake location, Station: station with ray-path, Details: “Show Details” button to open
+detailed information in <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>, Event Type: event type combo box to set event type, Status: connection status</p>
+</div>
+</figcaption>
+</figure>
+</section>
+<section id="hotkeys">
+<h2>Hotkeys<a class="headerlink" href="#hotkeys" title="Permalink to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Hotkey</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F1</kbd></p></td>
+<td><p>Open <cite>SeisComP</cite> documentation</p></td>
+</tr>
+<tr class="row-odd"><td><p>Shift + <kbd class="kbd docutils literal notranslate">F1</kbd></p></td>
+<td><p>Open scesv documentation</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F2</kbd></p></td>
+<td><p>Setup connection dialog</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">F6</kbd></p></td>
+<td><p>Show propagation of P and S wave</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F7</kbd></p></td>
+<td><p>Show focal mechanism by beach ball</p></td>
+</tr>
+<tr class="row-odd"><td><p>Shift + <kbd class="kbd docutils literal notranslate">F7</kbd></p></td>
+<td><p>Show focal mechanism by beach ball</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F8</kbd></p></td>
+<td><p>Toggle auto update</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">F9</kbd></p></td>
+<td><p>Show raypaths and associated stations</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F10</kbd></p></td>
+<td><p>Toggle tabs</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">F11</kbd></p></td>
+<td><p>Toggle fullscreen</p></td>
+</tr>
+<tr class="row-even"><td><p>Mouse wheel</p></td>
+<td><p>Zoom map in/out</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double click</p></td>
+<td><p>Center map</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-configuration">
+<span id="scesv-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scesv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scesv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scesv.cfg</span></code></div>
+</div>
+<p>scesv inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-loadEventDB">
+<span class="sig-name descname"><span class="pre">loadEventDB</span></span><a class="headerlink" href="#confval-loadEventDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>days</em></p>
+<p>Number of days to preload if scesv is started.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-showLastAutomaticSolution">
+<span class="sig-name descname"><span class="pre">showLastAutomaticSolution</span></span><a class="headerlink" href="#confval-showLastAutomaticSolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the last automatic solution is displayed next to the
+current solution in the summary panel. If the last automatic
+solution differs from the current solution it is displayed
+in red. If both solutions match it is displayed in gray.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-showOnlyMostRecentEvent">
+<span class="sig-name descname"><span class="pre">showOnlyMostRecentEvent</span></span><a class="headerlink" href="#confval-showOnlyMostRecentEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, only the most recent event is shown even if an update of
+an older event is being received.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-recenterMap">
+<span class="sig-name descname"><span class="pre">recenterMap</span></span><a class="headerlink" href="#confval-recenterMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the map is centered around the most recent event event.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-enableFixAutomaticSolutions">
+<span class="sig-name descname"><span class="pre">enableFixAutomaticSolutions</span></span><a class="headerlink" href="#confval-enableFixAutomaticSolutions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, an additional button is displayed which allows to
+switch back the latest automatic solution. This button triggers
+an command for scevent to prioritize automatic solutions until
+the next manual solution is available.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-visibleMagnitudes">
+<span class="sig-name descname"><span class="pre">visibleMagnitudes</span></span><a class="headerlink" href="#confval-visibleMagnitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">M,MLv,mb,mB,Mw(mB)</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>A list of magnitude types to be displayed.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-button0">
+<span class="sig-name descname"><span class="pre">button0</span></span><a class="headerlink" href="#confval-button0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Label of button0 which triggers script0.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-button1">
+<span class="sig-name descname"><span class="pre">button1</span></span><a class="headerlink" href="#confval-button1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Label of button1 which triggers script1.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-ignoreOtherEvents">
+<span class="sig-name descname"><span class="pre">ignoreOtherEvents</span></span><a class="headerlink" href="#confval-ignoreOtherEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If the event type is either &quot;other&quot; or
+&quot;not existing&quot; and this flag is true then the
+event will not be shown.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script0">
+<span class="sig-name descname"><span class="pre">scripts.script0</span></span><a class="headerlink" href="#confval-scripts.script0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path to a script if button0 is clicked.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script1">
+<span class="sig-name descname"><span class="pre">scripts.script1</span></span><a class="headerlink" href="#confval-scripts.script1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Path to a script if button1 is clicked.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script0.exportMap">
+<span class="sig-name descname"><span class="pre">scripts.script0.exportMap</span></span><a class="headerlink" href="#confval-scripts.script0.exportMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the current map is exported to file.
+The filename is appened to the parameter list of script0.
+The script has to take ownership of the file.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script0.oldStyle">
+<span class="sig-name descname"><span class="pre">scripts.script0.oldStyle</span></span><a class="headerlink" href="#confval-scripts.script0.oldStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the parameter list of script0 is event ID,
+arrival count, magnitude, description.</p>
+<p>If disabled, the parameter list of script0 is event ID,
+preferredOriginID, preferredMagnitudeID,
+preferredFocalMechanismID.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script1.exportMap">
+<span class="sig-name descname"><span class="pre">scripts.script1.exportMap</span></span><a class="headerlink" href="#confval-scripts.script1.exportMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the current map is exported to file.
+The filename is appened to the parameter list of script1.
+The script has to take ownership of the file.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.script1.oldStyle">
+<span class="sig-name descname"><span class="pre">scripts.script1.oldStyle</span></span><a class="headerlink" href="#confval-scripts.script1.oldStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the parameter list of script1 is event ID,
+arrivalCount, magnitude, description.</p>
+<p>If disabled, the parameter list of script1 is event ID,
+preferredOriginID, preferredMagnitudeID,
+preferredFocalMechanismID.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-summary.borders">
+<span class="sig-name descname"><span class="pre">summary.borders</span></span><a class="headerlink" href="#confval-summary.borders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Draw borders in the summary panel.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>display.*</strong>
+<em>Adjust content or display custom information in the Summary tab.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.lonmin">
+<span class="sig-name descname"><span class="pre">display.lonmin</span></span><a class="headerlink" href="#confval-display.lonmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-180</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Minimum longitude of initially displayed map region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.lonmax">
+<span class="sig-name descname"><span class="pre">display.lonmax</span></span><a class="headerlink" href="#confval-display.lonmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">180</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Maximum longitude of initially displayed map region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.latmin">
+<span class="sig-name descname"><span class="pre">display.latmin</span></span><a class="headerlink" href="#confval-display.latmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-90</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Minimum latitude of initially displayed map region.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.latmax">
+<span class="sig-name descname"><span class="pre">display.latmax</span></span><a class="headerlink" href="#confval-display.latmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">90</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Maximum latitude of initially displayed map region.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>display.event.*</strong>
+<em>Event information</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.event.comment.id">
+<span class="sig-name descname"><span class="pre">display.event.comment.id</span></span><a class="headerlink" href="#confval-display.event.comment.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>ID of the event comment to be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.event.comment.default">
+<span class="sig-name descname"><span class="pre">display.event.comment.default</span></span><a class="headerlink" href="#confval-display.event.comment.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Value to be shown in case no valid event comment is
+found.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.event.comment.label">
+<span class="sig-name descname"><span class="pre">display.event.comment.label</span></span><a class="headerlink" href="#confval-display.event.comment.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Label of the value to be shown.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>display.origin.*</strong>
+<em>Origin information</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>display.origin.comment.*</strong>
+<em>Display origin comments.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.origin.comment.id">
+<span class="sig-name descname"><span class="pre">display.origin.comment.id</span></span><a class="headerlink" href="#confval-display.origin.comment.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>ID of the origin comment to be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.origin.comment.default">
+<span class="sig-name descname"><span class="pre">display.origin.comment.default</span></span><a class="headerlink" href="#confval-display.origin.comment.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Value to be shown in case no valid origin comment is
+found.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-display.origin.comment.label">
+<span class="sig-name descname"><span class="pre">display.origin.comment.label</span></span><a class="headerlink" href="#confval-display.origin.comment.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Label of the value to be shown.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>poi.*</strong>
+<em>Display information related to a point of interest (POI)</em>
+<em>read from the cities XML file.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.maxDist">
+<span class="sig-name descname"><span class="pre">poi.maxDist</span></span><a class="headerlink" href="#confval-poi.maxDist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Maximum distance in degrees of a POI to be taken into account.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.minPopulation">
+<span class="sig-name descname"><span class="pre">poi.minPopulation</span></span><a class="headerlink" href="#confval-poi.minPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>The minimum population of a POI to be taken into account.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.message">
+<span class="sig-name descname"><span class="pre">poi.message</span></span><a class="headerlink" href="#confval-poi.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Message conversion string that converts a POI into the text
+displayed under the region label. There are different
+placeholders that can be used: &#64;dist&#64;, &#64;dir&#64;, &#64;poi&#64; and &#64;region&#64;.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scesv [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-h">
+<span id="cmdoption-scesv-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-V">
+<span id="cmdoption-scesv-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-v">
+<span id="cmdoption-scesv-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-q">
+<span id="cmdoption-scesv-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-s">
+<span id="cmdoption-scesv-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-l">
+<span id="cmdoption-scesv-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-u">
+<span id="cmdoption-scesv-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-H">
+<span id="cmdoption-scesv-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-t">
+<span id="cmdoption-scesv-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-g">
+<span id="cmdoption-scesv-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-S">
+<span id="cmdoption-scesv-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-d">
+<span id="cmdoption-scesv-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="records">
+<h3>Records<a class="headerlink" href="#records" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-record-driver-list">
+<span class="sig-name descname"><span class="pre">--record-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-record-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported record stream drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-I">
+<span id="cmdoption-scesv-record-url"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--record-url</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-I" title="Permalink to this definition">¶</a></dt>
+<dd><p>The recordstream source URL, format:
+[<a class="reference external" href="service://">service://</a>]location[#type].
+&quot;service&quot; is the name of the recordstream driver
+which can be queried with &quot;--record-driver-list&quot;.
+If &quot;service&quot; is not given, &quot;<a class="reference external" href="file://">file://</a>&quot; is
+used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-record-file">
+<span class="sig-name descname"><span class="pre">--record-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-record-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a file as record source.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-record-type">
+<span class="sig-name descname"><span class="pre">--record-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-record-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a type for the records being read.</p>
+</dd></dl>
+
+</section>
+<section id="cities">
+<h3>Cities<a class="headerlink" href="#cities" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-city-xml">
+<span class="sig-name descname"><span class="pre">--city-xml</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-city-xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path to the cities XML file. This overrides the default
+paths. Compare with the global parameter &quot;citiesXML&quot;.</p>
+</dd></dl>
+
+</section>
+<section id="user-interface">
+<h3>User interface<a class="headerlink" href="#user-interface" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-F">
+<span id="cmdoption-scesv-full-screen"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--full-screen</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the application filling the entire screen.
+This only works with GUI applications.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-N">
+<span id="cmdoption-scesv-non-interactive"></span><span class="sig-name descname"><span class="pre">-N</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--non-interactive</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scesv-N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use non-interactive presentation mode. This only works with
+GUI applications.</p>
+</dd></dl>
+
+</section>
+<section id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-script0">
+<span class="sig-name descname"><span class="pre">--script0</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-script0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the script called when configurable
+button0 is pressed; EventID, arrival count, magnitude and
+the additional location information string are passed as
+parameters $1, $2, $3 and $4, respectively.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-script1">
+<span class="sig-name descname"><span class="pre">--script1</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-script1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the script called when configurable
+button1 is pressed; EventID, arrival count, magnitude and
+the additional location information string are passed as
+parameters $1, $2, $3 and $4, respectively.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scesv-load-event-db">
+<span class="sig-name descname"><span class="pre">--load-event-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scesv-load-event-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of days to load from database.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scesv</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#events-tab">Events Tab</a></li>
+<li><a class="reference internal" href="#summary-tab">Summary Tab</a></li>
+<li><a class="reference internal" href="#hotkeys">Hotkeys</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#records">Records</a></li>
+<li><a class="reference internal" href="#cities">Cities</a></li>
+<li><a class="reference internal" href="#user-interface">User interface</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../gui.html"
+                          title="previous chapter">Graphical User Interfaces</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scheli.html"
+                          title="next chapter">scheli</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scesv.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

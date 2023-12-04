@@ -1,0 +1,129 @@
+# Change Log
+
+All notable changes to the gempa gui library will be documented in this file.
+
+## 2023.284 5.0.0
+
+### Added
+
+-   virtual Application::docUrl() const
+
+## 2022.347 4.0.0
+
+### Added
+
+-   MultiTraceWidget horizontal layout
+-   MultiTraceWidget wiggle display support
+
+## 2022.314 3.3.0
+
+### Added
+
+-   EventListWidget added
+
+## 2022.307 3.2.1
+
+-   Update splash screen copyright notice in class Application
+
+## 2022-09-13 3.2.0
+
+### Fixed
+
+-   Fix issue with TraceView scaling and resizing
+
+## 2022-08-29 Version 3.1.0
+
+### Added
+
+-   Authentication backend feature
+
+## 2022-08-16 Version 3.0.2
+
+### Fixed
+
+-   Evaluate process exit code
+
+## 2022-05-24 Version 3.0.1
+
+### Fixed
+
+-   Add missing gradientUpdated signal when table data changed
+    in gradient editor
+
+## 2021-10-08 Version 2.3.0
+
+### Added
+
+-   Add trace method to query waveformID per slot
+
+## 2021-10-08 Version 2.1.0
+
+### Changed
+
+-   Add SymbolLayer index symbol access and removal
+
+## 2021-06-03 Version 2.0.4
+
+### Fixed
+
+-   Minor fixes in gradient editor:
+    -   Using editor without gradient
+    -   Segmentation fault when removing handle
+    -   Reset current values when changing the gradient
+
+## 2021-06-01 Version 2.0.3
+
+### Fixed
+
+-   Rendering of empty annotations
+
+## 2021-01-07 Version 2.0.2
+
+### Fixed
+
+-   More changes on video player control style
+
+## 2021-01-06 Version 2.0.1
+
+### Fixed
+
+-   Video player control style. Some window managers
+    did not render buttons and menus properly.
+
+## 2020-09-04 Version 2.0.0
+
+### Added
+
+-   License information button in status bar of main window
+-   Message box if license is about to expire
+-   Licensee information in about dialog
+
+## 2020-08-06 Version 1.1.4
+
+### Fixed
+
+-   Crash caused by double freed memory in annotation pool
+
+## 2020-08-06 Version 1.1.3
+
+### Fixed
+
+-   Video player didn't emit a signal on slider change
+
+## 2020-08-06 Version 1.1.2
+
+### Added
+
+-   Video player controls
+
+## 2020-07-03 Version 1.1.1
+
+### Changed
+
+-   Use Fontawesome 5.13.1 Pro icons
+
+## 2020-06-09 Version 1.0.1
+
+### Fixed
+
+-   Build issues under Debian 9

@@ -1,0 +1,304 @@
+.. _gradients:
+
+***************
+Color Gradients
+***************
+
+
+Overview
+========
+
+A number of pre-defined color gradients are available for gempa modules.
+These gradients can be used when displaying color-coded values such as grids,
+spectrograms or heat-maps. The following is an overview of pre-defined
+gradients along with the name of the gradient which can be used in
+configurations. The gradients are grouped into:
+
+* :ref:`gradients-fullspectrum`
+* :ref:`gradients-darkyellow`
+* :ref:`gradients-blackandwhite`
+* :ref:`gradients-singlecolor`
+* :ref:`gradients-threecolor`
+
+
+List of Gradients
+=================
+
+.. _gradients-fullspectrum:
+
+Full spectrum
+-------------
+
+Gradients that use the full spectrum of colors.
+
+
+.. _gradients-default:
+
+Default
+~~~~~~~
+
+* Configuration name: :option:`Default`
+
+.. figure:: media/gradients/Default.*
+   :width: 420 px
+   :alt: overview of the Default color-gradient
+.. figure:: media/gradients/Default_.*
+   :width: 420 px
+   :alt: example spectrogram using the Default gradient
+
+   Example spectrogram using the "Default" color-gradient.
+
+
+.. _gradients-spectrum:
+
+Spectrum
+~~~~~~~~
+
+* Configuration name: :option:`Spectrum`
+
+.. figure:: media/gradients/Spectrum.*
+   :width: 420 px
+   :alt: overview of the Spectrum color-gradient
+.. figure:: media/gradients/Spectrum_.*
+   :width: 420 px
+   :alt: example spectrogram using the Spectrum gradient
+
+   Example spectrogram using the "Spectrum" color-gradient.
+
+
+.. _gradients-circle:
+
+Circle
+~~~~~~
+
+* Configuration name: :option:`Circle`
+
+.. figure:: media/gradients/Circle.*
+   :width: 420 px
+   :alt: overview of the Circle color-gradient
+.. figure:: media/gradients/Circle_.*
+   :width: 420 px
+   :alt: example spectrogram using the Circle gradient
+
+   Example spectrogram using the "Circle" color-gradient.
+
+
+.. _gradients-darkyellow:
+
+Dark to yellow
+--------------
+
+Gradients optically resembling fire with increased energy beeing displayed by
+bright yellow tones.
+
+
+.. _gradients-blackbody:
+
+BlackBody
+~~~~~~~~~
+* Configuration name: :option:`BlackBody`
+
+.. figure:: media/gradients/BlackBody.*
+   :width: 420 px
+   :alt: overview of the BlackBody color-gradient
+.. figure:: media/gradients/BlackBody_.*
+   :width: 420 px
+   :alt: example spectrogram using the BlackBody gradient
+
+   Example spectrogram using the "BlackBody" color-gradient.
+
+
+.. _gradients-inferno:
+
+Inferno
+~~~~~~~
+* Configuration name: :option:`Inferno`
+
+.. figure:: media/gradients/Inferno.*
+   :width: 420 px
+   :alt: overview of the Inferno color-gradient
+.. figure:: media/gradients/Inferno_.*
+   :width: 420 px
+   :alt: example spectrogram using the Inferno gradient
+
+   Example spectrogram using the "Inferno" color-gradient.
+
+
+.. _gradients-plasma:
+
+Plasma
+~~~~~~
+
+* Configuration name: :option:`Plasma`
+
+.. figure:: media/gradients/Plasma.*
+   :width: 420 px
+   :alt: overview of the Plasma color-gradient
+.. figure:: media/gradients/Plasma_.*
+   :width: 420 px
+   :alt: example spectrogram using the Plasma gradient
+
+   Example spectrogram using the "Plasma" color-gradient.
+
+
+.. _gradients-blackandwhite:
+
+Black and white
+---------------
+
+For a maximum contrast there are these two gradients that just use black and
+white.
+
+
+.. _gradients-blackwhite:
+
+BlackWhite
+~~~~~~~~~~
+
+* Configuration name: :option:`BlackWhite`
+
+.. figure:: media/gradients/BlackWhite.*
+   :width: 420 px
+   :alt: overview of the BlackWhite color-gradient
+.. figure:: media/gradients/BlackWhite_.*
+   :width: 420 px
+   :alt: example spectrogram using the BlackWhite gradient
+
+   Example spectrogram using the "BlackWhite" color-gradient.
+
+
+.. _gradients-whiteblack:
+
+WhiteBlack
+~~~~~~~~~~
+
+* Configuration name: :option:`WhiteBlack`
+
+.. figure:: media/gradients/WhiteBlack.*
+   :width: 420 px
+   :alt: overview of the WhiteBlack color-gradient
+.. figure:: media/gradients/WhiteBlack_.*
+   :width: 420 px
+   :alt: example spectrogram using the WhiteBlack gradient
+
+   Example spectrogram using the "WhiteBlack" color-gradient.
+
+
+.. _gradients-singlecolor:
+
+Single color
+------------
+
+The single color gradients have the same benefit as the
+:ref:`black and white gradients <gradients-blackwhite>` and are of a high contrast.
+
+
+.. _gradients-bluepurple:
+
+BluePurple
+~~~~~~~~~~
+
+* Configuration name: :option:`BuPu`
+
+.. figure:: media/gradients/BluePurple.*
+   :width: 420 px
+   :alt: overview of the BluePurple color-gradient
+.. figure:: media/gradients/BluePurple_.*
+   :width: 420 px
+   :alt: example spectrogram using the BluePurple gradient
+
+   Example spectrogram using the "BluePurple" color-gradient.
+
+
+.. _gradients-blues:
+
+Blues
+~~~~~
+
+* Configuration name: :option:`Blues`
+
+.. figure:: media/gradients/Blues.*
+   :width: 420 px
+   :alt: overview of the Blues color-gradient
+.. figure:: media/gradients/Blues_.*
+   :width: 420 px
+   :alt: example spectrogram using the Blues gradient
+
+   Example spectrogram using the "Blues" color-gradient.
+
+
+.. _gradients-purplered:
+
+PurpleRed
+~~~~~~~~~
+
+* Configuration name: :option:`PuRd`
+
+.. figure:: media/gradients/PurpleRed.*
+   :width: 420 px
+   :alt: overview of the PurpleRed color-gradient
+.. figure:: media/gradients/PurpleRed_.*
+   :width: 420 px
+   :alt: example spectrogram using the PurpleRed gradient
+
+   Example spectrogram using the "PurpleRed" color-gradient.
+
+
+.. _gradients-threecolor:
+
+Three color
+-----------
+
+Gradients allowing to distinguish more details than
+:ref:`single colored <gradients-singlecolor>`.
+
+
+.. _gradients-redyellowblue:
+
+RedYellowBlue
+~~~~~~~~~~~~~
+
+* Configuration name: :option:`RdYlBu`
+
+.. figure:: media/gradients/RedYellowBlue.*
+   :width: 420 px
+   :alt: overview of the RedYellowBlue color-gradient
+.. figure:: media/gradients/RedYellowBlue_.*
+   :width: 420 px
+   :alt: example spectrogram using the RedYellowBlue gradient
+
+   Example spectrogram using the "RedYellowBlue" color-gradient.
+
+
+.. _gradients-parula:
+
+Parula
+~~~~~~
+
+* Configuration name: :option:`Parula`
+
+.. figure:: media/gradients/Parula.*
+   :width: 420 px
+   :alt: overview of the Parula color-gradient
+.. figure:: media/gradients/Parula_.*
+   :width: 420 px
+   :alt: example spectrogram using the Parula gradient
+
+   Example spectrogram using the "Parula" color-gradient.
+
+
+.. _gradients-viridis:
+
+Viridis
+~~~~~~~
+
+* Configuration name: :option:`Viridis`
+
+.. figure:: media/gradients/Viridis.*
+   :width: 420 px
+   :alt: overview of the Viridis color-gradient
+.. figure:: media/gradients/Viridis_.*
+   :width: 420 px
+   :alt: example spectrogram using the Viridis gradient
+
+   Example spectrogram using the "Viridis" color-gradient.

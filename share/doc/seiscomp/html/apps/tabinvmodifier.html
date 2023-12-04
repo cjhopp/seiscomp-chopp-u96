@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>tabinvmodifier &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Messaging" href="../toc/messaging.html" />
+    <link rel="prev" title="tab2inv" href="tab2inv.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="../toc/messaging.html" title="Messaging"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="tab2inv.html" title="tab2inv"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/inventory.html" accesskey="U">Inventory</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="tabinvmodifier">
+<span id="id1"></span><h1>tabinvmodifier<a class="headerlink" href="#tabinvmodifier" title="Permalink to this heading">¶</a></h1>
+<p><strong>tab-based inventory modifier</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>Sometimes small tweaks need to be made to inventory.
+The tabinvmodifier program reads a <em>rules file</em> (a network tab file without any station lines) and applies network and station attributes to existing inventory. This method can be used to modify attributes in inventory that originate from dataless SEED or other sources. It can change inventory at the network, station, location, and channel level; it can also change sensor and datalogger attributes (Ia lines).
+Currently (2016) changes to station groups (virtual networks) aren’t supported.</p>
+<p>For details of what can go in a tab file, see
+<a class="reference external" href="http://www.seiscomp.org/wiki/doc/special/nettabv2">NETTAB File Format Description</a>.</p>
+<p>tabinvmodifier can either write directly to the inventory in an SC3 database, or dump its output as an XML file.
+If output is as an XML file, typically this would then be moved to ~/seiscomp/etc/inventory, and then loaded into the database with <cite>seiscomp update-config</cite>.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Set network-level attributes. Suppose the file <cite>ge.rules</cite> contains</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Nw:<span class="w"> </span>GE<span class="w"> </span><span class="m">1993</span>/001
+Na:<span class="w"> </span><span class="nv">Description</span><span class="o">=</span><span class="s2">&quot;GEOFON Program, GFZ Potsdam, Germany&quot;</span>
+Na:<span class="w"> </span><span class="nv">Remark</span><span class="o">=</span><span class="s2">&quot;Access to Libyan stations and Spanish HH streams limited&quot;</span>
+Na:<span class="w"> </span><span class="nv">Type</span><span class="o">=</span>VBB
+</pre></div>
+</div>
+<p>The first line (Nw:) specifies the network, including its start date, that these rules apply to.
+The following lines starting with Na: provide values for the description, remark, and type attributes to be written into the new inventory.
+Note the capital letter on the attributes Description, Remark, Type, etc.</p>
+<p>We can use this rules file to change attributes of the GE network:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Apply changes to database directly</span>
+$<span class="w"> </span>tabinvmodifier<span class="w"> </span>-r<span class="w"> </span>ge.rules
+
+<span class="c1"># Apply changes to XML file</span>
+$<span class="w"> </span>tabinvmodifier<span class="w"> </span>-r<span class="w"> </span>ge.rules<span class="w"> </span>--inventory-db<span class="w"> </span>ge.xml<span class="w"> </span>-o<span class="w"> </span>ge-mod.xml
+</pre></div>
+</div>
+<p>The resulting inventory now contains:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;network</span><span class="w"> </span><span class="na">publicID=</span><span class="s">&quot;Network#20130513163612.389203.2&quot;</span><span class="w"> </span><span class="na">code=</span><span class="s">&quot;GE&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;start&gt;</span>1993-01-01T00:00:00.0000Z<span class="nt">&lt;/start&gt;</span>
+<span class="w">  </span><span class="nt">&lt;description&gt;</span>GEOFON<span class="w"> </span>Program,<span class="w"> </span>GFZ<span class="w"> </span>Potsdam,<span class="w"> </span>Germany<span class="nt">&lt;/description&gt;</span>
+<span class="w">  </span><span class="nt">&lt;institutions&gt;</span>GFZ/partners<span class="nt">&lt;/institutions&gt;</span>
+<span class="w">  </span><span class="nt">&lt;region&gt;</span>euromed<span class="w"> </span>global<span class="nt">&lt;/region&gt;</span>
+<span class="w">  </span><span class="nt">&lt;type&gt;</span>VBB<span class="nt">&lt;/type&gt;</span>
+<span class="w">  </span><span class="nt">&lt;netClass&gt;</span>p<span class="nt">&lt;/netClass&gt;</span>
+<span class="w">  </span><span class="nt">&lt;archive&gt;</span>GFZ<span class="nt">&lt;/archive&gt;</span>
+<span class="w">  </span><span class="nt">&lt;restricted&gt;</span>false<span class="nt">&lt;/restricted&gt;</span>
+<span class="w">  </span><span class="nt">&lt;shared&gt;</span>true<span class="nt">&lt;/shared&gt;</span>
+<span class="w">  </span><span class="nt">&lt;remark&gt;</span>access<span class="w"> </span>to<span class="w"> </span>Libyan<span class="w"> </span>stations<span class="w"> </span>and<span class="w"> </span>Spanish<span class="w"> </span>HH<span class="w"> </span>streams<span class="w"> </span>limited<span class="nt">&lt;/remark&gt;</span>
+<span class="w">  </span><span class="nt">&lt;station</span><span class="w"> </span><span class="na">publicID=</span><span class="s">&quot;Station#20130620185450.488952.190&quot;</span><span class="w"> </span><span class="na">code=</span><span class="s">&quot;MSBI&quot;</span><span class="w"> </span><span class="na">archiveNetworkCode=</span><span class="s">&quot;GE&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;start&gt;</span>2013-06-16T00:00:00.0000Z<span class="nt">&lt;/start&gt;</span>
+</pre></div>
+</div>
+<p>Other attributes present in inventory are left unchanged.</p>
+</li>
+<li><p>Changing location codes. (Thanks to Andres H. for this example.)
+To replace an empty location code for station “KP.UPNV” with location code “00”, together with its description and place.
+The rules file is:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Nw:<span class="w"> </span>KP<span class="w"> </span><span class="m">1980</span>/001
+Sa:<span class="w"> </span><span class="nv">Description</span><span class="o">=</span><span class="s2">&quot;GLISN Station Upernavik, Greenland&quot;</span><span class="w"> </span>UPNV
+Sa:<span class="w"> </span><span class="nv">Place</span><span class="o">=</span><span class="s2">&quot;Upernavik, Greenland&quot;</span><span class="w"> </span>UPNV
+Sa:<span class="w"> </span><span class="nv">Code</span><span class="o">=</span><span class="s2">&quot;00&quot;</span><span class="w"> </span>UPNV,
+</pre></div>
+</div>
+<p>The resulting inventory now contains:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;network</span><span class="w"> </span><span class="na">publicID=</span><span class="s">&quot;Network#20140603153203.17936.2&quot;</span><span class="w"> </span><span class="na">code=</span><span class="s">&quot;KP&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;start&gt;</span>1980-01-01T00:00:00.0000Z<span class="nt">&lt;/start&gt;</span>
+<span class="w">  </span>...
+<span class="w">  </span><span class="nt">&lt;station</span><span class="w"> </span><span class="na">publicID=</span><span class="s">&quot;Station#20140603153203.179738.3&quot;</span><span class="w"> </span><span class="na">code=</span><span class="s">&quot;UPNV&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;start&gt;</span>2013-08-01T00:00:00.0000Z<span class="nt">&lt;/start&gt;</span>
+<span class="w">    </span><span class="nt">&lt;description&gt;</span>GLISN<span class="w"> </span>Station<span class="w"> </span>Upernavik,<span class="w"> </span>Greenland<span class="nt">&lt;/description&gt;</span>
+<span class="w">    </span><span class="nt">&lt;latitude&gt;</span>72.7829<span class="nt">&lt;/latitude&gt;</span>
+<span class="w">    </span><span class="nt">&lt;longitude&gt;</span>-56.1395<span class="nt">&lt;/longitude&gt;</span>
+<span class="w">    </span><span class="nt">&lt;elevation&gt;</span>38<span class="nt">&lt;/elevation&gt;</span>
+<span class="w">    </span><span class="nt">&lt;place&gt;</span>Upernavik,<span class="w"> </span>Greenland<span class="nt">&lt;/place&gt;</span>
+<span class="w">    </span><span class="nt">&lt;affiliation&gt;</span>GLISN<span class="nt">&lt;/affiliation&gt;</span>
+<span class="w">    </span>...
+<span class="w">    </span><span class="nt">&lt;sensorLocation</span><span class="w"> </span><span class="na">publicID=</span><span class="s">&quot;SensorLocation#20140603153203.181119.4&quot;</span><span class="w"> </span><span class="na">code=</span><span class="s">&quot;00&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;start&gt;</span>2013-08-01T00:00:00.0000Z<span class="nt">&lt;/start&gt;</span>
+<span class="w">    </span>...
+<span class="w">   </span><span class="nt">&lt;/station&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/network&gt;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">tabinvmodifier { -r | --rules } {rules file} [options]</strong></p>
+<section id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-tabinvmodifier-r">
+<span id="cmdoption-tabinvmodifier-rules"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rules</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-tabinvmodifier-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input filename of the rules file. A rules file is mandatory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-tabinvmodifier-e">
+<span id="cmdoption-tabinvmodifier-relaxed"></span><span class="sig-name descname"><span class="pre">-e</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--relaxed</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-tabinvmodifier-e" title="Permalink to this definition">¶</a></dt>
+<dd><p>Relax rules for matching NSLC items</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-tabinvmodifier-o">
+<span id="cmdoption-tabinvmodifier-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-tabinvmodifier-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output XML filename. Without an output file, tabinvmodifier will attempt to write to the local SeisComp3 database.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-tabinvmodifier-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-tabinvmodifier-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input file containing inventory. If this option is given, an output file must be provided with <cite>--output</cite>.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">tabinvmodifier</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="tab2inv.html"
+                          title="previous chapter">tab2inv</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../toc/messaging.html"
+                          title="next chapter">Messaging</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/tabinvmodifier.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

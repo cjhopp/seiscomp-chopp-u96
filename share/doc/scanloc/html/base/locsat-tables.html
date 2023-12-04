@@ -1,0 +1,165 @@
+<!doctype html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dense Travel-Time Tables &#8212; scanloc: Phase Associator  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gempa.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/gempa.css?v=c960eebf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/gempa.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Advanced S-Phase Detector" href="sphase-detector.html" />
+    <link rel="prev" title="Auxiliary Scripts" href="auxiliary.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <img class="background" src="../_static/icon.png"/>
+        <div class="content">
+           <span class="title">scanloc: Phase Associator </span>
+           <span class="version">2023.325#090ad6fc3</span></h1>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="sphase-detector.html" title="Advanced S-Phase Detector"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="auxiliary.html" title="Auxiliary Scripts"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="dense-travel-time-tables">
+<span id="scanloc-ttt"></span><h1>Dense Travel-Time Tables<a class="headerlink" href="#dense-travel-time-tables" title="Permalink to this heading">¶</a></h1>
+<p>The default travel time tables of SeisComP for <span id="id1"><em>LOCSAT</em> [<a class="reference internal" href="references.html#id145" title="LOCSAT. SeisComP locator. URL: https://docs.gempa.de/seiscomp/current/apps/global_locsat.html.">4</a>]</span> provide the
+times in intervals of 1 degree epicentral distance. Thus, the curvature of the
+travel-time curve at closer distance is not well imaged potentially resulting in
+wrong locations or missing event solutions. Therefore, the LOCSAT tables,
+<em>iasp91_scanloc</em>, based on the IASP91 model with higher spacial sampling are
+added. The tables are located in <code class="file docutils literal notranslate"><span class="pre">$SEISCOMP_ROOT/share/locsat/tables</span></code>.</p>
+<figure class="align-center" id="id2">
+<span id="fig-ttt-scanloc"></span><a class="reference internal image-reference" href="../_images/ttt_scanloc_P_5km.png"><img alt="../_images/ttt_scanloc_P_5km.png" src="../_images/ttt_scanloc_P_5km.png" style="width: 18cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Figure 40: Differences between P-wave travel times in the standard iasp91 tables for LOCSAT
+and the iasp91_scanloc tables provided with scanloc for an event at 5 km depth.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
+<p>Configure <a class="reference internal" href="../apps/scanloc.html#confval-association.table"><code class="xref std std-confval docutils literal notranslate"><span class="pre">association.table</span></code></a> and <a class="reference internal" href="../apps/scanloc.html#confval-locator.profile"><code class="xref std std-confval docutils literal notranslate"><span class="pre">locator.profile</span></code></a> with
+<em>iasp91_scanloc</em> for making use of the provided LOCSAT tables.</p>
+<div class="highlight-params notranslate"><div class="highlight"><pre><span></span># Type of travel-time tables for phase association. May be different from locator.
+# Use e.g. libtau or LOCSAT.
+association.tableType = LOCSAT
+
+# Name of travel-time table used for phase association. May be different from locator
+# profile.
+association.table = iasp91_scanloc
+
+# The locator type to use
+locator.type = LOCSAT
+
+# The locator profile to use
+locator.profile = iasp91_scanloc
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Dense Travel-Time Tables</a><ul>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="auxiliary.html"
+                          title="previous chapter">Auxiliary Scripts</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="sphase-detector.html"
+                          title="next chapter">Advanced S-Phase Detector</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/locsat-tables.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="content">
+        Release <b></b> version <b>2023.325#090ad6fc3</b>
+          <div class="copyright">
+            &copy; Copyright <a href="https://www.gempa.de">2014, gempa GmbH.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+/* below is a simple named discontinuities model. */
+0.0 2.5 1.4 2.55
+1 4.0 2.25 2.6
+2 5.7 3.2 2.64
+5 6.0 3.37 2.69
+15 6.15 3.46 2.80
+17 6.3 3.54 2.80
+22 6.6 3.71 2.90
+27 7.4 4.16 3.10
+33 7.4 4.16 3.10
+mantle # the word "mantle" designates that this is the moho
+33 8.0 4.49 3.3
+410 8.9 4.7 3.5
+410 9.1 4.9 3.7
+670 10.2 5.5 4.0
+670 10.7 5.9 4.4
+2891 13.7 7.2 5.6
+outer-core # "outer-core" designates that this is the core mantle boundary
+2891 8.0 0.0 9.9
+5149.5 10.3 0.0 12.2
+inner-core # "inner-core" makes this the inner-outer core boundary
+5149.5 11 3.5 12.7
+6371 11.3 3.7 13

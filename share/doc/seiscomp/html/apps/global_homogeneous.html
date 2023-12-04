@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>homogeneous &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="LOCSAT" href="global_locsat.html" />
+    <link rel="prev" title="ML_IDC" href="global_ml_idc.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_locsat.html" title="LOCSAT"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_ml_idc.html" title="ML_IDC"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="homogeneous">
+<span id="global-homogeneous"></span><h1>homogeneous<a class="headerlink" href="#homogeneous" title="Permalink to this heading">¶</a></h1>
+<p>Travel-times for a homogeneous velocity model</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>The travel-time interface <em>homogeneous</em> allows predicting travel times for
+P and S wave and homogeneous velocity models.</p>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
+<p>The travel-time interface <em>homogeneous</em> is controlled by global parameters,
+e.g., in <code class="file docutils literal notranslate"><span class="pre">$SEISCOMP_ROOT/etc/global.cfg</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Add a new table profile for homogeneous travel-time tables with some custom
+profile name. In <a class="reference internal" href="scconfig.html#scconfig"><span class="std std-ref">scconfig</span></a> navigate to the section <em>ttt.homogeneous</em>
+and click on the green button to add a table profile.</p></li>
+<li><p>Set all parameters in the new profile.</p></li>
+<li><p>Register the new profile by adding its name to the list of tables in
+<code class="xref std std-confval docutils literal notranslate"><span class="pre">ttt.homogeneous.tables</span></code></p></li>
+</ol>
+<p>Example configuration:</p>
+<div class="highlight-params notranslate"><div class="highlight"><pre><span></span># The list of supported model names per interface.
+ttt.homogeneous.tables = &quot;5&quot;
+
+# Geographic origin of the region. Expects 2 values: latitude, longitude.
+ttt.homogeneous.5.origin = 51, 12
+
+# Radius validity of the region.
+ttt.homogeneous.5.radius = 1
+
+# Min Depth validity of the region.
+ttt.homogeneous.5.minDepth = 0
+
+# Max Depth validity of the region.
+ttt.homogeneous.5.maxDepth = 2
+
+# P wave velocity.
+ttt.homogeneous.5.P-velocity = 5
+
+# S wave velocity.
+ttt.homogeneous.5.S-velocity = 3
+</pre></div>
+</div>
+</section>
+<section id="application">
+<h2>Application<a class="headerlink" href="#application" title="Permalink to this heading">¶</a></h2>
+<p>Once the travel-time interface profile is defined and registered, in can be
+selected</p>
+<ul class="simple">
+<li><p>interactively in the <a class="reference internal" href="scolv.html#scolv-sec-waveform-review"><span class="std std-ref">scolv phase picker</span></a>
+or the <a class="reference internal" href="scolv.html#scolv-sec-amplitude-review"><span class="std std-ref">scolv amplitude picker</span></a>,</p></li>
+<li><p>or used in other modules which allow the configuration of travel-time
+interfaces.</p></li>
+</ul>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">homogeneous</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#application">Application</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_ml_idc.html"
+                          title="previous chapter">ML_IDC</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_locsat.html"
+                          title="next chapter">LOCSAT</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_homogeneous.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

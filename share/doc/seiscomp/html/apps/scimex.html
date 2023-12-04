@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scimex &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scimport" href="scimport.html" />
+    <link rel="prev" title="scevtstreams" href="scevtstreams.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scimport.html" title="scimport"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scevtstreams.html" title="scevtstreams"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scimex">
+<span id="id1"></span><h1>scimex<a class="headerlink" href="#scimex" title="Permalink to this heading">¶</a></h1>
+<p><strong>SeisComP event exchange between two systems.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scimex manages the <cite>SeisComP</cite> object exchange between two or more different SeisComP systems in
+real time. scimex may import or export the data to one or several systems. In
+contrary to <a class="reference internal" href="scimport.html#scimport"><span class="std std-ref">scimport</span></a> the exchange of the <cite>SeisComP</cite> objects is event based.
+This means no messages will be exchanged until the exporting system has produced
+an event.</p>
+<p>By default all objects (picks, amplitudes, origins, arrivals, station
+magnitudes, magnitudes, magnitude references) are transferred to the other
+system. The user can define filters at both the sender and the receiver, to
+limit the events for which objects are transferred. Possible filter parameters
+are the event location, magnitude, arrival count and agency. scimex supports
+two modi: <em>import</em> and <em>export</em>. In export mode scimex collects all objects
+relevant for an event (e.g. picks, amplitudes, origins, magnitudes) from
+scmaster’s message groups at the source and checks if the filter criteria
+match. Once the criteria are fulfilled, the whole package of objects is send
+to the scmaster IMPORT group of the receiving system.</p>
+<p>At the receiving <cite>SeisComP</cite> system an instance of scimex runs in import mode. It
+fetches the whole event information from its own IMPORT group, checks the local
+filter criteria of the system and sends the collected objects to the different
+message groups, e.g. Pick, Amplitude, Magnitude, Location. In export mode
+several recipients can be defined and for each recipient individual filters
+can be set. To run several instances of scimex on one system, aliases have to
+be defined, e.g. for import:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>create<span class="w"> </span>scimex_import<span class="w"> </span>scimex
+</pre></div>
+</div>
+<p>and for export:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>create<span class="w"> </span>scimex_export<span class="w"> </span>scimex
+</pre></div>
+</div>
+<p>Then the configuration can be split into scimex_import.cfg and
+scimex_export.cfg.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>For a push-type configuration, in which the exporting server must be able to
+connect to the messaging server on the receiving host. On the receiving host:</p>
+<p>scimex_import.cfg</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>connection.username<span class="w"> </span><span class="o">=</span><span class="w"> </span>scimexIm
+connection.server<span class="w"> </span><span class="o">=</span><span class="w"> </span>localhost
+
+<span class="nv">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>IMPORT
+
+<span class="nv">cleanupinterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">86400</span>
+
+<span class="nv">importHosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>import1
+
+criteria.world.longitude<span class="w"> </span><span class="o">=</span><span class="w"> </span>-180:180
+criteria.world.latitude<span class="w"> </span><span class="o">=</span><span class="w"> </span>-90:90
+criteria.world.magnitude<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>:9
+criteria.world.agencyID<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+criteria.world.arrivalcount<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+
+hosts.import1.address<span class="w"> </span><span class="o">=</span><span class="w"> </span>localhost
+<span class="c1"># The criterion &quot;world&quot; has been defined above</span>
+hosts.import1.criteria<span class="w"> </span><span class="o">=</span><span class="w"> </span>world
+<span class="c1"># optional and true per default</span>
+hosts.import1.filter<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<span class="c1"># optional and true per default</span>
+hosts.import1.useDefinedRoutingTable<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+hosts.import1.routingtable<span class="w"> </span><span class="o">=</span><span class="w"> </span>Pick:IMPORT,StationAmplitude:IMPORT,
+<span class="w">                               </span>Origin:LOCATION,Arrival:LOCATION,
+<span class="w">                               </span>StationMagnitude:MAGNITUDE,
+<span class="w">                               </span>Magnitude:MAGNITUDE,
+<span class="w">                               </span>StationMagnitudeContribution:MAGNITUDE,
+<span class="w">                               </span>OriginReference:EVENT,Event:EVENT
+</pre></div>
+</div>
+<p>In this example, Pick and StationAmplitude objects are sent to the
+receiving system’s IMPORT group to avoid interfering with the receiving system’s
+picking.</p>
+<p>On the sending system, only those events with a high enough magnitude
+and enough arrivals, and with the AgencyID “GFZ” are exported:
+scimex_export.cfg</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>connection.username<span class="o">=</span><span class="s2">&quot;scimexEx&quot;</span>
+connection.server<span class="w"> </span><span class="o">=</span><span class="w"> </span>localhost
+
+<span class="nv">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>EXPORT
+
+<span class="nv">cleanupinterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7200</span>
+<span class="nv">exportHosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>exp1,<span class="w"> </span>exp2
+
+<span class="c1"># Match everything with magnitude above or equal 5</span>
+<span class="c1"># and with more than 25 phases which comes from</span>
+<span class="c1"># agency GFZ.</span>
+criteria.globalM5.latitude<span class="w">     </span><span class="o">=</span><span class="w"> </span>-90:90
+criteria.globalM5.longitude<span class="w">    </span><span class="o">=</span><span class="w"> </span>-180:180
+criteria.globalM5.magnitude<span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>:10
+criteria.globalM5.arrivalcount<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">25</span>
+criteria.globalM5.agencyID<span class="w">     </span><span class="o">=</span><span class="w"> </span>GFZ
+
+<span class="c1"># Export to a system which still runs a very old version. The</span>
+<span class="c1"># messages need to be converted.</span>
+hosts.exp1.address<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">192</span>.168.0.3
+hosts.exp1.criteria<span class="w"> </span><span class="o">=</span><span class="w"> </span>globalM5
+hosts.exp1.conversion<span class="w"> </span><span class="o">=</span><span class="w"> </span>imexscdm0.51
+
+hosts.exp2.address<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">192</span>.168.0.4
+hosts.exp2.criteria<span class="w"> </span><span class="o">=</span><span class="w"> </span>globalM5
+</pre></div>
+</div>
+</section>
+<section id="module-configuration">
+<span id="scimex-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scimex.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scimex.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scimex.cfg</span></code></div>
+</div>
+<p>scimex inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#confval-mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Mode of operation. Options are IMPORT or EXPORT.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-cleanupinterval">
+<span class="sig-name descname"><span class="pre">cleanupinterval</span></span><a class="headerlink" href="#confval-cleanupinterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Cache lifetime for objects.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-subscriptions">
+<span class="sig-name descname"><span class="pre">subscriptions</span></span><a class="headerlink" href="#confval-subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Only used in export mode. A list of message groups to subscribe.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-conversion">
+<span class="sig-name descname"><span class="pre">conversion</span></span><a class="headerlink" href="#confval-conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Used only in import mode. It defines the source format of the
+messages that need to be converted. Currently the import of
+SeisComP datamodel version 0.51 (imexscdm0.51)
+is supported which was used in release Barcelona (2008).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-exportHosts">
+<span class="sig-name descname"><span class="pre">exportHosts</span></span><a class="headerlink" href="#confval-exportHosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>A list of hosts profiles to be considered for exporting.
+These are used in hosts.$name directives
+(see below) to define addresses, filter criteria, etc.
+applicable to each recipient.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-importHosts">
+<span class="sig-name descname"><span class="pre">importHosts</span></span><a class="headerlink" href="#confval-importHosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>A list of hosts profiles to be considered for importing.
+These are used with hosts.$name directives similarly to
+exportHosts.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>criteria.$name.*</strong>
+<em>A definition of an event filter.</em>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-criteria.-name.latitude">
+<span class="sig-name descname"><span class="pre">criteria.$name.latitude</span></span><a class="headerlink" href="#confval-criteria.-name.latitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>tuple:double</em></p>
+<p>Pair of doubles that defines the latitude range.
+Example: -90:90.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-criteria.-name.longitude">
+<span class="sig-name descname"><span class="pre">criteria.$name.longitude</span></span><a class="headerlink" href="#confval-criteria.-name.longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>tuple:double</em></p>
+<p>Pair of doubles that defines the longitude range.
+Example: -180:180.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-criteria.-name.magnitude">
+<span class="sig-name descname"><span class="pre">criteria.$name.magnitude</span></span><a class="headerlink" href="#confval-criteria.-name.magnitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>tuple:double</em></p>
+<p>Pair of doubles that defines the magnitude range.
+Example: 3:10.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-criteria.-name.arrivalcount">
+<span class="sig-name descname"><span class="pre">criteria.$name.arrivalcount</span></span><a class="headerlink" href="#confval-criteria.-name.arrivalcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>int</em></p>
+<p>Number of minimum arrivals.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-criteria.-name.agencyID">
+<span class="sig-name descname"><span class="pre">criteria.$name.agencyID</span></span><a class="headerlink" href="#confval-criteria.-name.agencyID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>White list of AgencyIDs (the agency identifier which
+appears in the objects sent over the export-import link).</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>hosts.$name.*</strong>
+<em>A sink definition used for either import or export.</em>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.address">
+<span class="sig-name descname"><span class="pre">hosts.$name.address</span></span><a class="headerlink" href="#confval-hosts.-name.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Address of a sink, as a host name with an optional port
+number e.g. ‘address = 192.168.1.1’ or
+‘address = somewhere.com:4803’</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.criteria">
+<span class="sig-name descname"><span class="pre">hosts.$name.criteria</span></span><a class="headerlink" href="#confval-hosts.-name.criteria" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Defining filter criteria name for sink, e.g. criteria =
+world-xxl. The criteria must be defined in the criteria.
+* configuration lines.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.filter">
+<span class="sig-name descname"><span class="pre">hosts.$name.filter</span></span><a class="headerlink" href="#confval-hosts.-name.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enable/disable filtering based on defined criteria.
+If set to false, all events will pass, even if one
+or more criteria are defined.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.conversion">
+<span class="sig-name descname"><span class="pre">hosts.$name.conversion</span></span><a class="headerlink" href="#confval-hosts.-name.conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Optional target format for export.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.useDefinedRoutingTable">
+<span class="sig-name descname"><span class="pre">hosts.$name.useDefinedRoutingTable</span></span><a class="headerlink" href="#confval-hosts.-name.useDefinedRoutingTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enable/disable defined routing tables.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts.-name.routingTable">
+<span class="sig-name descname"><span class="pre">hosts.$name.routingTable</span></span><a class="headerlink" href="#confval-hosts.-name.routingTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Defining routing tables in the meaning of mapping
+objects to message groups. Example: Pick:NULL,
+StationAmplitude:NULL, Origin:LOCATION,
+StationMagnitude: MAGNITUDE, NetworkMagnitude:MAGNITUDE,
+MagnitudeReference:MAGNITUDE, OriginReference:EVENT,
+Event:EVENT. Specifying NULL for the message group causes
+messages to be thrown away/dropped/discarded.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scimex [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-h">
+<span id="cmdoption-scimex-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-V">
+<span id="cmdoption-scimex-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-D">
+<span id="cmdoption-scimex-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-v">
+<span id="cmdoption-scimex-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-q">
+<span id="cmdoption-scimex-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-s">
+<span id="cmdoption-scimex-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-l">
+<span id="cmdoption-scimex-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-u">
+<span id="cmdoption-scimex-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-H">
+<span id="cmdoption-scimex-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-t">
+<span id="cmdoption-scimex-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-g">
+<span id="cmdoption-scimex-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-S">
+<span id="cmdoption-scimex-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimex-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h3>SCIMEX<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimex-print-default-routingtable">
+<span class="sig-name descname"><span class="pre">--print-default-routingtable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimex-print-default-routingtable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the default object routing table.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scimex</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#id2">SCIMEX</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scevtstreams.html"
+                          title="previous chapter">scevtstreams</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scimport.html"
+                          title="next chapter">scimport</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scimex.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

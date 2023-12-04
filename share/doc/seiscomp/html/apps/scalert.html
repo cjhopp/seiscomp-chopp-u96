@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scalert &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scart" href="scart.html" />
+    <link rel="prev" title="ql2sc" href="ql2sc.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scart.html" title="scart"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="ql2sc.html" title="ql2sc"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scalert">
+<span id="id1"></span><h1>scalert<a class="headerlink" href="#scalert" title="Permalink to this heading">¶</a></h1>
+<p><strong>Real time alert template.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>This module executes custom scripts upon arrival of objects or updates.
+It provides as template for custom modification and is not a replacement for <a class="reference internal" href="scvoice.html#scvoice"><span class="std std-ref">scvoice</span></a>.</p>
+<p>There are four possible trigger mechanisms for calling scripts:</p>
+<ul class="simple">
+<li><p>Event creation/update,</p></li>
+<li><p>Amplitude creation,</p></li>
+<li><p>Origin creation (with status = preliminary),</p></li>
+<li><p>Pick creation with filter for phase hint.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>People started modifying <a class="reference internal" href="scvoice.html#scvoice"><span class="std std-ref">scvoice</span></a> to send emails or
+other alert messages. Then, the name <em>scvoice</em> is then just wrong.
+If you want to customize <a class="reference internal" href="scvoice.html#scvoice"><span class="std std-ref">scvoice</span></a>, use scalert instead.</p>
+</div>
+</section>
+<section id="module-configuration">
+<span id="scalert-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scalert.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scalert.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scalert.cfg</span></code></div>
+</div>
+<p>scalert inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-firstNew">
+<span class="sig-name descname"><span class="pre">firstNew</span></span><a class="headerlink" href="#confval-firstNew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Treat an event as new event when it is seen the first time.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-agencyIDs">
+<span class="sig-name descname"><span class="pre">agencyIDs</span></span><a class="headerlink" href="#confval-agencyIDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of agency IDs to consider picks and origins. The agency ID
+is extracted from the pick or the preferred origin of the event
+and compared with the configured IDs.</p>
+<p>unset (=): use agencyID defined in global, default</p>
+<p>empty list (=&quot;&quot;): all agencies are allowed</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.message">
+<span class="sig-name descname"><span class="pre">poi.message</span></span><a class="headerlink" href="#confval-poi.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The default message string for the event-script is
+&quot;earthquake, [HOURS] hours [MINS] minutes ago, [DESC],
+magnitude [MAG], depth [DEP] kilometers&quot; whereas [DESC]
+is the string given in the event.description attribute. This
+string can be overwritten using one of the following options.
+There are three placeholders that can be used: &#64;region&#64;,
+&#64;dist&#64; and &#64;poi&#64;.
+Example: &quot;&#64;region&#64;, &#64;dist&#64; kilometers from &#64;poi&#64;
+away&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.maxDist">
+<span class="sig-name descname"><span class="pre">poi.maxDist</span></span><a class="headerlink" href="#confval-poi.maxDist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>When using the nearest point of interest (city) as part of
+the message string, specify the maximum distance in degrees
+from the event. Any point of interest farther away will be
+ignored.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-poi.minPopulation">
+<span class="sig-name descname"><span class="pre">poi.minPopulation</span></span><a class="headerlink" href="#confval-poi.minPopulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">50000</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Minimum population for a city to become a point of interest.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.pick">
+<span class="sig-name descname"><span class="pre">scripts.pick</span></span><a class="headerlink" href="#confval-scripts.pick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The script to be called when a pick
+arrives. Network-, station code, pick publicID are passed
+as parameters $1, $2, $3.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.amplitude">
+<span class="sig-name descname"><span class="pre">scripts.amplitude</span></span><a class="headerlink" href="#confval-scripts.amplitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The script to be called when an amplitude
+arrives. Network-, station code, amplitude and amplitude
+public ID are passed as parameters $1, $2, $3, $4.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.alert">
+<span class="sig-name descname"><span class="pre">scripts.alert</span></span><a class="headerlink" href="#confval-scripts.alert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The script to be called when a preliminary
+origin arrives. Latitude and longitude are passed as
+parameters $1 and $2.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-scripts.event">
+<span class="sig-name descname"><span class="pre">scripts.event</span></span><a class="headerlink" href="#confval-scripts.event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The script to be called when an event has been
+declared. The message string, a flag (1=new event,
+0=update event), the EventID, the arrival count and the
+magnitude (optional when set) are passed as parameters
+$1, $2, $3, $4 and $5.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>constraints.*</strong>
+<em>Constraints for executing scripts</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-constraints.phaseHints">
+<span class="sig-name descname"><span class="pre">constraints.phaseHints</span></span><a class="headerlink" href="#confval-constraints.phaseHints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">P,S</span></code></p>
+<p>Type: <em>list::string</em></p>
+<p>Start the pick script only when the phaseHint of the
+received pick has one of the value(s).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-constraints.phaseStreams">
+<span class="sig-name descname"><span class="pre">constraints.phaseStreams</span></span><a class="headerlink" href="#confval-constraints.phaseStreams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list::string</em></p>
+<p>Start the pick script only when the stream (NET.STA.LOC.CHA)
+of the received pick belongs to the list of stream IDs. If empty,
+all picks are accepted, otherwise only the ones whose stream ID
+matches one of the entry of this comma separated list. Each entry
+must follow the NET.STA.LOC.CHA format, but the special
+characters ? * | ( ) are also accepeted.
+E.g. &quot;CH.*,GR.STA??.*,*.*.*.HH?,*.*.*.??(Z|1)&quot;</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-constraints.phaseNumber">
+<span class="sig-name descname"><span class="pre">constraints.phaseNumber</span></span><a class="headerlink" href="#confval-constraints.phaseNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Start the pick script only when a minimum number of phases
+‘phaseNumber’ is received within ‘phaseInterval’.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-constraints.phaseInterval">
+<span class="sig-name descname"><span class="pre">constraints.phaseInterval</span></span><a class="headerlink" href="#confval-constraints.phaseInterval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Start the pick script only when a minimum number of phases
+‘phaseNumber’ is received within ‘phaseInterval’.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scalert [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-h">
+<span id="cmdoption-scalert-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-V">
+<span id="cmdoption-scalert-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-D">
+<span id="cmdoption-scalert-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-first-new">
+<span class="sig-name descname"><span class="pre">--first-new</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-first-new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-firstNew"><code class="xref std std-confval docutils literal notranslate"><span class="pre">firstNew</span></code></a>.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-v">
+<span id="cmdoption-scalert-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-q">
+<span id="cmdoption-scalert-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-s">
+<span id="cmdoption-scalert-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-l">
+<span id="cmdoption-scalert-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-u">
+<span id="cmdoption-scalert-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-H">
+<span id="cmdoption-scalert-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-t">
+<span id="cmdoption-scalert-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-g">
+<span id="cmdoption-scalert-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-S">
+<span id="cmdoption-scalert-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-d">
+<span id="cmdoption-scalert-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scalert-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="alert">
+<h3>Alert<a class="headerlink" href="#alert" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-amp-type">
+<span class="sig-name descname"><span class="pre">--amp-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-amp-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the amplitude type to listen to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-amp-script">
+<span class="sig-name descname"><span class="pre">--amp-script</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-amp-script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-scripts.amplitude"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scripts.amplitude</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-alert-script">
+<span class="sig-name descname"><span class="pre">--alert-script</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-alert-script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-scripts.alert"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scripts.alert</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-event-script">
+<span class="sig-name descname"><span class="pre">--event-script</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-event-script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-scripts.event"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scripts.event</span></code></a>.</p>
+</dd></dl>
+
+</section>
+<section id="cities">
+<h3>Cities<a class="headerlink" href="#cities" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-max-dist">
+<span class="sig-name descname"><span class="pre">--max-dist</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-max-dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-poi.maxDist"><code class="xref std std-confval docutils literal notranslate"><span class="pre">poi.maxDist</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-min-population">
+<span class="sig-name descname"><span class="pre">--min-population</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-min-population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="scvoice.html#confval-poi.minPopulation"><code class="xref std std-confval docutils literal notranslate"><span class="pre">poi.minPopulation</span></code></a>.</p>
+</dd></dl>
+
+</section>
+<section id="debug">
+<h3>Debug<a class="headerlink" href="#debug" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scalert-E">
+<span id="cmdoption-scalert-eventid"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--eventid</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scalert-E" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify event ID that is used for testing. After running the
+alert scripts scvoice will exit.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scalert</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#alert">Alert</a></li>
+<li><a class="reference internal" href="#cities">Cities</a></li>
+<li><a class="reference internal" href="#debug">Debug</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ql2sc.html"
+                          title="previous chapter">ql2sc</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scart.html"
+                          title="next chapter">scart</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scalert.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

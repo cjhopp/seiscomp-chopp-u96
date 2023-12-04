@@ -1,0 +1,1021 @@
+# Change Log
+
+All notable changes to GAPS and its web applications will be documented in this
+file.
+
+## 2023.324
+
+### Changed
+
+-   Update SQLite library to 3.44.0.
+
+## 2023.299
+
+### Added
+
+-   Read `eventlist.filter.types.enabled` and set event list filter in
+    OriginLocatorView initially.
+
+## 2023.290
+
+### Added
+
+-   Add filter "Show/hide other/fake events" to event list of OriginLocatorView v1.
+-   Use global configuration `eventlist.filter.types.blacklist` to declare the
+    list of event types treated as other/fake events.
+
+## 2023.289
+
+### Added
+
+-   StationView v2 received a configuration option for the event timespan:
+    `apps.mapview.eventTimeSpan`. The default is 168 (hours).
+
+## 2023.279
+
+### Fixed
+
+-   Render Geo feature coordinates with full precision as read from
+    either BNA or GeoJSON. The precision was fixed to 4 digits.
+
+## 2023.255
+
+### Added
+
+-   Configuration option `apps.eqview.showRegion`
+-   Use evaluation mode and status for color encoded status flag similar to
+    scolv (native SeisComP application)
+
+## 2023.251
+
+### Added
+
+-   Added support for `STALTA(sta, lta)` to webapps v1
+
+## 2023.249
+
+### Added
+
+-   Added support for `STALTA(sta, lta)` filter definition.
+
+## 2023.244
+
+### Added
+
+-   Added `apps.eqview.geoCodeURL` configuration parameter
+-   Show geo code (address) of earthquake location in EQView V2
+
+## 2023.241
+
+### Added
+
+-   Show picks on traces in traceview v2
+
+## 2023.186
+
+### Fixed
+
+-   Fixed dead lock caused by concurrent access with `forceHTTP = true`
+
+## 2023.185
+
+### Changed
+
+-   Changed internal socket debug logging
+-   Fix acquisition thread purging
+
+## 2023.180
+
+### Added
+
+-   Add option to configure station symbol border width:
+
+    ```
+    scheme.map.stationBorder = 1
+    ```
+
+## 2023.179
+
+### Added
+
+-   Add switch to toggle map legends in apps v2 and a configuration
+    option in gaps to initialize this setting:
+
+    ```
+    apps.mapShowLegend = false
+    ```
+
+-   Add option to toggle UTC in traceview/v2:
+
+    ```
+    apps.traceview.utc = true
+    ```
+
+## 2023.178
+
+### Added
+
+-   Add optional event region per widget. This can be useful if the
+    events per widget should cover a larger region than the initial
+    widget bounds.
+
+    ```
+    # Use a different event region than the initial map region
+    apps.eqview.widget.abc.eventRegion = 20x40+45-8
+    ```
+
+## 2023.174
+
+### Added
+
+-   Add EQ symbol animation type "three-circles" which animates
+    the current earthquake symbol in three steps: one circle,
+    two circles, three circles:
+
+    ```
+    apps.eventSymbolAnimation = three-circles
+    ```
+
+## 2023.173
+
+### Added
+
+-   Add configuration parameter to toggle display of map zoom
+    controls in v2 web applications:
+
+    ```
+    apps.mapShowZoomControl = true
+    ```
+
+-   Add default station cluster setting for v2 traceview:
+
+    ```
+    apps.traceview.cluster = true
+    ```
+
+## 2023.166
+
+### Added
+
+-   Support event color scale based on magnitude:
+
+    ```
+    apps.colorMode = magnitude
+    ```
+
+-   Use `scheme.maps.originSymbolMinSize` to configure
+    the fixed size of event symbols if the color mode
+    is "magnitude".
+-   Add single event mode to eqview v2 which shows the
+    selected event exclusively.
+
+    ```
+    apps.eqview.singleEventMode = true
+    ```
+
+-   Show stations in eqview v2 optionally and allow to
+    configure station colors per type.
+
+    ```
+    apps.eqview.showStations = true
+    scheme.colors.stationTypes = BB:orange, SM:blue, SP:lightgreen
+    ```
+
+## 2023.158
+
+### Fixed
+
+-   Fix setting configured mode in stationview (v2)
+
+### Added
+
+-   Add forwarding of SeisComP `scheme.precision` values
+    to web apps v2. To restore the current precision display,
+    the following values have to be configured in `gaps.cfg`:
+
+    ```
+    scheme {
+      precision {
+        depth = 0
+        distance = 1
+        location = 1
+        magnitude = 1
+        originTime = 0
+        pickTime = 1
+        traceValues = 1
+        rms = 1
+        uncertainties = 1
+      }
+      map {
+        stationSize = 25
+      }
+    }
+    ```
+
+-   Add configuration to set the station shape:
+
+    ```
+    scheme.map.stationSymbol = hexagon | triangle | diamond
+    ```
+
+    This is only recognized with web apps v2.
+
+## 2023.157
+
+-   Fix lat/lon/mag display in web apps version 2
+-   Add `widget.maximumMagnitude` filter and add support for it to
+    web apps version 2
+
+## 2023.146
+
+-   Fix relocation errors in OriginLocatorView. Sometimes the locator
+    failed while it worked in SeisComP scolv.
+-   Fix showing stations with a valid end time but in future in frontends2
+
+## 2023.142
+
+-   Change lat/lon precision two digits in web apps version 1.
+
+## 2023.107
+
+-   Support URL parameter "stations" to preset and show the trace view
+    initially in TraceView V2. An example URL looks like this:
+    <http://localhost:8080/traceview/#/?stations=GR.WET,CZ.KHC>
+
+## 2023.104
+
+-   Update event processors input CSV description. Five additional fm columns
+    have been added.
+
+## 2023.101
+
+-   Add missing description for `processors.events`
+
+## 2023.096
+
+-   Add `authorize` flag to event processor to require authentication for
+    staff members
+
+## 2023.075
+
+-   Support event processing and running configured scripts from within eqview v2
+    when a user selects a region with ctrl+left mouse
+
+## 2023.055
+
+-   Internal cleanups
+
+## 2023.019
+
+-   Let webapps v1 handle Quakelink URLs without
+    the concrete events/query path ending with a slash
+
+## 2023.017
+
+-   Allow microsecond precision for waveform requests
+
+## 2023.006
+
+-   Add websocket support for objects query
+-   Add region query
+
+## 2022.355
+
+### Added
+
+-   Add new configuration variables: `computePGAVD` and `windowPGAVD`
+    to control ground motion amplitude computation.
+
+## 2022.298
+
+### Changed
+
+-   Update SQLite library to 3.39.4 to fixing CVE-2022-35737.
+
+## 2022-07-29
+
+### Fixed
+
+-   Apply mapMaxLevel to base layer
+-   eqview widgets for undefined minimum magnitude threshold
+-   Tile layer config debug output
+-   Tile layer contains test
+
+## 2022-07-28
+
+### Fixed
+
+-   Fixed configuration description and removed invalid option
+    `apps.traceview.forceHTTP`.
+-   Respect forceHTTP setting in traceview@v2.
+
+## 2022-07-13
+
+### Fixed
+
+-   Support environment variables with `tileLayers.*.db`
+
+## 2022-07-11
+
+### Added
+
+-   Added additional tile layer configuration. In order to provide higher detailed
+    maps in certain areas it is now possible to define a mbtiles database for
+    particular zoom levels and bounding rects. An example configuration looks like
+    this:
+
+    ```
+    tileLayers = myarea
+    tileLayers.myarea {
+        db = /path/to/map.mbtiles
+        levels = 11:16
+        rects = +2048+2048+2064+2064
+    }
+    ```
+
+## 2022-05-17
+
+### Changed
+
+-   Update documentation on installation and setup
+
+## 2022-04-28
+
+### Added
+
+-   Allow configuration of event age color scale with `scheme.colors.originSymbol.age.gradient`.
+    This setting will currently be only used by frontends in version 2 and later.
+
+## 2022-04-27
+
+### Added
+
+-   Fetch event type list and event type certainty list from server
+
+## 2022-04-26
+
+### Fixed
+
+-   Read spatial vector data from standard vector directory of the corresponding
+    SeisComP release
+
+## 2022-04-25
+
+### Changed
+
+-   Renamed the v1 frontend assets directory `static` to `assets`
+-   OriginLocatorView fetches known event types from backend and presents
+    a sorted list
+-   Frontends v2 do respect `colorByAge` settings.
+
+### Fixed
+
+-   v1 frontends used a wrong maximum age value of 210 days instead of
+    1 month. This has been fixed. All events older than 30 days are
+    being rendered in gray now.
+
+## 2022-04-14
+
+### Added
+
+-   Add install instructions for basic setup and web server integration
+
+### Fixed
+
+-   Typos and default values in description XML
+
+## 2022-03-17
+
+### Added
+
+-   Added landing page for frontends v2. To configure it use
+
+    ```
+    indexTemplate = @DATADIR@/gaps/index-v2.cs
+    ```
+
+## 2022-02-23
+
+### Fixed
+
+-   Fixed typo in description: showWidgetsBounds -> showWidgetBounds
+
+## 2022-02-21
+
+### Fixed
+
+-   Fixed display of region bound rectangle. Due to a regression the initial
+    map region bound in eqview was always shown and not the widget region bounds.
+    As both behaviors are desirable, an additional configuration option has been
+    introduced: `apps.eqview.showWidgetBounds`. To enable the old behavior, set
+
+    ```
+    apps.eqview.showWidgetBounds = true
+    ```
+
+    which takes precedence over `apps.eqview.showRegionBounds`.
+
+## 2022-01-10
+
+### Changed
+
+-   Add reasonable ITAPER() to default filters for optimizing data filtering
+-   Update documentation
+
+## 2021-10-07
+
+### Changed
+
+-   Update AngularJS to 1.8.2 and JQuery to 2.2.4 for the 1st generation web
+    applications
+
+## 2021-05-20
+
+### Fixed
+
+-   Only center at the latest earthquake initially in StationView if earthquakes
+    should be shown
+
+## 2020-11-19
+
+### Fixed
+
+-   Fix redirection to index.html
+
+## 2020-09-30
+
+### Fixed
+
+-   Fix OriginLocatorView settings input fields which were not applied correctly
+    on change.
+
+## 2020-09-15
+
+### Fixed
+
+-   Fix handling of empty server responses in Web applications. This is important
+    for QuakeLink servers which are configured with a long poll timeout.
+
+## 2019-09-24
+
+### Changed
+
+-   Remove tile db configuration from default configuration in order that the
+    global configuration is not overridden by default. This change might break
+    existing installations that does not set
+    the **tileDB** parameter in the configuration file explicitly. To fix the
+    issue add the following line to the GAPS configuration.
+
+    ```
+    tileDB = @DATADIR@/gaps/zoom12.mbtiles
+    ```
+
+    Alternatively, the map location can be also defined in the global or GAPS
+    configuration file with
+
+    ```
+    map.location = @DATADIR@/gaps/zoom12.mbtiles
+    ```
+
+## 2019-04-26
+
+### Added
+
+-   Play EQView audio alerts in a loop
+-   Added stop button to EQView widgets in case an audio alert is played
+
+## 2019-04-16
+
+### Fixed
+
+-   Fixed direction (azimuth) to next city or reference place
+
+## 2019-01-24
+
+### Fixed
+
+-   Fixed ITAPER() filter which caused invalid data
+
+## 2019-01-22
+
+### Fixed
+
+-   Fixed map centering in OriginLocatorView. Sometimes the map is centered 360
+    degrees left of the event or right of it so that it looks like the event is
+    not shown at all.
+
+## 2019-01-15
+
+### Added
+
+-   Added configurable reference place to which the distance and azimuth of the
+    currently selected event is calculated and shown in the details
+
+## 2018-12-21
+
+### Added
+
+-   Added configuration parameter `map.geoFeaturePath` to configure the directory
+    of the BNA files to be displayed in the web applications
+
+### Fixed
+
+-   Fixed EQView widget layout in Chrome
+
+## 2018-12-14
+
+### Added
+
+-   Added options to play audio alert and give visual feedback if a new event
+    has been set as latest event for a widget
+
+## 2018-12-13
+
+### Added
+
+-   Added option to hide the latest event panel and to show the latest overall
+    event above the widgets
+
+## 2018-12-12
+
+### Added
+
+-   Added option to either use event depth or event age as source for symbol colors
+
+## 2018-12-10
+
+### Fixed
+
+-   Fixed symbol (either station or event) placement. They are now being placed
+    as close as possible to the center of the configured region
+
+## 2018-11-30
+
+### Fixed
+
+-   Fixed epoch matching in web application when station are being added to the
+    map
+
+## 2018-08-14
+
+### Fixed
+
+-   Restored old links in StationView and EQView caused by an upgrade of an
+    underlying web application framework
+
+## 2018-08-09
+
+### Fixed
+
+-   Fix time window request in StationView which was wrong if the system time
+    was not set to UTC
+
+## 2018-07-23
+
+### Added
+
+-   Support to overwrite global binding parameters in GAPS binding
+
+## 2018-05-03
+
+### Fixed
+
+-   Fixed relocation of events in OriginLocatorView when stations were
+    deactivated
+
+## 2018-04-30
+
+### Added
+
+-   If an event in EQView is selected manually, the URL will change to a
+    permanent link
+
+## 2018-04-19
+
+### Changed
+
+-   Upgraded critical external web components to latest version
+
+## 2018-04-05
+
+### Fixed
+
+-   Report correct content-type for URL directories, e.g. localhost/stationview/.
+    Not reporting it prevents Google Chrome from rendering the page.
+
+## 2018-03-07
+
+### Fixed
+
+-   Fixed connection state in StationView which was shown always as disconnected
+    once a connection to QuakeLink returned with an error even after a reconnect.
+
+## 2018-03-05
+
+### Fixed
+
+-   If the maximum bound rectangle is given (`apps.mapRegion.*`) then station
+    symbols are placed in the map that way that they are inside this rectangle.
+    E.g., setting the rectangle's longitude range from 0 to 360 will center the
+    map at 180 degrees and add station symbols left and right of the date line.
+
+## 2018-02-26
+
+### Added
+
+-   Added EQView configuration parameter `apps.eqview.externalData` which
+    allows to show external (with respect to the local inventory) referenced
+    waveform data. This parameter is by default `true`. If set set to `false`
+    then only stations which are part of the local inventory, which have bindings
+    and which are associated with the shown event will be added to the list of
+    traces.
+
+## 2018-02-20
+
+### Fixed
+
+-   Fixed waveform acquisition over HTTP which sometimes resulted in an interrupted
+    data stream. Although the stream recovered by requesting the data again, the
+    behavior was caused by a bug.
+
+## 2018-01-31
+
+### Fixed
+
+-   Finally we changed the EQView carousel screenshot thanks to Péter Mónus who
+    discovered the fail
+
+## 2017-09-06
+
+### Fixed
+
+-   Fixed parsing of initial time value when relocating an origin which caused
+    lots of LOCSAT errors for smaller events
+
+## 2017-08-31
+
+### Fixed
+
+-   Fixed map center location if clicked on a table entry for regions crossing the
+    date line
+
+## 2017-08-30
+
+### Fixed
+
+-   Fixed earthquake symbol placement for EQView region widgets
+
+## 2017-07-19
+
+### Fixed
+
+-   Fixed EQView table parameter markup which was introduced by the prior version
+    of eqview
+
+## 2017-07-17
+
+### Added
+
+-   Added option to use UTC timestamps for EqView
+
+    ```
+    apps.eqview.useUTC = true
+    ```
+
+## 2017-07-13
+
+### Added
+
+-   Added OriginLocatorView configuration to setup the pre/post data timespan
+
+    ```
+    # Both values are in seconds
+    apps.scolv.picker.preOffset = 30
+    apps.scolv.picker.postOffset = 60
+    ```
+
+-   Added OriginLocatorView settings tab to control some picker time window
+    settings. More probably to come.
+
+## 2017-04-18
+
+### Fixed
+
+-   Fixed legend style bug that showed up in Webkit browsers (Chrome/Chromium)
+    when the page is zoomed to a particular level
+
+## 2017-03-27
+
+### Fixed
+
+-   StationsView continues with data requests after connection has been closed
+    by the server
+-   Unify data acquisition requests in StationView and EQView
+
+## 2017-03-08
+
+### Fixed
+
+-   GAPS interprets an unset *enable* parameter as true according to the
+    documentation.
+
+## 2017-03-03
+
+### Added
+
+-   Allow guest users to do a relocation in OriginLocatorView
+
+## 2017-02-17
+
+### Added
+
+-   Added configuration parameter to set the TraceView trace timespan
+
+    ```
+    # Set timespan to 20min
+    apps.traceview.timeSpan = 1200
+    ```
+
+## 2017-02-13
+
+### Added
+
+-   Added configuration parameters to customize travel time tables.
+
+    ```
+    apps.scolv.ttt = libtau, LOCSAT
+    apps.scolv.ttt.libtau.models = iasp91, ak135
+    apps.scolv.ttt.LOCSAT.models = iasp91, tab, custom1, custom2
+    ```
+
+## 2017-02-10
+
+### Added
+
+-   GAPS requires now station bindings to enable station inventory and configuration
+    for web applications. Unbound stations will not be shown in e.g. StationView.
+
+## 2017-02-03
+
+### Fixed
+
+-   Disable database usage only if inventory and config XML files are given
+
+## 2017-02-01
+
+### Fixed
+
+-   Added scroll bar to station view detail widget in case of overflow
+
+## 2017-01-30
+
+### Fixed
+
+-   Changed filter name of LP to BW_LP and made BW an alias of BW_HLP. The
+    Butterworth bandpass can be explicitly created as BW_BP.
+
+## 2017-01-23
+
+### Added
+
+-   Added configuration parameter apps.mapview.cluster defining if stations
+    symbols should be clustered by default
+
+## 2017-01-18
+
+### Changed
+
+-   Set text color of cluster icons depended on background color for best contrast
+
+## 2016-12-12
+
+### Changed
+
+-   Removed blue info pop up messages
+
+## 2016-12-06
+
+### Added
+
+-   Added URL search parameters for StationView to select a station initially
+
+## 2016-12-05
+
+### Changed
+
+-   Changed header text from Extern to Downloads in StationView
+
+## 2016-11-28
+
+### Fixed
+
+-   Fixed horizontal line rendering bug on inset world map
+-   Open logo link in new tab
+
+### Added
+
+-   Added browser check in webapps which will warn a user
+    that does not use a compatible browser, currently Firefox and Chrome/Chromium
+
+## 2016-11-02
+
+### Added
+
+-   Added lock on EQView event detail page if opened manually. This will prevent
+    the detail panel from updating or closing automatically. To return to the
+    automatic mode the panel has to closed explicitly.
+
+## 2016-11-01
+
+### Added
+
+-   Added option to configure an additional link for the station detail panel
+    in the StationView
+
+    ```
+    apps.mapview.customStationLink = "http://geofon.gfz-potsdam.de/fdsnws/station/1/query?network=${net}&station=${sta}&level=resp&format=sc3ml"
+    apps.mapview.customStationLinkName = "Download instrument response"
+    ```
+
+## 2016-10-19
+
+### Added
+
+-   Added configuration option for initial mode of StationView
+
+    ```
+    apps.mapview.mode = delay | latency | groundmotion
+    ```
+
+## 2016-09-26
+
+### Fixed
+
+-   Fixed segmentation fault
+
+## 2016-09-15
+
+### Fixed
+
+-   Fixed TraceView waveform reconnect when a proxy server is used
+
+## 2016-08-25
+
+### Fixed
+
+-   Fixed error when loading events from QuakeLink that is running behind a proxy
+
+## 2015-05-13
+
+### Fixed
+
+-   Fixed QuakeLink reconnect in EQView and StationView
+
+## 2016-03-22
+
+### Added
+
+-   Added option `indexTemplate` that configures the path to the index.cs template
+    used to generate the index.html.
+
+## 2016-03-21
+
+### Fixed
+
+-   Fixed bug that did not take `apps.scolv.useUTC` into account. Furthermore
+    the time edit fields expect either GMT or local time depending on that flag.
+
+## 2016-03-18
+
+### Fixed
+
+-   Fixed display of selected initial map region which was sometimes ignored
+
+## 2016-03-16
+
+### Fixed
+
+-   Fixed OriginLocatorView configuration error if `apps.scolv.distInKM` is not
+    set to true
+
+## 2016-03-15
+
+### Added
+
+-   Added configuration option to specify the path of the logo shown in eqview
+    and MapView/StationView
+
+    ```
+    # Relative path to ~/seiscomp3/share/gaps/apps/
+    apps.logoPath = share/images/mylogo.svg
+    ```
+
+-   Added travel time plot to originlocatorview
+-   Added configuration option to show plot distances in OriginLocatorView in km
+    instead of degree
+
+    ```
+    # Show distances in km instead of degree
+    apps.scolv.distInKM = true
+    ```
+
+## 2016-03-14
+
+### Added
+
+-   Added configuration of default visible region for MapView and TraceView
+
+    ```
+    apps.mapRegion.minimumLatitude  = 0
+    apps.mapRegion.minimumLongitude = 0
+    apps.mapRegion.maximumLatitude  = 10
+    apps.mapRegion.maximumLongitude = 10
+    ```
+
+## 2016-01-27
+
+### Added
+
+-   Added `mapMaxLevel` and `mapMaxZoom` configuration parameter for better
+    integration of tile servers
+
+## 2017-01-07
+
+### Added
+
+-   Added legend to EQView and OriginLocatorView
+-   Added time span query to OriginLocatorView
+
+### Fixed
+
+-   Added OriginLocatorView events map view to documentation
+-   Fixed OriginLocatorView events map view to show exactly the same events as
+    the event list and respecting the filters
+-   Fixed tooltip (event ID) for event symbols in EQView and OriginLocatorView
+
+## 2016-01-06
+
+### Added
+
+-   OriginLocatorView received an additional view for the event list, a map, that
+    it is now possible to either list all events in a table or plotted in a map
+
+### Fixed
+
+-   Fixed bug that caused an error at every second "Read" button activation
+
+## 2015-10-26
+
+### Added
+
+-   Remove "not existing" and "other" events
+
+## 2015-10-19
+
+### Added
+
+-   OriginLocatorView adds a filter the event list to either show all events,
+    hide rejected events or only show rejected events
+
+## 2015-07-07
+
+### Added
+
+-   Added option to display P/S wave spreading for the current
+    widget in EQViev
+
+    ```
+    apps.eqview.showWaveSpreading = true
+    ```
+
+## 2015-06-24
+
+### Added
+
+-   Added option to use UTC timestamps in OriginLocatorView
+
+    ```
+    # Uses UTC timestamps in the frontend
+    apps.scolv.useUTC = true
+    ```
+
+## 2015-06-22
+
+### Fixed
+
+-   Fixed carousel image scaling problems in the landing page
+-   Fixed waveform reconnection problem with web applications
+
+## 2015-06-19
+
+### Added
+
+-   Allow index files (`share/gaps/*/gaps.idx`) to point to an
+    absolute URL with e.g. `link=http://www.domain.org`
+
+## 2015-05-08
+
+### Added
+
+-   Added forceHTTP option to disable Websockets for record
+    which can cause problems with Apache Websocket Proxy module

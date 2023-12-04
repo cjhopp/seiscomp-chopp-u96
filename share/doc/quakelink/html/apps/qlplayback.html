@@ -1,0 +1,397 @@
+<!doctype html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>qlplayback &#8212; QuakeLink: Earthquake Distribution Server  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gempa.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/gempa.css?v=c960eebf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/gempa.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qlpush" href="qlpush.html" />
+    <link rel="prev" title="ql2ql" href="ql2ql.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <img class="background" src="../_static/icon.png"/>
+        <div class="content">
+           <span class="title">QuakeLink: Earthquake Distribution Server </span>
+           <span class="version">2023.324#17393ecf5</span></h1>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="qlpush.html" title="qlpush"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="ql2ql.html" title="ql2ql"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../base/plugins.html" accesskey="U">Server</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="qlplayback">
+<span id="id1"></span><h1>qlplayback<a class="headerlink" href="#qlplayback" title="Permalink to this heading">¶</a></h1>
+<p><strong>Uses a quakelink event archive directory, modifies timestamps and
+feeds the data into another quakelink instance.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>qlplayback feeds event parameter into a <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> server for simulating
+real-time conditions in a playback:</p>
+<ul class="simple">
+<li><p>Read event parameters from a Quakelink event archive directory.</p></li>
+<li><p>Modify the timestamp before sending to the server.</p></li>
+</ul>
+<p>It is part of the QuakeLink suite. Please read the command-line help for the options:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>qlplayback<span class="w"> </span>-h
+</pre></div>
+</div>
+</section>
+<section id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this heading">¶</a></h2>
+<p>qlplayback enters an arbitrary <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> event directory and reads the
+revision log file. The time difference from the current system time to the
+first revision timestamp is being computed and applied to all timestamps of all
+objects of the XML files unless <a class="reference internal" href="#cmdoption-d"><code class="xref std std-option docutils literal notranslate"><span class="pre">--time-delta</span></code></a> is specified.
+That means that all creationInfo.creationTime and creationInfo.modificationTime
+values are being modified, all pick.time.value values are being modified and the
+publicIDs of all objects are also being recomputed and reassigned.</p>
+<p>After all those modifications have taken place, the revisions will be sent to
+<a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> in a way which simulates real-time updates. The first revision
+is being sent immediately. The second revision will be sent after the time
+difference of the second revision and the first revision and so on. This is
+very similar to msrtsimul of seedlink.</p>
+</section>
+<section id="seiscomp-setup">
+<h2>SeisComP Setup<a class="headerlink" href="#seiscomp-setup" title="Permalink to this heading">¶</a></h2>
+<p>In order to forward the playback data to SeisComP, <span class="xref std std-ref">ql2sc</span> must be
+utilized and configured. It depends on whether scevent should run on the
+target system or not. A simple playback which just wants to test downstream
+modules or which wants to show real-time updates on e.g. scesv does not need
+to run scevent and can forward also Events from <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a>. Injecting
+playbacks into a processing system with interactive analysis must not forward
+Events and requires scevent to be running.</p>
+<section id="without-scevent">
+<h3>Without scevent<a class="headerlink" href="#without-scevent" title="Permalink to this heading">¶</a></h3>
+<p>File: <code class="file docutils literal notranslate"><span class="pre">ql2sc.cfg</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">hosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>playback
+
+<span class="c1"># Request native data instead of XML format. Native data export may be disabled</span>
+<span class="c1"># on some hosts.</span>
+host.playback<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">native</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ql://localhost:18010
+<span class="w">    </span><span class="nv">syncEventAttributes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="c1"># Because we forward events</span>
+<span class="w">    </span><span class="nv">routingTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Pick:PICK,<span class="se">\</span>
+<span class="w">                   </span>Amplitude:AMPLITUDE,<span class="se">\</span>
+<span class="w">                   </span>Origin:LOCATION,<span class="se">\</span>
+<span class="w">                   </span>FocalMechanism::FOCMECH,<span class="se">\</span>
+<span class="w">                   </span>Event:EVENT
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This setup will connect to the <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> server which receives the
+playback XML files from qlplayback and forward everything to SeisComP, also
+events.</p>
+</section>
+<section id="with-scevent">
+<h3>With scevent<a class="headerlink" href="#with-scevent" title="Permalink to this heading">¶</a></h3>
+<p>File: <code class="file docutils literal notranslate"><span class="pre">ql2sc.cfg</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">hosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>playback
+
+<span class="c1"># Request native data instead of XML format. Native data export may be disabled</span>
+<span class="c1"># on some hosts.</span>
+host.playback<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">native</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ql://localhost:18010
+<span class="w">    </span><span class="nv">syncEventAttributes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span>
+<span class="w">    </span><span class="nv">routingTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Pick:IMPORT_GROUP,<span class="se">\</span>
+<span class="w">                   </span>Amplitude:IMPORT_GROUP,<span class="se">\</span>
+<span class="w">                   </span>Origin:EVENT,<span class="se">\</span>
+<span class="w">                   </span>FocalMechanism::EVENT
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This setup will connect to the <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> server which receives the
+playback XML files from qlplayback and forward only origins and focal
+mechanisms to scevent. Picks and amplitudes will be forwarded to the
+IMPORT_GROUP and therefore invisible for e.g. scamp and scmag.</p>
+</section>
+<section id="run-required-modules">
+<h3>Run required modules<a class="headerlink" href="#run-required-modules" title="Permalink to this heading">¶</a></h3>
+<p>Here only the additional modules to the existing SeisComP processing modules
+are listed:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>seiscomp<span class="w"> </span>start<span class="w"> </span>quakelink<span class="w"> </span>ql2sc
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>Playback of a certain event in the QuakeLink archive.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>qlplayback<span class="w"> </span><span class="nv">$SEISCOMP_ROOT</span>/var/lib/quakelink/archive/2022/09/18/gempa2022shod
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="module-configuration">
+<h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/qlplayback.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/qlplayback.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/qlplayback.cfg</span></code></div>
+</div>
+<p>qlplayback inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modules/plugins may require a license file. The default path to license
+files is <code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/licenses/</span></code> which can be overridden by global
+configuration of the parameter <code class="xref std std-confval docutils literal notranslate"><span class="pre">gempa.licensePath</span></code>. Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>gempa.licensePath = @CONFIGDIR@/licenses
+</pre></div>
+</div>
+</div>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">qlplayback [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-h">
+<span id="cmdoption-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-V">
+<span id="cmdoption-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-v">
+<span id="cmdoption-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-q">
+<span id="cmdoption-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-s">
+<span id="cmdoption-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-l">
+<span id="cmdoption-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="quakelink">
+<h3>Quakelink<a class="headerlink" href="#quakelink" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-H">
+<span id="cmdoption-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Host name or IP of the QuakeLink server to connect to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-dry-run">
+<span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-dry-run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not send any events to QuakeLink.</p>
+</dd></dl>
+
+</section>
+<section id="playback">
+<h3>Playback<a class="headerlink" href="#playback" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-d">
+<span id="cmdoption-time-delta"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--time-delta</span></span><span class="sig-prename descclassname"> <span class="pre">seconds</span></span><a class="headerlink" href="#cmdoption-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define a fixed time delta in seconds. This prevents
+qlplayback from figuring out the time delta itself.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">qlplayback</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#workflow">Workflow</a></li>
+<li><a class="reference internal" href="#seiscomp-setup">SeisComP Setup</a><ul>
+<li><a class="reference internal" href="#without-scevent">Without scevent</a></li>
+<li><a class="reference internal" href="#with-scevent">With scevent</a></li>
+<li><a class="reference internal" href="#run-required-modules">Run required modules</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#quakelink">Quakelink</a></li>
+<li><a class="reference internal" href="#playback">Playback</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ql2ql.html"
+                          title="previous chapter">ql2ql</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="qlpush.html"
+                          title="next chapter">qlpush</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/qlplayback.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="content">
+        Release <b></b> version <b>2023.324#17393ecf5</b>
+          <div class="copyright">
+            &copy; Copyright <a href="https://www.gempa.de">2013, gempa GmbH.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

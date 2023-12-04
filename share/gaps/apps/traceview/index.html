@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="TraceView">
+	<head>
+		<title>gempa TraceView</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.5" />
+		<link rel="stylesheet" href="../share/css/gempa-allinone.css"/>
+		<link rel="stylesheet" href="../share/css/leaflet.css"/>
+
+		<script type="text/javascript" src="../share/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../share/lib/angular.min.js"></script>
+		<script type="text/javascript" src="../share/lib/leaflet.js"></script>
+		<script language="javascript" type="text/javascript" src="lib/traceview.min.js"></script>
+	</head>
+	<body ng-controller="Ctrl">
+		<noscript>
+		Sorry, your browser does not support JavaScript! Enable JavaScript and
+		<a href="index.html">reload</a> the page.
+		</noscript>
+		<div id="app">
+			<browser-check></browser-check>
+			<div id="loader" ng-if="progress != undefined">
+				<h1><center>Initializing</center></h1>
+				<div class="progress progress-striped">
+					<div class="progress-bar
+						 progress-bar-success"
+						 role="progressbar"
+						 aria-valuenow="{{progress}}"
+						 aria-valuemin="0"
+						 aria-valuemax="100"
+						 style="width:{{progress}}%">
+						<span class="sr-only">{{progress}}% Complete</span>
+					</div>
+				</div>
+				<span><center>{{progressMsg}}</center></span>
+			</div>
+			<div id="content">
+				<div id="traces">
+					<div class="tracearea"
+						 jq-show="layoutComplete"
+						 jq-options="{fadeDelay:200}"
+						 auto-height
+						 layout-complete="traceLayoutComplete()"
+						 min-height="viewOptions.minHeight"
+						 children=".row" rows="rowCount">
+						<div class="row" ng-repeat="trace in orderedTraces" ng-show="trace.isVisible()">
+							<div class="trace"
+								 timeseries
+								 data="trace.data"
+								 markers="trace.markers"
+								 options="options"
+								 defer-update></div>
+							<div class="label label-info">{{trace.sid}}</div>
+						</div>
+					</div>
+					<div class="ruler"
+						 timeseries
+						 options="rulerOptions"
+						 status="status"
+						 markers="rulerMarkers"
+						 title="Ruler which can be either moved (drag) or zoomed (wheel)">
+					</div>
+				</div>
+				<div id="trMapBox" ng-if="initMap" class="box" jq-show="viewOptions.showMap && viewOptions.showConfig">
+					<map-ll id="maplayer"
+							options="config.map"
+							map-interface="mapInterface"
+							inventory="inventory"
+							events="mapEvents"
+							current-feature="currentFeature"
+							select="viewOptions.mapSelect"
+							title="{{currentFeature._staid2}}{{currentFeature._sta.description}}">
+					</map-ll>
+				</div>
+				<menu class="gmenu gcontent"
+					  ng-class="{show:viewOptions.showConfig}"
+					  ng-mouseover="setConfigVisibility()"
+					  ng-mouseleave="setConfigVisibility('hide')"
+					  type="list">
+					<li class="gheader">
+						<span>Settings</span>
+						<span><i class="icon glyphicon glyphicon-question-sign"></i></span>
+					</li>
+					<li ng-show="!viewOptions.showMap">
+						<menu label="Map">
+							<li class="menudivider" >Map</li>
+							<li class="gbutton" ng-click="toggleMap()">
+								<i class="glyphicon glyphicon-globe"></i>
+								Show map</li>
+						</menu>
+					</li>
+					<li ng-show="!viewOptions.showMap">
+						<menu label="Filter">
+							<li class="menudivider" >Filter</li>
+							<li class="gradio" ng-click="applyFilter(null)">
+								<i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:!viewOptions.useFilter}"></i>
+								Off</li>
+							<li class="gradio"
+								ng-repeat="f in filters"
+								ng-click="applyFilter(f)">
+								<i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:f[1] === currentFilter && viewOptions.useFilter}"></i>
+								{{f[0]}}</li>
+						</menu>
+					</li>
+					<li ng-show="!viewOptions.showMap">
+						<menu label="Row Size">
+							<li class="menudivider" >Row Size</li>
+							<li class="gbutton" ng-click="incRowSize()">
+								<i class="glyphicon glyphicon-plus-sign"></i>
+								Increase row size</li>
+							<li class="gbutton" ng-click="decRowSize()">
+								<i class="glyphicon glyphicon-minus-sign"></i>
+								Decrease row size</li>
+							<li class="gbutton" ng-click="resetView()">
+								<i class="glyphicon glyphicon-remove-sign"></i>
+								Reset view</li>
+						</menu>
+					</li>
+					<li ng-show="viewOptions.showMap">
+						<menu label="Map">
+							<li class="menudivider" >Map</li>
+							<li class="gradio" ng-click="viewOptions.mapSelect = true">
+								<i i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:viewOptions.mapSelect}"></i>
+								Select stations</li>
+							<li class="gradio" ng-click="viewOptions.mapSelect = false">
+								<i i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:!viewOptions.mapSelect}"></i>
+								Pan map</li>
+							<li class="gbutton" ng-click="showData()">
+								<i class="glyphicon glyphicon-stats"></i>
+								Show traces</li>
+						</menu>
+					</li>
+				</menu>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,283 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "SCEVTLOG" "1" "Dec 04, 2023" "5.5.14" "SeisComP"
+.SH NAME
+scevtlog \- SeisComP Documentation
+.sp
+\fBEvent log preserving the history of updates.\fP
+.SH DESCRIPTION
+.sp
+Running SeisComP causes many database accesses for writing. Anytime a new
+event has been created a new row will be inserted in the database table.
+When the same event is updated the row in the database table is going to be
+changed as well. The information about the history of the event is lost because
+the database contains only the current event attributes. scevtlog saves the
+event history into files. While scevtlog is running it keeps the track of all
+event updates and stores this information in a directory that can be analyzed
+at anytime. The stored information is written as plain text in an easily
+readable format. Additionally scevtlog maintains an event summary file for an
+overview of the event history.
+.SH MODULE CONFIGURATION
+.nf
+\fBetc/defaults/global.cfg\fP
+\fBetc/defaults/scevtlog.cfg\fP
+\fBetc/global.cfg\fP
+\fBetc/scevtlog.cfg\fP
+\fB~/.seiscomp/global.cfg\fP
+\fB~/.seiscomp/scevtlog.cfg\fP
+.fi
+.sp
+.sp
+scevtlog inherits \fI\%global options\fP\&.
+.INDENT 0.0
+.TP
+.B directory
+Default: \fB@LOGDIR@/events\fP
+.sp
+Type: \fIstring\fP
+.sp
+Specify the output directory. Within this directory the logging
+directory structure and the event files are stored.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B format
+Default: \fBxml\fP
+.sp
+Type: \fIstring\fP
+.sp
+Specify output event format (default is autoloc3). For completeness
+it is recommended to switch to xml as storage format. The autoloc3
+format can be easily reconstructed with scbulletin but not the other
+way around.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B gzip
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+If format is xml then all XML files will be compressed with gzip
+and stored with file extension \(dq.xml.gz\(dq. They are also
+valid gzip files and can be used as input to e.g. zgrep.
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBscevtlog [options]\fP
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-file arg
+Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick \-> scautopick2.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-plugins arg
+Load given plugins.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D, \-\-daemon
+Run as daemon. This means the application will fork itself
+and doesn\(aqt need to be started with &.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-auto\-shutdown arg
+Enable/disable self\-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with \-\-start\-stop\-msg
+for the master module).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-module arg
+Set the name of the master\-module used for auto\-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-username arg
+Set the name of the master\-username of the messaging
+used for auto\-shutdown. If \(dqshutdown\-master\-module\(dq is
+given as well, this parameter is ignored.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-\-verbosity arg
+Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Quiet mode: no logging output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-component arg
+Limit the logging to a certain component. This option can
+be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-syslog
+Use syslog logging backend. The output usually goes to
+/var/lib/messages.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-l, \-\-lockfile arg
+Path to lock file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-console arg
+Send log output to stdout.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-log\-file arg
+Use alternative log file.
+.UNINDENT
+.SS Messaging
+.INDENT 0.0
+.TP
+.B \-u, \-\-user arg
+Overrides configuration parameter \fI\%connection.username\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-H, \-\-host arg
+Overrides configuration parameter \fI\%connection.server\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-t, \-\-timeout arg
+Overrides configuration parameter \fI\%connection.timeout\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-g, \-\-primary\-group arg
+Overrides configuration parameter \fI\%connection.primaryGroup\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-S, \-\-subscribe\-group arg
+A group to subscribe to.
+This option can be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-content\-type arg
+Overrides configuration parameter \fI\%connection.contentType\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-start\-stop\-msg arg
+Set sending of a start and a stop message.
+.UNINDENT
+.SS Database
+.INDENT 0.0
+.TP
+.B \-\-db\-driver\-list
+List all supported database drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-d, \-\-database arg
+The database connection string, format:
+\fI\%service://user:pwd@host/database\fP\&.
+\(dqservice\(dq is the name of the database driver which
+can be queried with \(dq\-\-db\-driver\-list\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-module arg
+The config module to use.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-inventory\-db arg
+Load the inventory from the given database or file, format:
+[\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-db\-disable
+Do not use the database at all
+.UNINDENT
+.SS Storage
+.INDENT 0.0
+.TP
+.B \-o, \-\-directory arg
+Overrides configuration parameter \fI\%directory\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-f, \-\-format arg
+Overrides configuration parameter \fI\%format\fP\&.
+.UNINDENT
+.SH AUTHOR
+gempa GmbH, GFZ Potsdam
+.SH COPYRIGHT
+gempa GmbH, GFZ Potsdam
+.\" Generated by docutils manpage writer.
+.

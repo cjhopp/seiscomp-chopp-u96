@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Waveform archives &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="RecordStream" href="recordstream.html" />
+    <link rel="prev" title="Database" href="database.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="recordstream.html" title="RecordStream"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="database.html" title="Database"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../concepts.html" accesskey="U">Concepts</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="waveform-archives">
+<span id="concepts-waveformarchives"></span><h1>Waveform archives<a class="headerlink" href="#waveform-archives" title="Permalink to this heading">¶</a></h1>
+<section id="scope">
+<h2>Scope<a class="headerlink" href="#scope" title="Permalink to this heading">¶</a></h2>
+<p>This chapter describes waveform archives for long-term storage of miniSEED data.</p>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
+<p>While real-time data sources provide data for a rather short amount of time,
+long-term access to waveforms can be established through waveform archives.
+The <a class="reference internal" href="recordstream.html#concepts-recordstream"><span class="std std-ref">RecordStream interface</span></a> allows a combined access
+to real-time data and data in <a class="reference internal" href="#concepts-sds"><span class="std std-ref">SDS</span></a> or other archives.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is assumed that instrument corrections applied to the recorded
+waveform data result in data in units of the real observations and their unmodified value.
+Therefore, it is recommended to store only unprocessed raw data in units of digital counts
+in the waveform archives and to provide the complete <a class="reference internal" href="inventory.html#concepts-inventory"><span class="std std-ref">inventory</span></a>
+referring to input data given in counts.</p>
+</div>
+</section>
+<section id="sds-archives">
+<span id="concepts-sds"></span><h2>SDS archives<a class="headerlink" href="#sds-archives" title="Permalink to this heading">¶</a></h2>
+<p>SeisComP uses the SeisComP Data Structure (SDS) for archiving miniSEED waveform data.
+It has the structure:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>archive
+<span class="w">  </span>+<span class="w"> </span>year
+<span class="w">    </span>+<span class="w"> </span>network<span class="w"> </span>code
+<span class="w">      </span>+<span class="w"> </span>station<span class="w"> </span>code
+<span class="w">        </span>+<span class="w"> </span>channel<span class="w"> </span>code
+<span class="w">          </span>+<span class="w"> </span>one<span class="w"> </span>file<span class="w"> </span>per<span class="w"> </span>day<span class="w"> </span>and<span class="w"> </span>location,<span class="w"> </span>e.g.<span class="w"> </span>NET.STA.LOC.CHAN.D.YEAR.DOY
+</pre></div>
+</div>
+<p>SeisComP ships with <a class="reference internal" href="../../apps/slarchive.html#slarchive"><span class="std std-ref">slarchive</span></a> to create SDS archives from a miniSEED waveform
+buffer by <a class="reference internal" href="../../apps/seedlink.html#seedlink"><span class="std std-ref">seedlink</span></a> in real time and with <a class="reference internal" href="../../apps/scart.html#scart"><span class="std std-ref">scart</span></a> to intergrate miniSEED
+records from files into an SDS archive. <a class="reference internal" href="../../apps/scart.html#scart"><span class="std std-ref">scart</span></a> can also be used to retrieve
+miniSEED records from an SDS archive.</p>
+</section>
+<section id="access-to-waveform-archives">
+<h2>Access to waveform archives<a class="headerlink" href="#access-to-waveform-archives" title="Permalink to this heading">¶</a></h2>
+<p>Access from SeisComP processing and GUI modules to waveform archives is realized by
+<a class="reference internal" href="recordstream.html#concepts-recordstream"><span class="std std-ref">RecordStream implementations</span></a>.
+The continuity of SDS archives can be monitored by <a class="reference internal" href="../../apps/scardac.html#scardac"><span class="std std-ref">scardac</span></a> and exposed by
+the <a class="reference internal" href="../../apps/fdsnws.html#fdsnws"><span class="std std-ref">fdsnws availability feature</span></a>.
+miniSEED waveforms in SDS archives, can interactively retrieved using <a class="reference internal" href="../../apps/scart.html#scart"><span class="std std-ref">scart</span></a>.
+Waveforms stored in SDS archives can be served to clients, e.g. using <a class="reference internal" href="../../apps/fdsnws.html#fdsnws"><span class="std std-ref">fdsnws</span></a>.</p>
+</section>
+<section id="related-modules">
+<h2>Related modules<a class="headerlink" href="#related-modules" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><span class="xref std std-ref">caps_plugin</span></p></li>
+<li><p><a class="reference internal" href="../../apps/fdsnws.html#fdsnws"><span class="std std-ref">fdsnws</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/scardac.html#scardac"><span class="std std-ref">scardac</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/scart.html#scart"><span class="std std-ref">scart</span></a></p></li>
+<li><p><a class="reference internal" href="../../apps/slarchive.html#slarchive"><span class="std std-ref">slarchive</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Waveform archives</a><ul>
+<li><a class="reference internal" href="#scope">Scope</a></li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#sds-archives">SDS archives</a></li>
+<li><a class="reference internal" href="#access-to-waveform-archives">Access to waveform archives</a></li>
+<li><a class="reference internal" href="#related-modules">Related modules</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="database.html"
+                          title="previous chapter">Database</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="recordstream.html"
+                          title="next chapter">RecordStream</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/base/concepts/waveformarchives.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

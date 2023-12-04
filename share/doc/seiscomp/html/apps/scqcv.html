@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scqcv &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scrttv" href="scrttv.html" />
+    <link rel="prev" title="scolv" href="scolv.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scrttv.html" title="scrttv"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scolv.html" title="scolv"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../gui.html" accesskey="U">Graphical User Interfaces</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scqcv">
+<span id="id1"></span><h1>scqcv<a class="headerlink" href="#scqcv" title="Permalink to this heading">¶</a></h1>
+<p><strong>Quality control view.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scqcv provides both, a brief overview of the seismometer network status and a
+detailed view of specific stream parameters. Quality Control (QC) parameters,
+determined by <a class="reference internal" href="scqc.html#scqc"><span class="std std-ref">scqc</span></a> and sent via messaging system, are received and displayed.</p>
+<p>scqcv allows to interactively disable or to enable streams for automatic data processing
+based on the observed QC reports.</p>
+</section>
+<section id="detailed-qc-reports-per-station">
+<h2>Detailed QC reports per station<a class="headerlink" href="#detailed-qc-reports-per-station" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference internal" href="#fig-tab-view"><span class="std std-ref">Tabulator view of scqcv</span></a> shows the tabular view of the QC report messages.
+Each QC parameter is shown in a column. The default sorting by stream code can
+be changed by pressing a header field of a parameter. A widget displaying the
+currently received waveform data is shown by pressing the cell with the streamID.
+Positioning the mouse over the parameter cell a ToolTip indicates
+more detailed information on the selected parameter. Typing a regular
+expression in the “StreamIDFilter” text entry field results in a stream code
+filter, only displaying the matching stream codes with QC parameter. Green
+colored fields indicate that the QC parameter values lie within the configured
+“good” interval. Red colors indicate that the QC parameters lie outside the
+tolerated value interval – this stream might have an issue. All <a class="reference internal" href="#scqcv-sec-setup"><span class="std std-ref">colors are
+configurable</span></a>.
+Click on the table header to sort by the selected value or drag the columns to
+another position. The order of the columns is controlled by <a class="reference internal" href="#confval-parameter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">parameter</span></code></a>.
+By clicking on a streamID, the past waveforms are displayed at length configured
+by <a class="reference internal" href="#confval-streamWidget.length"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streamWidget.length</span></code></a>.</p>
+<p>To <strong>disable / enable</strong> a station click on the respective station field in the
+<em>enabled</em> column.</p>
+<figure class="align-center" id="id2">
+<span id="fig-tab-view"></span><a class="reference internal image-reference" href="../_images/Tabulator_view_of_scqcv.png"><img alt="../_images/Tabulator_view_of_scqcv.png" src="../_images/Tabulator_view_of_scqcv.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Tabulator view of scqcv</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="station-overview">
+<h2>Station overview<a class="headerlink" href="#station-overview" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference internal" href="#fig-status-overview"><span class="std std-ref">Status overview of scqcv with a stream widget</span></a> shows the status overview grouped by network code.
+The status is color coded and the color is derived from a
+<a class="reference internal" href="#scqcv-sec-scoring"><span class="std std-ref">score</span></a> per station.</p>
+<p>The more the color usually varies from green to dark red, the worse the waveform data might be.
+A dark red color indicates a stream with low quality, e.g. high latency.
+Light to darker red
+represents a badness sum of related QC parameters. Colors are subject to
+changes in near future and are configurable. Pressing a stream code item opens a
+single line table
+with detailed information of the selected stream. Again it is possible to open
+a real time waveform widget by pressing the leading header field indicating
+the stream code.</p>
+<p>Typing a regular expression in the bottom text entry field
+results in a stream code filter, only displaying the matching stream codes.
+Disabled stations are crossed out. Click on a stream field to view the detailed
+QC parameters where stations can also be enabled / disabled.</p>
+<figure class="align-center" id="id3">
+<span id="fig-status-overview"></span><a class="reference internal image-reference" href="../_images/Status_overview_of_scqcv.png"><img alt="../_images/Status_overview_of_scqcv.png" src="../_images/Status_overview_of_scqcv.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Status overview of scqcv with a stream widget</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The compact status overview allows a quick impression of the present status of
+all received streams (<a class="reference internal" href="#fig-compact-status"><span class="std std-ref">Compact status overview of scqcv</span></a>). Functionality is equal to the
+status overview grouped by network.</p>
+<p>Switch between compact view and
+network seperated view by clicking the checkbox in the bottom line.</p>
+<figure class="align-center" id="id4">
+<span id="fig-compact-status"></span><a class="reference internal image-reference" href="../_images/Compact_status_overview_of_scqcv.png"><img alt="../_images/Compact_status_overview_of_scqcv.png" src="../_images/Compact_status_overview_of_scqcv.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Compact status overview of scqcv</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<section id="scoring">
+<span id="scqcv-sec-scoring"></span><h3>Scoring<a class="headerlink" href="#scoring" title="Permalink to this heading">¶</a></h3>
+<p>The score is formed per station as the sum of the counts for the parameters defined,
+e.g., by <code class="xref std std-confval docutils literal notranslate"><span class="pre">score.default</span></code>. The counts are defined per QC parameter by the
+<cite>count</cite> parameter of the applicable range, e.g. <a class="reference internal" href="#confval-timing.range.-name.count"><code class="xref std std-confval docutils literal notranslate"><span class="pre">timing.range.$name.count</span></code></a>.</p>
+</section>
+</section>
+<section id="setup">
+<span id="scqcv-sec-setup"></span><h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<p>While some important parameters can be configured using <a class="reference internal" href="scconfig.html#scconfig"><span class="std std-ref">scconfig</span></a> the configuration
+of others is available by examples in the extensive default configuration of scqcv in
+<em>&#64;DEFAULTCONFIGDIR/scqcv.cfg&#64;</em></p>
+<p>Apply your setup to scqcv.cfg in &#64;SYSTEMCONFIGDIR&#64; or in &#64;CONFIGDIR&#64;.
+If the parameters are not configured, the defaults configuration will be considered.</p>
+<section id="message-groups-and-qc-parameters">
+<h3>Message groups and QC parameters<a class="headerlink" href="#message-groups-and-qc-parameters" title="Permalink to this heading">¶</a></h3>
+<p>Select the desired parameters from the list below. “#” disables a parameter.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>connection.primaryGroup<span class="w"> </span><span class="o">=</span><span class="w"> </span>QC
+connection.subscription<span class="w"> </span><span class="o">=</span><span class="w"> </span>QC,<span class="w"> </span>CONFIG
+
+<span class="nv">parameter</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="s2">&quot;latency           : latency&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;delay             : delay&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;timing quality    : timing&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;offset            : offset&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;rms               : rms&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;gaps count        : gap&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;overlaps count    : overlap&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;availability      : availability&quot;</span>,<span class="se">\</span>
+<span class="w">                             </span><span class="s2">&quot;spikes count      : spike&quot;</span>
+<span class="c1">#                            &quot;gaps interval     : gapInterval&quot;,\</span>
+<span class="c1">#                            &quot;gaps length       : gapLength&quot;,\</span>
+<span class="c1">#                            &quot;spikes interval   : spikeInterval&quot;,\</span>
+<span class="c1">#                            &quot;spikes amplitude  : spikeAmplitude&quot;</span>
+<span class="c1">#                            &quot;overlaps interval : overlapInterval&quot;,\</span>
+<span class="c1">#                            &quot;overlaps length   : overlapLength&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="stream-selection">
+<h3>Stream selection<a class="headerlink" href="#stream-selection" title="Permalink to this heading">¶</a></h3>
+<p>By default all streams configured by the global bindings will be displayed. To limit
+the streams or to use a specific list configure <a class="reference internal" href="scrttv.html#confval-streams.codes"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.codes</span></code></a> and
+<a class="reference internal" href="#confval-streams.cumulative"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.cumulative</span></code></a>.</p>
+<p>Example configuration or the AM network:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># List of channels to display. By default the global configuration is used</span>
+<span class="c1"># which can be overwritten with this parameter.</span>
+streams.codes<span class="w"> </span><span class="o">=</span><span class="w"> </span>AM.*.*.*
+
+<span class="c1"># Add new streams from WfQ automatically to the list of stream configured in</span>
+<span class="c1"># streams.codes.</span>
+streams.cumulative<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+</pre></div>
+</div>
+</section>
+<section id="properties-of-qc-parameters">
+<h3>Properties of QC parameters<a class="headerlink" href="#properties-of-qc-parameters" title="Permalink to this heading">¶</a></h3>
+<p>Configure intervals, values and format and background colors for QC parameters to
+display in <code class="file docutils literal notranslate"><span class="pre">scqcv.cfg</span></code>.</p>
+<p>In the configuration the QC parameter is referred to by its unique ConfigName. You may
+generate structures for each parameter starting with its ConfigName. The structures
+contain all configuration parameters. Example for the QC parameter <em>timing quality</em>
+referred to as <em>timing</em>:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>timing.ranges<span class="w"> </span><span class="o">=</span><span class="w"> </span>sane,<span class="w"> </span>inter,<span class="w"> </span>bad
+timing.format<span class="w"> </span><span class="o">=</span><span class="w"> </span>int
+timing.expire<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">600</span>
+timing.useAbsoluteValue<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+
+timing.range.sane<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">90</span>.0,<span class="w"> </span><span class="m">100</span>.0
+timing.range.inter<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50</span>.0,<span class="w"> </span><span class="m">90</span>.0
+
+timing.range.bad.count<span class="w"> </span><span class="o">=</span><span class="w"> </span>-100
+timing.range.bad.color<span class="w"> </span><span class="o">=</span><span class="w"> </span>darkred
+
+timing.range.inter.count<span class="w"> </span><span class="o">=</span><span class="w"> </span>-1
+timing.range.inter.color<span class="w"> </span><span class="o">=</span><span class="w"> </span>yellow
+
+timing.range.sane.count<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+timing.range.sane.color<span class="w"> </span><span class="o">=</span><span class="w"> </span>green
+</pre></div>
+</div>
+<p>The mapping of parameter names to ConfigName is configurable by
+<a class="reference internal" href="#confval-parameter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">parameter</span></code></a> but the default mapping is available in
+<code class="file docutils literal notranslate"><span class="pre">&#64;DEFAULTCONFIGDIR&#64;/scqcv.cfg</span></code>.</p>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Default mapping of parameter names.</span><a class="headerlink" href="#id5" title="Permalink to this table">¶</a></caption>
+<tbody>
+<tr class="row-odd"><td><p>Parameter name</p></td>
+<td><p>ConfigName</p></td>
+</tr>
+<tr class="row-even"><td><p>latency</p></td>
+<td><p>latency</p></td>
+</tr>
+<tr class="row-odd"><td><p>delay</p></td>
+<td><p>delay</p></td>
+</tr>
+<tr class="row-even"><td><p>timing quality</p></td>
+<td><p>timing</p></td>
+</tr>
+<tr class="row-odd"><td><p>offset</p></td>
+<td><p>offset</p></td>
+</tr>
+<tr class="row-even"><td><p>rms</p></td>
+<td><p>rms</p></td>
+</tr>
+<tr class="row-odd"><td><p>gaps count</p></td>
+<td><p>gap</p></td>
+</tr>
+<tr class="row-even"><td><p>overlaps count</p></td>
+<td><p>overlap</p></td>
+</tr>
+<tr class="row-odd"><td><p>availability</p></td>
+<td><p>availability</p></td>
+</tr>
+<tr class="row-even"><td><p>spikes count</p></td>
+<td><p>spike</p></td>
+</tr>
+<tr class="row-odd"><td><p>gaps interval</p></td>
+<td><p>gapInterval</p></td>
+</tr>
+<tr class="row-even"><td><p>gaps length</p></td>
+<td><p>gapLength</p></td>
+</tr>
+<tr class="row-odd"><td><p>spikes interval</p></td>
+<td><p>spikeInterval</p></td>
+</tr>
+<tr class="row-even"><td><p>spikes amplitude</p></td>
+<td><p>spikeAmplitude</p></td>
+</tr>
+<tr class="row-odd"><td><p>overlaps interval</p></td>
+<td><p>overlapInterval</p></td>
+</tr>
+<tr class="row-even"><td><p>overlaps length</p></td>
+<td><p>overlapLength</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="module-configuration">
+<span id="scqcv-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scqcv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scqcv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scqcv.cfg</span></code></div>
+</div>
+<p>scqcv inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-parameter">
+<span class="sig-name descname"><span class="pre">parameter</span></span><a class="headerlink" href="#confval-parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of QC parameters to be displayed in the details table.
+Read the scqc documentation for a list of available QC parameters
+and the default configuration of scqcv
+$SEISCOMP_ROOT/etc/defaults/scqcv.cfg for more examples.</p>
+<p>Format: &quot;Parameter name : ConfigName&quot;</p>
+<p>Example: &quot;delay : delay&quot;,&quot;spikes count : spike&quot;,&quot;spikes amplitude :
+spikeAmplitude&quot;.
+Refer to the parameters by their ConfigName to configure the
+attributes.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.codes">
+<span class="sig-name descname"><span class="pre">streams.codes</span></span><a class="headerlink" href="#confval-streams.codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The list of channel codes to be displayed. List items may
+contain wildcards and are separated by comma.
+The list is  intersected with all channels configured in
+inventory.</p>
+<p>Examples:</p>
+<p>default : display all streams configured by global bindings</p>
+<p>default, PF.BON.00.HH? : display default and all HH streams
+of PF.BON.00</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.cumulative">
+<span class="sig-name descname"><span class="pre">streams.cumulative</span></span><a class="headerlink" href="#confval-streams.cumulative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Add new streams automatically to the streams configured in
+streams.codes when waveform QC parameters are provided for
+these streams.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streamWidget.*</strong>
+<em>Control the stream widget which opens when clicking on a stream</em>
+<em>name in the detailed table.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streamWidget.length">
+<span class="sig-name descname"><span class="pre">streamWidget.length</span></span><a class="headerlink" href="#confval-streamWidget.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">600</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Length of data to be displayed.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>score.*</strong>
+<em>Parameters controlling the overall QC score of a station.</em>
+<em>The score is computed from the valid count parameter of the</em>
+<em>defined ranges. It is vizualized in the QcOverview.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-score.default.ranges">
+<span class="sig-name descname"><span class="pre">score.default.ranges</span></span><a class="headerlink" href="#confval-score.default.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Ranges to be considered for forming the score. Set the
+count parameter om the respective range section for
+controlling the contribution of this range. The
+range parameters control the coloring.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>default.*</strong>
+<em>Default configuration for all QC parameters. The configuration</em>
+<em>can be extended to each QC parameter by placing “default” with</em>
+<em>the parameter name in scqcv.cfg. Examples for some QC parameters</em>
+<em>are given below.</em>
+**
+<em>Read the scqc documentation for a list of available QC</em>
+<em>parameters and the default configuration of scqcv</em>
+<em>$SEISCOMP_ROOT/etc/defaults/scqcv.cfg for more examples.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.ranges">
+<span class="sig-name descname"><span class="pre">default.ranges</span></span><a class="headerlink" href="#confval-default.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">bad,</span> <span class="pre">sane</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered.
+The range profiles define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.format">
+<span class="sig-name descname"><span class="pre">default.format</span></span><a class="headerlink" href="#confval-default.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.expire">
+<span class="sig-name descname"><span class="pre">default.expire</span></span><a class="headerlink" href="#confval-default.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.color">
+<span class="sig-name descname"><span class="pre">default.color</span></span><a class="headerlink" href="#confval-default.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">default.useAbsoluteValue</span></span><a class="headerlink" href="#confval-default.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.action">
+<span class="sig-name descname"><span class="pre">default.action</span></span><a class="headerlink" href="#confval-default.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>default.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.sane">
+<span class="sig-name descname"><span class="pre">default.range.sane</span></span><a class="headerlink" href="#confval-default.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.inter">
+<span class="sig-name descname"><span class="pre">default.range.inter</span></span><a class="headerlink" href="#confval-default.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.bad">
+<span class="sig-name descname"><span class="pre">default.range.bad</span></span><a class="headerlink" href="#confval-default.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>default.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+default.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+default.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+default.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.-name.count">
+<span class="sig-name descname"><span class="pre">default.range.$name.count</span></span><a class="headerlink" href="#confval-default.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.-name.color">
+<span class="sig-name descname"><span class="pre">default.range.$name.color</span></span><a class="headerlink" href="#confval-default.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-default.range.-name.action">
+<span class="sig-name descname"><span class="pre">default.range.$name.action</span></span><a class="headerlink" href="#confval-default.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>availability.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘availability’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.ranges">
+<span class="sig-name descname"><span class="pre">availability.ranges</span></span><a class="headerlink" href="#confval-availability.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.format">
+<span class="sig-name descname"><span class="pre">availability.format</span></span><a class="headerlink" href="#confval-availability.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.expire">
+<span class="sig-name descname"><span class="pre">availability.expire</span></span><a class="headerlink" href="#confval-availability.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.color">
+<span class="sig-name descname"><span class="pre">availability.color</span></span><a class="headerlink" href="#confval-availability.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">availability.useAbsoluteValue</span></span><a class="headerlink" href="#confval-availability.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.action">
+<span class="sig-name descname"><span class="pre">availability.action</span></span><a class="headerlink" href="#confval-availability.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>availability.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.sane">
+<span class="sig-name descname"><span class="pre">availability.range.sane</span></span><a class="headerlink" href="#confval-availability.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.inter">
+<span class="sig-name descname"><span class="pre">availability.range.inter</span></span><a class="headerlink" href="#confval-availability.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.bad">
+<span class="sig-name descname"><span class="pre">availability.range.bad</span></span><a class="headerlink" href="#confval-availability.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>availability.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+availability.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+availability.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+availability.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.-name.count">
+<span class="sig-name descname"><span class="pre">availability.range.$name.count</span></span><a class="headerlink" href="#confval-availability.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.-name.color">
+<span class="sig-name descname"><span class="pre">availability.range.$name.color</span></span><a class="headerlink" href="#confval-availability.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-availability.range.-name.action">
+<span class="sig-name descname"><span class="pre">availability.range.$name.action</span></span><a class="headerlink" href="#confval-availability.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>delay.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘delay’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.ranges">
+<span class="sig-name descname"><span class="pre">delay.ranges</span></span><a class="headerlink" href="#confval-delay.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.format">
+<span class="sig-name descname"><span class="pre">delay.format</span></span><a class="headerlink" href="#confval-delay.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.expire">
+<span class="sig-name descname"><span class="pre">delay.expire</span></span><a class="headerlink" href="#confval-delay.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.color">
+<span class="sig-name descname"><span class="pre">delay.color</span></span><a class="headerlink" href="#confval-delay.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">delay.useAbsoluteValue</span></span><a class="headerlink" href="#confval-delay.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.action">
+<span class="sig-name descname"><span class="pre">delay.action</span></span><a class="headerlink" href="#confval-delay.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>delay.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.sane">
+<span class="sig-name descname"><span class="pre">delay.range.sane</span></span><a class="headerlink" href="#confval-delay.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.inter">
+<span class="sig-name descname"><span class="pre">delay.range.inter</span></span><a class="headerlink" href="#confval-delay.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.bad">
+<span class="sig-name descname"><span class="pre">delay.range.bad</span></span><a class="headerlink" href="#confval-delay.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>delay.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+delay.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+delay.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+delay.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.-name.count">
+<span class="sig-name descname"><span class="pre">delay.range.$name.count</span></span><a class="headerlink" href="#confval-delay.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.-name.color">
+<span class="sig-name descname"><span class="pre">delay.range.$name.color</span></span><a class="headerlink" href="#confval-delay.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-delay.range.-name.action">
+<span class="sig-name descname"><span class="pre">delay.range.$name.action</span></span><a class="headerlink" href="#confval-delay.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gap.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘gaps count’.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.ranges">
+<span class="sig-name descname"><span class="pre">gap.ranges</span></span><a class="headerlink" href="#confval-gap.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.format">
+<span class="sig-name descname"><span class="pre">gap.format</span></span><a class="headerlink" href="#confval-gap.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.expire">
+<span class="sig-name descname"><span class="pre">gap.expire</span></span><a class="headerlink" href="#confval-gap.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.color">
+<span class="sig-name descname"><span class="pre">gap.color</span></span><a class="headerlink" href="#confval-gap.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">gap.useAbsoluteValue</span></span><a class="headerlink" href="#confval-gap.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.action">
+<span class="sig-name descname"><span class="pre">gap.action</span></span><a class="headerlink" href="#confval-gap.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gap.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.sane">
+<span class="sig-name descname"><span class="pre">gap.range.sane</span></span><a class="headerlink" href="#confval-gap.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.inter">
+<span class="sig-name descname"><span class="pre">gap.range.inter</span></span><a class="headerlink" href="#confval-gap.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.bad">
+<span class="sig-name descname"><span class="pre">gap.range.bad</span></span><a class="headerlink" href="#confval-gap.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gap.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+gap.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+gap.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+gap.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.-name.count">
+<span class="sig-name descname"><span class="pre">gap.range.$name.count</span></span><a class="headerlink" href="#confval-gap.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.-name.color">
+<span class="sig-name descname"><span class="pre">gap.range.$name.color</span></span><a class="headerlink" href="#confval-gap.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gap.range.-name.action">
+<span class="sig-name descname"><span class="pre">gap.range.$name.action</span></span><a class="headerlink" href="#confval-gap.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapLength.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘gaps length’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.ranges">
+<span class="sig-name descname"><span class="pre">gapLength.ranges</span></span><a class="headerlink" href="#confval-gapLength.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.format">
+<span class="sig-name descname"><span class="pre">gapLength.format</span></span><a class="headerlink" href="#confval-gapLength.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.expire">
+<span class="sig-name descname"><span class="pre">gapLength.expire</span></span><a class="headerlink" href="#confval-gapLength.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.color">
+<span class="sig-name descname"><span class="pre">gapLength.color</span></span><a class="headerlink" href="#confval-gapLength.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">gapLength.useAbsoluteValue</span></span><a class="headerlink" href="#confval-gapLength.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.action">
+<span class="sig-name descname"><span class="pre">gapLength.action</span></span><a class="headerlink" href="#confval-gapLength.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapLength.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.sane">
+<span class="sig-name descname"><span class="pre">gapLength.range.sane</span></span><a class="headerlink" href="#confval-gapLength.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.inter">
+<span class="sig-name descname"><span class="pre">gapLength.range.inter</span></span><a class="headerlink" href="#confval-gapLength.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.bad">
+<span class="sig-name descname"><span class="pre">gapLength.range.bad</span></span><a class="headerlink" href="#confval-gapLength.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapLength.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+gapLength.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+gapLength.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+gapLength.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.-name.count">
+<span class="sig-name descname"><span class="pre">gapLength.range.$name.count</span></span><a class="headerlink" href="#confval-gapLength.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.-name.color">
+<span class="sig-name descname"><span class="pre">gapLength.range.$name.color</span></span><a class="headerlink" href="#confval-gapLength.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapLength.range.-name.action">
+<span class="sig-name descname"><span class="pre">gapLength.range.$name.action</span></span><a class="headerlink" href="#confval-gapLength.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapInterval.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘gaps interval’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.ranges">
+<span class="sig-name descname"><span class="pre">gapInterval.ranges</span></span><a class="headerlink" href="#confval-gapInterval.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.format">
+<span class="sig-name descname"><span class="pre">gapInterval.format</span></span><a class="headerlink" href="#confval-gapInterval.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.expire">
+<span class="sig-name descname"><span class="pre">gapInterval.expire</span></span><a class="headerlink" href="#confval-gapInterval.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in scqcv
+if no update is received. Setting to 0 means, show value until
+updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.color">
+<span class="sig-name descname"><span class="pre">gapInterval.color</span></span><a class="headerlink" href="#confval-gapInterval.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">gapInterval.useAbsoluteValue</span></span><a class="headerlink" href="#confval-gapInterval.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.action">
+<span class="sig-name descname"><span class="pre">gapInterval.action</span></span><a class="headerlink" href="#confval-gapInterval.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapInterval.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.sane">
+<span class="sig-name descname"><span class="pre">gapInterval.range.sane</span></span><a class="headerlink" href="#confval-gapInterval.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.inter">
+<span class="sig-name descname"><span class="pre">gapInterval.range.inter</span></span><a class="headerlink" href="#confval-gapInterval.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.bad">
+<span class="sig-name descname"><span class="pre">gapInterval.range.bad</span></span><a class="headerlink" href="#confval-gapInterval.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>gapInterval.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+gapInterval.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+gapInterval.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+gapInterval.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.-name.count">
+<span class="sig-name descname"><span class="pre">gapInterval.range.$name.count</span></span><a class="headerlink" href="#confval-gapInterval.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.-name.color">
+<span class="sig-name descname"><span class="pre">gapInterval.range.$name.color</span></span><a class="headerlink" href="#confval-gapInterval.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gapInterval.range.-name.action">
+<span class="sig-name descname"><span class="pre">gapInterval.range.$name.action</span></span><a class="headerlink" href="#confval-gapInterval.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>latency.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘latency’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.ranges">
+<span class="sig-name descname"><span class="pre">latency.ranges</span></span><a class="headerlink" href="#confval-latency.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.format">
+<span class="sig-name descname"><span class="pre">latency.format</span></span><a class="headerlink" href="#confval-latency.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.expire">
+<span class="sig-name descname"><span class="pre">latency.expire</span></span><a class="headerlink" href="#confval-latency.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in scqcv
+if no update is received. Setting to 0 means, show value until
+updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.color">
+<span class="sig-name descname"><span class="pre">latency.color</span></span><a class="headerlink" href="#confval-latency.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">latency.useAbsoluteValue</span></span><a class="headerlink" href="#confval-latency.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.action">
+<span class="sig-name descname"><span class="pre">latency.action</span></span><a class="headerlink" href="#confval-latency.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>latency.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.sane">
+<span class="sig-name descname"><span class="pre">latency.range.sane</span></span><a class="headerlink" href="#confval-latency.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.inter">
+<span class="sig-name descname"><span class="pre">latency.range.inter</span></span><a class="headerlink" href="#confval-latency.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.bad">
+<span class="sig-name descname"><span class="pre">latency.range.bad</span></span><a class="headerlink" href="#confval-latency.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>latency.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+latency.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+latency.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+latency.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.-name.count">
+<span class="sig-name descname"><span class="pre">latency.range.$name.count</span></span><a class="headerlink" href="#confval-latency.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.-name.color">
+<span class="sig-name descname"><span class="pre">latency.range.$name.color</span></span><a class="headerlink" href="#confval-latency.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-latency.range.-name.action">
+<span class="sig-name descname"><span class="pre">latency.range.$name.action</span></span><a class="headerlink" href="#confval-latency.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>offset.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘offset’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.ranges">
+<span class="sig-name descname"><span class="pre">offset.ranges</span></span><a class="headerlink" href="#confval-offset.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.format">
+<span class="sig-name descname"><span class="pre">offset.format</span></span><a class="headerlink" href="#confval-offset.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.expire">
+<span class="sig-name descname"><span class="pre">offset.expire</span></span><a class="headerlink" href="#confval-offset.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in scqcv
+if no update is received. Setting to 0 means, show value until
+updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.color">
+<span class="sig-name descname"><span class="pre">offset.color</span></span><a class="headerlink" href="#confval-offset.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">offset.useAbsoluteValue</span></span><a class="headerlink" href="#confval-offset.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.action">
+<span class="sig-name descname"><span class="pre">offset.action</span></span><a class="headerlink" href="#confval-offset.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>offset.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.sane">
+<span class="sig-name descname"><span class="pre">offset.range.sane</span></span><a class="headerlink" href="#confval-offset.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.inter">
+<span class="sig-name descname"><span class="pre">offset.range.inter</span></span><a class="headerlink" href="#confval-offset.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.bad">
+<span class="sig-name descname"><span class="pre">offset.range.bad</span></span><a class="headerlink" href="#confval-offset.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>offset.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+offset.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+offset.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+offset.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.-name.count">
+<span class="sig-name descname"><span class="pre">offset.range.$name.count</span></span><a class="headerlink" href="#confval-offset.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.-name.color">
+<span class="sig-name descname"><span class="pre">offset.range.$name.color</span></span><a class="headerlink" href="#confval-offset.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-offset.range.-name.action">
+<span class="sig-name descname"><span class="pre">offset.range.$name.action</span></span><a class="headerlink" href="#confval-offset.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlap.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘overlaps count’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.ranges">
+<span class="sig-name descname"><span class="pre">overlap.ranges</span></span><a class="headerlink" href="#confval-overlap.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.format">
+<span class="sig-name descname"><span class="pre">overlap.format</span></span><a class="headerlink" href="#confval-overlap.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.expire">
+<span class="sig-name descname"><span class="pre">overlap.expire</span></span><a class="headerlink" href="#confval-overlap.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in scqcv
+if no update is received. Setting to 0 means, show value until
+updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.color">
+<span class="sig-name descname"><span class="pre">overlap.color</span></span><a class="headerlink" href="#confval-overlap.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">overlap.useAbsoluteValue</span></span><a class="headerlink" href="#confval-overlap.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.action">
+<span class="sig-name descname"><span class="pre">overlap.action</span></span><a class="headerlink" href="#confval-overlap.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlap.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.sane">
+<span class="sig-name descname"><span class="pre">overlap.range.sane</span></span><a class="headerlink" href="#confval-overlap.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.inter">
+<span class="sig-name descname"><span class="pre">overlap.range.inter</span></span><a class="headerlink" href="#confval-overlap.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.bad">
+<span class="sig-name descname"><span class="pre">overlap.range.bad</span></span><a class="headerlink" href="#confval-overlap.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlap.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+overlap.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+overlap.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+overlap.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.-name.count">
+<span class="sig-name descname"><span class="pre">overlap.range.$name.count</span></span><a class="headerlink" href="#confval-overlap.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.-name.color">
+<span class="sig-name descname"><span class="pre">overlap.range.$name.color</span></span><a class="headerlink" href="#confval-overlap.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlap.range.-name.action">
+<span class="sig-name descname"><span class="pre">overlap.range.$name.action</span></span><a class="headerlink" href="#confval-overlap.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapInterval.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘overlaps interval’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.ranges">
+<span class="sig-name descname"><span class="pre">overlapInterval.ranges</span></span><a class="headerlink" href="#confval-overlapInterval.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.format">
+<span class="sig-name descname"><span class="pre">overlapInterval.format</span></span><a class="headerlink" href="#confval-overlapInterval.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.expire">
+<span class="sig-name descname"><span class="pre">overlapInterval.expire</span></span><a class="headerlink" href="#confval-overlapInterval.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.color">
+<span class="sig-name descname"><span class="pre">overlapInterval.color</span></span><a class="headerlink" href="#confval-overlapInterval.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">overlapInterval.useAbsoluteValue</span></span><a class="headerlink" href="#confval-overlapInterval.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.action">
+<span class="sig-name descname"><span class="pre">overlapInterval.action</span></span><a class="headerlink" href="#confval-overlapInterval.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapInterval.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.sane">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.sane</span></span><a class="headerlink" href="#confval-overlapInterval.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.inter">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.inter</span></span><a class="headerlink" href="#confval-overlapInterval.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.bad">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.bad</span></span><a class="headerlink" href="#confval-overlapInterval.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapInterval.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+overlapInterval.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+overlapInterval.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+overlapInterval.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.-name.count">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.$name.count</span></span><a class="headerlink" href="#confval-overlapInterval.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.-name.color">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.$name.color</span></span><a class="headerlink" href="#confval-overlapInterval.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapInterval.range.-name.action">
+<span class="sig-name descname"><span class="pre">overlapInterval.range.$name.action</span></span><a class="headerlink" href="#confval-overlapInterval.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapLength.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘overlaps length’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.ranges">
+<span class="sig-name descname"><span class="pre">overlapLength.ranges</span></span><a class="headerlink" href="#confval-overlapLength.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.format">
+<span class="sig-name descname"><span class="pre">overlapLength.format</span></span><a class="headerlink" href="#confval-overlapLength.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.expire">
+<span class="sig-name descname"><span class="pre">overlapLength.expire</span></span><a class="headerlink" href="#confval-overlapLength.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.color">
+<span class="sig-name descname"><span class="pre">overlapLength.color</span></span><a class="headerlink" href="#confval-overlapLength.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">overlapLength.useAbsoluteValue</span></span><a class="headerlink" href="#confval-overlapLength.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.action">
+<span class="sig-name descname"><span class="pre">overlapLength.action</span></span><a class="headerlink" href="#confval-overlapLength.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapLength.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.sane">
+<span class="sig-name descname"><span class="pre">overlapLength.range.sane</span></span><a class="headerlink" href="#confval-overlapLength.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.inter">
+<span class="sig-name descname"><span class="pre">overlapLength.range.inter</span></span><a class="headerlink" href="#confval-overlapLength.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.bad">
+<span class="sig-name descname"><span class="pre">overlapLength.range.bad</span></span><a class="headerlink" href="#confval-overlapLength.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>overlapLength.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+overlapLength.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+overlapLength.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+overlapLength.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.-name.count">
+<span class="sig-name descname"><span class="pre">overlapLength.range.$name.count</span></span><a class="headerlink" href="#confval-overlapLength.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.-name.color">
+<span class="sig-name descname"><span class="pre">overlapLength.range.$name.color</span></span><a class="headerlink" href="#confval-overlapLength.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-overlapLength.range.-name.action">
+<span class="sig-name descname"><span class="pre">overlapLength.range.$name.action</span></span><a class="headerlink" href="#confval-overlapLength.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>rms.*</strong>
+<em>Parameters controlling the display of the QC parameter ‘rms’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.ranges">
+<span class="sig-name descname"><span class="pre">rms.ranges</span></span><a class="headerlink" href="#confval-rms.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.format">
+<span class="sig-name descname"><span class="pre">rms.format</span></span><a class="headerlink" href="#confval-rms.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.expire">
+<span class="sig-name descname"><span class="pre">rms.expire</span></span><a class="headerlink" href="#confval-rms.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.color">
+<span class="sig-name descname"><span class="pre">rms.color</span></span><a class="headerlink" href="#confval-rms.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">rms.useAbsoluteValue</span></span><a class="headerlink" href="#confval-rms.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.action">
+<span class="sig-name descname"><span class="pre">rms.action</span></span><a class="headerlink" href="#confval-rms.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>rms.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.sane">
+<span class="sig-name descname"><span class="pre">rms.range.sane</span></span><a class="headerlink" href="#confval-rms.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.inter">
+<span class="sig-name descname"><span class="pre">rms.range.inter</span></span><a class="headerlink" href="#confval-rms.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.bad">
+<span class="sig-name descname"><span class="pre">rms.range.bad</span></span><a class="headerlink" href="#confval-rms.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>rms.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+rms.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+rms.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+rms.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.-name.count">
+<span class="sig-name descname"><span class="pre">rms.range.$name.count</span></span><a class="headerlink" href="#confval-rms.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.-name.color">
+<span class="sig-name descname"><span class="pre">rms.range.$name.color</span></span><a class="headerlink" href="#confval-rms.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-rms.range.-name.action">
+<span class="sig-name descname"><span class="pre">rms.range.$name.action</span></span><a class="headerlink" href="#confval-rms.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spike.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘spikes count’</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.ranges">
+<span class="sig-name descname"><span class="pre">spike.ranges</span></span><a class="headerlink" href="#confval-spike.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered.
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.format">
+<span class="sig-name descname"><span class="pre">spike.format</span></span><a class="headerlink" href="#confval-spike.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.expire">
+<span class="sig-name descname"><span class="pre">spike.expire</span></span><a class="headerlink" href="#confval-spike.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.color">
+<span class="sig-name descname"><span class="pre">spike.color</span></span><a class="headerlink" href="#confval-spike.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">spike.useAbsoluteValue</span></span><a class="headerlink" href="#confval-spike.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.action">
+<span class="sig-name descname"><span class="pre">spike.action</span></span><a class="headerlink" href="#confval-spike.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spike.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.sane">
+<span class="sig-name descname"><span class="pre">spike.range.sane</span></span><a class="headerlink" href="#confval-spike.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.inter">
+<span class="sig-name descname"><span class="pre">spike.range.inter</span></span><a class="headerlink" href="#confval-spike.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.bad">
+<span class="sig-name descname"><span class="pre">spike.range.bad</span></span><a class="headerlink" href="#confval-spike.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spike.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+spike.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+spike.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+spike.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.-name.count">
+<span class="sig-name descname"><span class="pre">spike.range.$name.count</span></span><a class="headerlink" href="#confval-spike.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.-name.color">
+<span class="sig-name descname"><span class="pre">spike.range.$name.color</span></span><a class="headerlink" href="#confval-spike.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spike.range.-name.action">
+<span class="sig-name descname"><span class="pre">spike.range.$name.action</span></span><a class="headerlink" href="#confval-spike.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeAmplitude.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘spikes amplitude’.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.ranges">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.ranges</span></span><a class="headerlink" href="#confval-spikeAmplitude.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.format">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.format</span></span><a class="headerlink" href="#confval-spikeAmplitude.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.expire">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.expire</span></span><a class="headerlink" href="#confval-spikeAmplitude.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.color">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.color</span></span><a class="headerlink" href="#confval-spikeAmplitude.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.useAbsoluteValue</span></span><a class="headerlink" href="#confval-spikeAmplitude.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.action">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.action</span></span><a class="headerlink" href="#confval-spikeAmplitude.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeAmplitude.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.sane">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.sane</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.inter">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.inter</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.bad">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.bad</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeAmplitude.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+spikeAmplitude.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+spikeAmplitude.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+spikeAmplitude.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.-name.count">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.$name.count</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.-name.color">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.$name.color</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeAmplitude.range.-name.action">
+<span class="sig-name descname"><span class="pre">spikeAmplitude.range.$name.action</span></span><a class="headerlink" href="#confval-spikeAmplitude.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeInterval.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘spikes interval’.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.ranges">
+<span class="sig-name descname"><span class="pre">spikeInterval.ranges</span></span><a class="headerlink" href="#confval-spikeInterval.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.format">
+<span class="sig-name descname"><span class="pre">spikeInterval.format</span></span><a class="headerlink" href="#confval-spikeInterval.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.expire">
+<span class="sig-name descname"><span class="pre">spikeInterval.expire</span></span><a class="headerlink" href="#confval-spikeInterval.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.color">
+<span class="sig-name descname"><span class="pre">spikeInterval.color</span></span><a class="headerlink" href="#confval-spikeInterval.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">spikeInterval.useAbsoluteValue</span></span><a class="headerlink" href="#confval-spikeInterval.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.action">
+<span class="sig-name descname"><span class="pre">spikeInterval.action</span></span><a class="headerlink" href="#confval-spikeInterval.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeInterval.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.sane">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.sane</span></span><a class="headerlink" href="#confval-spikeInterval.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.inter">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.inter</span></span><a class="headerlink" href="#confval-spikeInterval.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.bad">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.bad</span></span><a class="headerlink" href="#confval-spikeInterval.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>spikeInterval.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+spikeInterval.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+spikeInterval.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+spikeInterval.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.-name.count">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.$name.count</span></span><a class="headerlink" href="#confval-spikeInterval.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.-name.color">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.$name.color</span></span><a class="headerlink" href="#confval-spikeInterval.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-spikeInterval.range.-name.action">
+<span class="sig-name descname"><span class="pre">spikeInterval.range.$name.action</span></span><a class="headerlink" href="#confval-spikeInterval.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>timing.*</strong>
+<em>Parameters controlling the display of the QC parameter</em>
+<em>‘timing quality’.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.ranges">
+<span class="sig-name descname"><span class="pre">timing.ranges</span></span><a class="headerlink" href="#confval-timing.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Names of range profile to be considered
+The range profiles s define the background color table
+fields depending on the field value. Add the default
+ranges for which different intervals and the color are
+configured.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.format">
+<span class="sig-name descname"><span class="pre">timing.format</span></span><a class="headerlink" href="#confval-timing.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Values are: int, float, percent, timeSpan</p>
+<p>Displays raw values if unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.expire">
+<span class="sig-name descname"><span class="pre">timing.expire</span></span><a class="headerlink" href="#confval-timing.expire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Default time in seconds, how long a value is displayed in
+scqcv if no update is received. Setting to 0 means, show
+value until updated.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.color">
+<span class="sig-name descname"><span class="pre">timing.color</span></span><a class="headerlink" href="#confval-timing.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.useAbsoluteValue">
+<span class="sig-name descname"><span class="pre">timing.useAbsoluteValue</span></span><a class="headerlink" href="#confval-timing.useAbsoluteValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate to display absolute values (modulus).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.action">
+<span class="sig-name descname"><span class="pre">timing.action</span></span><a class="headerlink" href="#confval-timing.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>timing.range.*</strong>
+<em>Range parameters overriding parameters from the general</em>
+<em>range section below. Unset values or range profiles</em>
+<em>undefined here will be inherited from the general range</em>
+<em>section.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.sane">
+<span class="sig-name descname"><span class="pre">timing.range.sane</span></span><a class="headerlink" href="#confval-timing.range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.inter">
+<span class="sig-name descname"><span class="pre">timing.range.inter</span></span><a class="headerlink" href="#confval-timing.range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.bad">
+<span class="sig-name descname"><span class="pre">timing.range.bad</span></span><a class="headerlink" href="#confval-timing.range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>timing.range.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <code class="xref std std-confval docutils literal notranslate"><span class="pre">ranges</span></code> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">ranges</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+timing.range.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+timing.range.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of ranges</span>
+timing.range.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.-name.count">
+<span class="sig-name descname"><span class="pre">timing.range.$name.count</span></span><a class="headerlink" href="#confval-timing.range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.-name.color">
+<span class="sig-name descname"><span class="pre">timing.range.$name.color</span></span><a class="headerlink" href="#confval-timing.range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-timing.range.-name.action">
+<span class="sig-name descname"><span class="pre">timing.range.$name.action</span></span><a class="headerlink" href="#confval-timing.range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>range.*</strong>
+<em>Range parameters defining default values which can be overridden</em>
+<em>per QC parameter in the section of this parameter.</em>
+<em>More ranges can be added by adjusting scqcv.cfg e.g. in</em>
+<em>&#64;SYSTEMCONFIGDIR&#64;/.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.sane">
+<span class="sig-name descname"><span class="pre">range.sane</span></span><a class="headerlink" href="#confval-range.sane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range sane.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.inter">
+<span class="sig-name descname"><span class="pre">range.inter</span></span><a class="headerlink" href="#confval-range.inter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range inter.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.bad">
+<span class="sig-name descname"><span class="pre">range.bad</span></span><a class="headerlink" href="#confval-range.bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range bad.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.above">
+<span class="sig-name descname"><span class="pre">range.above</span></span><a class="headerlink" href="#confval-range.above" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile above.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.below">
+<span class="sig-name descname"><span class="pre">range.below</span></span><a class="headerlink" href="#confval-range.below" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.delay">
+<span class="sig-name descname"><span class="pre">range.delay</span></span><a class="headerlink" href="#confval-range.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile delay.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.latency">
+<span class="sig-name descname"><span class="pre">range.latency</span></span><a class="headerlink" href="#confval-range.latency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile latency.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.timing">
+<span class="sig-name descname"><span class="pre">range.timing</span></span><a class="headerlink" href="#confval-range.timing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile timing.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.unset">
+<span class="sig-name descname"><span class="pre">range.unset</span></span><a class="headerlink" href="#confval-range.unset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile unset.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r01">
+<span class="sig-name descname"><span class="pre">range.r01</span></span><a class="headerlink" href="#confval-range.r01" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r01.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r02">
+<span class="sig-name descname"><span class="pre">range.r02</span></span><a class="headerlink" href="#confval-range.r02" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r02.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r03">
+<span class="sig-name descname"><span class="pre">range.r03</span></span><a class="headerlink" href="#confval-range.r03" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r03.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r04">
+<span class="sig-name descname"><span class="pre">range.r04</span></span><a class="headerlink" href="#confval-range.r04" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r04.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r05">
+<span class="sig-name descname"><span class="pre">range.r05</span></span><a class="headerlink" href="#confval-range.r05" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r05.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r06">
+<span class="sig-name descname"><span class="pre">range.r06</span></span><a class="headerlink" href="#confval-range.r06" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r06.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r07">
+<span class="sig-name descname"><span class="pre">range.r07</span></span><a class="headerlink" href="#confval-range.r07" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r07.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r08">
+<span class="sig-name descname"><span class="pre">range.r08</span></span><a class="headerlink" href="#confval-range.r08" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r08.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r09">
+<span class="sig-name descname"><span class="pre">range.r09</span></span><a class="headerlink" href="#confval-range.r09" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r09.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.r10">
+<span class="sig-name descname"><span class="pre">range.r10</span></span><a class="headerlink" href="#confval-range.r10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:double</em></p>
+<p>Value interval for range profile r10.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>range.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.-name.count">
+<span class="sig-name descname"><span class="pre">range.$name.count</span></span><a class="headerlink" href="#confval-range.-name.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Contribution of this range for computing the score.
+The range must be considered. The count is also set in
+[parameter].range.[range profile].count .</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.-name.color">
+<span class="sig-name descname"><span class="pre">range.$name.color</span></span><a class="headerlink" href="#confval-range.-name.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>A color defined by the color definitions below.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-range.-name.action">
+<span class="sig-name descname"><span class="pre">range.$name.action</span></span><a class="headerlink" href="#confval-range.-name.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Possible values: enableStream, disableStream</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>color.*</strong>
+<em>Color definitions. More colors can be added by adjusting</em>
+<em>scqcv.cfg e.g. in &#64;SYSTEMCONFIGDIR&#64;/.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red">
+<span class="sig-name descname"><span class="pre">color.red</span></span><a class="headerlink" href="#confval-color.red" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.yellow">
+<span class="sig-name descname"><span class="pre">color.yellow</span></span><a class="headerlink" href="#confval-color.yellow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.green">
+<span class="sig-name descname"><span class="pre">color.green</span></span><a class="headerlink" href="#confval-color.green" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.blue">
+<span class="sig-name descname"><span class="pre">color.blue</span></span><a class="headerlink" href="#confval-color.blue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.grey">
+<span class="sig-name descname"><span class="pre">color.grey</span></span><a class="headerlink" href="#confval-color.grey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.grey1">
+<span class="sig-name descname"><span class="pre">color.grey1</span></span><a class="headerlink" href="#confval-color.grey1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.darkred">
+<span class="sig-name descname"><span class="pre">color.darkred</span></span><a class="headerlink" href="#confval-color.darkred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-0">
+<span class="sig-name descname"><span class="pre">color.yellow</span></span><a class="headerlink" href="#confval-0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red01">
+<span class="sig-name descname"><span class="pre">color.red01</span></span><a class="headerlink" href="#confval-color.red01" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red02">
+<span class="sig-name descname"><span class="pre">color.red02</span></span><a class="headerlink" href="#confval-color.red02" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red03">
+<span class="sig-name descname"><span class="pre">color.red03</span></span><a class="headerlink" href="#confval-color.red03" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red04">
+<span class="sig-name descname"><span class="pre">color.red04</span></span><a class="headerlink" href="#confval-color.red04" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red05">
+<span class="sig-name descname"><span class="pre">color.red05</span></span><a class="headerlink" href="#confval-color.red05" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red06">
+<span class="sig-name descname"><span class="pre">color.red06</span></span><a class="headerlink" href="#confval-color.red06" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red07">
+<span class="sig-name descname"><span class="pre">color.red07</span></span><a class="headerlink" href="#confval-color.red07" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red08">
+<span class="sig-name descname"><span class="pre">color.red08</span></span><a class="headerlink" href="#confval-color.red08" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red09">
+<span class="sig-name descname"><span class="pre">color.red09</span></span><a class="headerlink" href="#confval-color.red09" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-color.red10">
+<span class="sig-name descname"><span class="pre">color.red10</span></span><a class="headerlink" href="#confval-color.red10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Color names or R, G, B, alpha values</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>format.*</strong>
+<em>Format describtions for showing values. The format parameter</em>
+<em>is defined seprately for earch parameter but the actual format</em>
+<em>can be adjusted here.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-format.float">
+<span class="sig-name descname"><span class="pre">format.float</span></span><a class="headerlink" href="#confval-format.float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">2</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of decimal values shown for parameters of format float.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scqcv [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-h">
+<span id="cmdoption-scqcv-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-V">
+<span id="cmdoption-scqcv-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-v">
+<span id="cmdoption-scqcv-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-q">
+<span id="cmdoption-scqcv-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-s">
+<span id="cmdoption-scqcv-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-l">
+<span id="cmdoption-scqcv-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-u">
+<span id="cmdoption-scqcv-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-H">
+<span id="cmdoption-scqcv-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-t">
+<span id="cmdoption-scqcv-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-g">
+<span id="cmdoption-scqcv-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-S">
+<span id="cmdoption-scqcv-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-d">
+<span id="cmdoption-scqcv-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="records">
+<h3>Records<a class="headerlink" href="#records" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-record-driver-list">
+<span class="sig-name descname"><span class="pre">--record-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-record-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported record stream drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-I">
+<span id="cmdoption-scqcv-record-url"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--record-url</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-I" title="Permalink to this definition">¶</a></dt>
+<dd><p>The recordstream source URL, format:
+[<a class="reference external" href="service://">service://</a>]location[#type].
+&quot;service&quot; is the name of the recordstream driver
+which can be queried with &quot;--record-driver-list&quot;.
+If &quot;service&quot; is not given, &quot;<a class="reference external" href="file://">file://</a>&quot; is
+used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-record-file">
+<span class="sig-name descname"><span class="pre">--record-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-record-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a file as record source.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-record-type">
+<span class="sig-name descname"><span class="pre">--record-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-record-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a type for the records being read.</p>
+</dd></dl>
+
+</section>
+<section id="cities">
+<h3>Cities<a class="headerlink" href="#cities" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-city-xml">
+<span class="sig-name descname"><span class="pre">--city-xml</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scqcv-city-xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path to the cities XML file. This overrides the default
+paths. Compare with the global parameter &quot;citiesXML&quot;.</p>
+</dd></dl>
+
+</section>
+<section id="user-interface">
+<h3>User interface<a class="headerlink" href="#user-interface" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-F">
+<span id="cmdoption-scqcv-full-screen"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--full-screen</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the application filling the entire screen.
+This only works with GUI applications.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scqcv-N">
+<span id="cmdoption-scqcv-non-interactive"></span><span class="sig-name descname"><span class="pre">-N</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--non-interactive</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scqcv-N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use non-interactive presentation mode. This only works with
+GUI applications.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scqcv</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#detailed-qc-reports-per-station">Detailed QC reports per station</a></li>
+<li><a class="reference internal" href="#station-overview">Station overview</a><ul>
+<li><a class="reference internal" href="#scoring">Scoring</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#message-groups-and-qc-parameters">Message groups and QC parameters</a></li>
+<li><a class="reference internal" href="#stream-selection">Stream selection</a></li>
+<li><a class="reference internal" href="#properties-of-qc-parameters">Properties of QC parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#records">Records</a></li>
+<li><a class="reference internal" href="#cities">Cities</a></li>
+<li><a class="reference internal" href="#user-interface">User interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scolv.html"
+                          title="previous chapter">scolv</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scrttv.html"
+                          title="next chapter">scrttv</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scqcv.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

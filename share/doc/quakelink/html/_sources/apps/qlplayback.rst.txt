@@ -1,0 +1,250 @@
+.. highlight:: rst
+
+.. _qlplayback:
+
+##########
+qlplayback
+##########
+
+**Uses a quakelink event archive directory, modifies timestamps and
+feeds the data into another quakelink instance.**
+
+
+Description
+===========
+
+qlplayback feeds event parameter into a :ref:`quakelink` server for simulating
+real-time conditions in a playback:
+
+* Read event parameters from a Quakelink event archive directory.
+* Modify the timestamp before sending to the server.
+
+It is part of the QuakeLink suite. Please read the command-line help for the options:
+
+.. code-block:: sh
+
+   qlplayback -h
+
+
+Workflow
+========
+
+qlplayback enters an arbitrary :ref:`quakelink` event directory and reads the
+revision log file. The time difference from the current system time to the
+first revision timestamp is being computed and applied to all timestamps of all
+objects of the XML files unless :option:`--time-delta` is specified.
+That means that all creationInfo.creationTime and creationInfo.modificationTime
+values are being modified, all pick.time.value values are being modified and the
+publicIDs of all objects are also being recomputed and reassigned.
+
+After all those modifications have taken place, the revisions will be sent to
+:ref:`quakelink` in a way which simulates real-time updates. The first revision
+is being sent immediately. The second revision will be sent after the time
+difference of the second revision and the first revision and so on. This is
+very similar to msrtsimul of seedlink.
+
+
+SeisComP Setup
+==============
+
+In order to forward the playback data to SeisComP, :ref:`ql2sc` must be
+utilized and configured. It depends on whether scevent should run on the
+target system or not. A simple playback which just wants to test downstream
+modules or which wants to show real-time updates on e.g. scesv does not need
+to run scevent and can forward also Events from :ref:`quakelink`. Injecting
+playbacks into a processing system with interactive analysis must not forward
+Events and requires scevent to be running.
+
+
+Without scevent
+---------------
+
+File: :file:`ql2sc.cfg`
+
+.. code:: sh
+
+   hosts = playback
+
+   # Request native data instead of XML format. Native data export may be disabled
+   # on some hosts.
+   host.playback {
+       native = true
+       url = ql://localhost:18010
+       syncEventAttributes = false # Because we forward events
+       routingTable = Pick:PICK,\
+                      Amplitude:AMPLITUDE,\
+                      Origin:LOCATION,\
+                      FocalMechanism::FOCMECH,\
+                      Event:EVENT
+   }
+
+This setup will connect to the :ref:`quakelink` server which receives the
+playback XML files from qlplayback and forward everything to SeisComP, also
+events.
+
+With scevent
+------------
+
+File: :file:`ql2sc.cfg`
+
+.. code:: sh
+
+   hosts = playback
+
+   # Request native data instead of XML format. Native data export may be disabled
+   # on some hosts.
+   host.playback {
+       native = true
+       url = ql://localhost:18010
+       syncEventAttributes = true
+       routingTable = Pick:IMPORT_GROUP,\
+                      Amplitude:IMPORT_GROUP,\
+                      Origin:EVENT,\
+                      FocalMechanism::EVENT
+   }
+
+This setup will connect to the :ref:`quakelink` server which receives the
+playback XML files from qlplayback and forward only origins and focal
+mechanisms to scevent. Picks and amplitudes will be forwarded to the
+IMPORT_GROUP and therefore invisible for e.g. scamp and scmag.
+
+
+Run required modules
+--------------------
+
+Here only the additional modules to the existing SeisComP processing modules
+are listed:
+
+.. code:: sh
+
+   seiscomp start quakelink ql2sc
+
+
+Examples
+========
+
+* Playback of a certain event in the QuakeLink archive.
+
+  .. code-block:: sh
+
+     qlplayback $SEISCOMP_ROOT/var/lib/quakelink/archive/2022/09/18/gempa2022shod
+
+
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/qlplayback.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/qlplayback.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/qlplayback.cfg`
+
+qlplayback inherits :ref:`global options<global-configuration>`.
+
+.. note::
+
+   Modules/plugins may require a license file. The default path to license
+   files is :file:`@DATADIR@/licenses/` which can be overridden by global
+   configuration of the parameter :confval:`gempa.licensePath`. Example: ::
+
+      gempa.licensePath = @CONFIGDIR@/licenses
+
+
+
+
+Command-Line Options
+====================
+
+:program:`qlplayback [options]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --print-component arg
+
+   For each log entry print the component right after the
+   log level. By default the component output is enabled
+   for file output but disabled for console output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --trace
+
+   Execute in trace mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 \-\-print\-component\=1
+   \-\-print\-context\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+
+Quakelink
+---------
+
+.. option:: -H, --host
+
+   Host name or IP of the QuakeLink server to connect to.
+
+.. option:: --dry-run
+
+   Do not send any events to QuakeLink.
+
+
+Playback
+--------
+
+.. option:: -d, --time-delta seconds
+
+   Define a fixed time delta in seconds. This prevents
+   qlplayback from figuring out the time delta itself.
+

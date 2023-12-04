@@ -1,0 +1,21 @@
+# Change Log
+
+All notable changes to the map multigrid plugin will be documented in this file.
+
+## 2021-02-03
+### Added
+- New config option `map.multigrid.profiles.*.mode` which allows
+  to set the render mode for a specific grid profile e.g.
+  ```
+  map.multigrid.profiles.time.mode = line
+  ```
+  Default is the global render mode.
+- More debug output
+- Update documentation
+
+### Fixed
+- The way how grid files will be read initially to avoid race condittions.
+
+## 2020-11-19
+### Fixed
+- Updates were first displayed when the user clicked or moved the map

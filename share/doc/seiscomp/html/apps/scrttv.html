@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scrttv &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modules" href="../modules.html" />
+    <link rel="prev" title="scqcv" href="scqcv.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="../modules.html" title="Modules"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scqcv.html" title="scqcv"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../gui.html" accesskey="U">Graphical User Interfaces</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scrttv">
+<span id="id1"></span><h1>scrttv<a class="headerlink" href="#scrttv" title="Permalink to this heading">¶</a></h1>
+<p><strong>Real-time trace view.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scrttv visualizes waveform data in miniSEED format
+(see <a class="reference internal" href="#fig-scrttv-overview"><span class="std std-ref">Figure below</span></a>) in real-time or from archives
+with a defined window length (default: 30 minutes) of defined streams/stations
+(default: streams defined by global bindings). Additionally, phase picks are
+visualized.</p>
+<p>scrttv can be used for view waveforms,
+<a class="reference internal" href="#scrttv-waveform-qc"><span class="std std-ref">visual waveform quality control</span></a> or
+<a class="reference internal" href="#scrttv-signal-detection"><span class="std std-ref">interactive signal detection</span></a>.</p>
+<p>When in <a class="reference internal" href="#scrttv-modes"><span class="std std-ref">message mode</span></a> scrttv dynamically resorts waveforms:
+Normally, the trace order is given by configuration, e.g., ordering by epicentral
+distance from a location given by <a class="reference internal" href="#confval-streams.sort.latitude"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.sort.latitude</span></code></a> and
+<a class="reference internal" href="#confval-streams.sort.longitude"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.sort.longitude</span></code></a>.
+In the event that a new SeisComP <a class="reference internal" href="../base/glossary.html#term-event"><span class="xref std std-term">event</span></a> arrives from the messaging, the
+traces are sorted  automatically by epicentral distance to the latest origin
+received. In addition to waveforms, information about gaps or overlaps, picks
+and the time of incoming origins are displayed.</p>
+<figure class="align-center" id="id2">
+<span id="fig-scrttv-overview"></span><a class="reference internal image-reference" href="../_images/scrttv.png"><img alt="../_images/scrttv.png" src="../_images/scrttv.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">scrttv overview</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<div class="legend">
+<p>An example of scrttv and the dialog window to associate picks to new origins.
+Tabs: Enable/Disable; Amplitude: mean and maximum;
+Stream: station, network, sensor location and channel code;
+Filter: filter applied traces; Status = connection status to messaging.</p>
+</div>
+</figcaption>
+</figure>
+<p>scrttv shows two tabs: the Enabled and the disabled tab
+(see <a class="reference internal" href="#fig-scrttv-overview"><span class="std std-ref">scrttv overview</span></a>). Stations listed in the disabled tab
+are excluded from automatic processing (e.g. phase picking). To move a station
+from one tab to another just drag and drop the trace to the new tab. An alternative solution is
+to double click on the trace label to disable a trace. Read the section
+<a class="reference internal" href="#scrttv-waveform-qc"><span class="std std-ref">Waveform Quality Control</span></a> for the details.</p>
+<p>Normally, the raw data are displayed. Pressing <kbd class="kbd docutils literal notranslate">f</kbd> the predefined bandpass filter
+of third order from 0.5 Hz to 8 Hz, <a class="reference internal" href="../base/filter-grammar.html#filter-bw"><span class="std std-ref">BW(3,0.5,8)</span></a> is applied
+to the traces. Also zoom functions for the time and amplitude axis are provided.
+Read the sections <span class="xref std std-ref">&lt;scrttv-filtering&gt;</span> and  <a class="reference internal" href="#scrttv-visualization"><span class="std std-ref">Waveform Visualization</span></a> for
+more details.</p>
+<p>Among the configurable parameters are:</p>
+<ul class="simple">
+<li><p>Global <a class="reference internal" href="../base/glossary.html#term-binding"><span class="xref std std-term">bindings</span></a>:</p>
+<ul>
+<li><p>default definition of traces to show (<a class="reference internal" href="global.html#confval-detecStream"><code class="xref std std-confval docutils literal notranslate"><span class="pre">detecStream</span></code></a> and <a class="reference internal" href="global.html#confval-detecLocid"><code class="xref std std-confval docutils literal notranslate"><span class="pre">detecLocid</span></code></a>).</p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="../base/glossary.html#term-module"><span class="xref std std-term">Module</span></a> configuration:</p>
+<ul>
+<li><p>network, stations, locations and streams to show extending or overriding the
+default definition (<a class="reference internal" href="#confval-streams.codes"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.codes</span></code></a>),</p></li>
+<li><p><a class="reference internal" href="#scrttv-filtering"><span class="std std-ref">data filters</span></a>,</p></li>
+<li><p>buffer size controlling the length of loaded data (<a class="reference internal" href="#confval-bufferSize"><code class="xref std std-confval docutils literal notranslate"><span class="pre">bufferSize</span></code></a>),</p></li>
+<li><p>sorting of traces upon arrival of new origins (<a class="reference internal" href="#confval-resortAutomatically"><code class="xref std std-confval docutils literal notranslate"><span class="pre">resortAutomatically</span></code></a>),</p></li>
+<li><p>reference coordinate for sorting traces by default (<code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.sort.*</span></code>),</p></li>
+<li><p>region filters (<code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.region.*</span></code>),</p></li>
+<li><p><a class="reference internal" href="#scrttv-grouping"><span class="std std-ref">grouping of streams</span></a> with different properties,</p></li>
+<li><p>number of traces to show with fixed height (<a class="reference internal" href="#confval-streams.rows"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.rows</span></code></a>).</p></li>
+</ul>
+</li>
+<li><p>Scheme parameters in global <a class="reference internal" href="../base/glossary.html#term-module"><span class="xref std std-term">module</span></a> configuration:</p>
+<ul>
+<li><p>trace properties and trace background colors,</p></li>
+<li><p>font and general GUI parameters.</p></li>
+</ul>
+</li>
+</ul>
+<p>More parameters are available on the command-line:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scrttv<span class="w"> </span>-h
+</pre></div>
+</div>
+</section>
+<section id="modes-of-operation">
+<span id="scrttv-modes"></span><h2>Modes of Operation<a class="headerlink" href="#modes-of-operation" title="Permalink to this heading">¶</a></h2>
+<p>scrttv can be started in message mode or in offline mode.</p>
+<ul>
+<li><p>Message mode: scrttv is started normally and connects to the messaging,
+<span class="xref std std-term">picks</span>, <a class="reference internal" href="../base/glossary.html#term-origin"><span class="xref std std-term">origins</span></a> and inventory are read from
+the database and received in real time from the messaging. Data are received
+from <a class="reference internal" href="../base/glossary.html#term-RecordStream"><span class="xref std std-term">recordstream</span></a>.</p></li>
+<li><p>Offline mode: scrttv is started without connection to the messaging,
+<span class="xref std std-term">picks</span> and <a class="reference internal" href="../base/glossary.html#term-origin"><span class="xref std std-term">origins</span></a> are not received in real
+time from the messaging. However, they can be loaded from XML files using the
+<em>File</em> menu. Data are received from <a class="reference internal" href="../base/glossary.html#term-RecordStream"><span class="xref std std-term">recordstream</span></a> or from file. The
+offline mode is invoked when using the option <code class="xref std std-option docutils literal notranslate"><span class="pre">--offline</span></code> or when
+passing a file name to scrttv at startup. Example:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scrttv<span class="w"> </span>file.mseed
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="waveform-visualization">
+<span id="scrttv-visualization"></span><h2>Waveform Visualization<a class="headerlink" href="#waveform-visualization" title="Permalink to this heading">¶</a></h2>
+<section id="stream-selection">
+<h3>Stream selection<a class="headerlink" href="#stream-selection" title="Permalink to this heading">¶</a></h3>
+<p>Without further configuration scrttv displays waveforms for streams defined
+in global bindings. The selection can be refined by configuring
+<a class="reference internal" href="#confval-streams.codes"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.codes</span></code></a>. Streams with
+<a class="reference internal" href="scqc.html#scqc"><span class="std std-ref">data latency</span></a> &lt; <a class="reference internal" href="#confval-maxDelay"><code class="xref std std-confval docutils literal notranslate"><span class="pre">maxDelay</span></code></a> are hidden but
+shown again when applicable. By default this parameter is inactive. For listing
+streams hidden from one tab press <kbd class="kbd docutils literal notranslate">h</kbd>.</p>
+</section>
+<section id="time-windows">
+<span id="scrttv-time-windows"></span><h3>Time windows<a class="headerlink" href="#time-windows" title="Permalink to this heading">¶</a></h3>
+<p>The reading waveforms from RecordStream, the data is displayed for a time
+window which by default ends at current time or as given by the command-line
+option <code class="xref std std-option docutils literal notranslate"><span class="pre">--end-time</span></code>. Initially, the time window takes the length defined
+in <a class="reference internal" href="#confval-bufferSize"><code class="xref std std-confval docutils literal notranslate"><span class="pre">bufferSize</span></code></a> or by the option <code class="xref std std-option docutils literal notranslate"><span class="pre">--buffer-size</span></code>. When reading data
+directly from file in offline mode, the time window is set
+from the time limits of the waveforms.</p>
+<ul class="simple">
+<li><p>The <strong>length of visible time windows</strong> can be adjusted by
+<a class="reference internal" href="#scrttv-zooming"><span class="std std-ref">zooming</span></a>.</p></li>
+<li><p>The <strong>end time of the data</strong> progresses in continuously in real time (UTC)
+with the time of the computer clock unless fixed (<kbd class="kbd docutils literal notranslate">F8</kbd>). The end time is
+fixed during startup when applying <code class="xref std std-option docutils literal notranslate"><span class="pre">--end-time</span></code>.</p></li>
+<li><p>For <strong>progressing or rewinding by 30 minutes</strong> press <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd> <kbd class="kbd docutils literal notranslate">right</kbd></kbd> or
+<kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd> <kbd class="kbd docutils literal notranslate">left</kbd></kbd>, respectively. Data will be loaded immediately.</p></li>
+<li><p>You may also <strong>freely zoom</strong> into any time window. Data and picks will be loaded
+when pressing <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">r</kbd></kbd></p></li>
+<li><p><strong>Return to default real-time processing</strong> by pressing <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">Shift</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">r</kbd></kbd>
+or <kbd class="kbd docutils literal notranslate">N</kbd>.</p></li>
+</ul>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Gaps and overlaps in waveforms are indicated by yellow and purple areas,
+respectively. The colors are configurable.</p>
+</div>
+</section>
+<section id="zooming">
+<span id="scrttv-zooming"></span><h3>Zooming<a class="headerlink" href="#zooming" title="Permalink to this heading">¶</a></h3>
+<p>Waveforms can be zoomed in and out interactively in amplitude and time. Use the
+<em>View</em> menu or refer to the section <a class="reference internal" href="#scrttv-hot-keys"><span class="std std-ref">Hotkeys</span></a> for options. In
+addition to the actions available from the View menu, zooming is supported by
+mouse actions:</p>
+<ul class="simple">
+<li><p>Zooming in in time: Right-click on time axis, drag to the right. A green bar appears
+which is the new time window. Dragging up or down (gray bar) disables zooming.</p></li>
+<li><p>Zooming out in time: Right-click on time axis, drag to the left. A red bar appears. The
+longer the bar, the more you zoom out.  Dragging up or down (gray bar)
+disables zooming.</p></li>
+<li><p>Zooming in time and amplitude: Mouse over a trace of interest, use
+<kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">mouse</kbd> <kbd class="kbd docutils literal notranslate">wheel</kbd></kbd> for zooming in or out.</p></li>
+<li><p>Zooming around a selected area: Press <kbd class="kbd docutils literal notranslate">z</kbd> and drag an area with while
+pressing the left mouse button. Press <kbd class="kbd docutils literal notranslate">z</kbd> again for leaving the zoom
+mode.</p></li>
+</ul>
+</section>
+<section id="stream-grouping">
+<span id="scrttv-grouping"></span><h3>Stream grouping<a class="headerlink" href="#stream-grouping" title="Permalink to this heading">¶</a></h3>
+<p>scrttv allows grouping of stations and even streams with different properties,
+e.g. colors or color gradients.</p>
+<figure class="align-center" id="id3">
+<span id="scrttv-fig-group-filter"></span><a class="reference internal image-reference" href="../_images/groups.png"><img alt="../_images/groups.png" src="../_images/groups.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Stations with 2 groups and different line color gradients. Ungrouped stations
+are visible with default line properties. The applied filter
+is shown in the lower left corner. The tooltip on top of station CX.PB19
+is derived from <a class="reference internal" href="#confval-streams.group.-name.title"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.group.$name.title</span></code></a>.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>Configuration</strong></p>
+<p>Adjust the scrttv module configuration (<code class="file docutils literal notranslate"><span class="pre">scrttv.cfg</span></code>).</p>
+<ol class="arabic simple">
+<li><p>Define the groups:</p>
+<ul class="simple">
+<li><p>add a new group profile to <code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.group</span></code>.</p></li>
+<li><p>set the properties for this group profile. <a class="reference internal" href="../base/glossary.html#term-color"><span class="xref std std-term">Colors</span></a> and color
+gradients are defined by hexadecimal values or by
+<a class="reference internal" href="../base/glossary.html#term-color-keyword-name"><span class="xref std std-term">color keyword name</span></a>.
+When choosing gradients the colors of the traces within one group will be
+varied in alphabetic order of the streams.</p></li>
+<li><p>set a group title in <a class="reference internal" href="#confval-streams.group.-name.title"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.group.$name.title</span></code></a>.</p></li>
+</ul>
+</li>
+<li><p>Register the groups in <a class="reference internal" href="#confval-streams.groups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.groups</span></code></a>.</p></li>
+</ol>
+<p><strong>Viewing groups</strong></p>
+<ol class="arabic">
+<li><p>Open <strong class="program">scrttv</strong> to view the data.</p></li>
+<li><p>Select <em>Sort by group</em> in the <em>Interaction</em> menu or use the hotkey <kbd class="kbd docutils literal notranslate">5</kbd>
+to sort the traces by their groups.</p></li>
+<li><p>Mouse over a station belonging to a group. The tooltips shows the group title.</p></li>
+<li><p>For maintaining the sorting by groups adjust the <strong class="program">scrttv</strong> module
+configuration (<code class="file docutils literal notranslate"><span class="pre">scrttv.cfg</span></code>):</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>resortAutomatically = false
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="phase-picks-and-arrivals">
+<span id="scrttv-picks"></span><h3>Phase picks and arrivals<a class="headerlink" href="#phase-picks-and-arrivals" title="Permalink to this heading">¶</a></h3>
+<p>Previous versions of scrttv (&lt; 5.4) only displayed <a class="reference internal" href="../base/glossary.html#term-pick"><span class="xref std std-term">picks</span></a> with the
+colors indicating the pick evaluation mode along with the phase hint of the
+pick:</p>
+<ul class="simple">
+<li><p>red: automatic,</p></li>
+<li><p>green: manual.</p></li>
+</ul>
+<p>This hasn’t really changed in later versions but additionally scrttv determines
+an additional state of a pick called <a class="reference internal" href="../base/glossary.html#term-arrival"><span class="xref std std-term">arrival</span></a>. In scrttv a pick is
+considered an arrival if it is associated to an valid origin. An origin is
+called valid if its evaluation status is not REJECTED. When scrttv loads all
+picks from the database for the currently visible time span it also checks if
+each pick is associated with a valid origin and declares the arrival state if
+the check yields true. The visibility of picks and arrivals can be toggled by
+pressing <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">p</kbd></kbd> and <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">a</kbd></kbd>, respectively. <kbd class="kbd docutils literal notranslate">c</kbd> removes all
+markers. The configuration parameter <a class="reference internal" href="#confval-showPicks"><code class="xref std std-confval docutils literal notranslate"><span class="pre">showPicks</span></code></a> controls the default
+visibility.</p>
+<p>Picks and arrivals can be differentiated visually by their colours. When
+configured in global module configuration, the same colours are being used
+consistently as in any other GUI displaying both types, namely</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.picks.automatic"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.picks.automatic</span></code></a></p></li>
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.picks.manual"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.picks.manual</span></code></a></p></li>
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.picks.undefined"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.picks.undefined</span></code></a></p></li>
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.arrivals.automatic"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.arrivals.automatic</span></code></a></p></li>
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.arrivals.manual"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.arrivals.manual</span></code></a></p></li>
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.colors.arrivals.undefined"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.arrivals.undefined</span></code></a></p></li>
+</ul>
+<p>That visual difference should support the operator in finding clusters of picks
+and creating new location missed by the automatic system.</p>
+<p>The next sections will only use the <a class="reference internal" href="../base/glossary.html#term-pick"><span class="xref std std-term">pick</span></a> which can be used
+interchangeable for pick or arrival.</p>
+</section>
+<section id="record-borders">
+<span id="scrttv-record-borders"></span><h3>Record borders<a class="headerlink" href="#record-borders" title="Permalink to this heading">¶</a></h3>
+<p>The borders of records are toggled by using the hotkey <kbd class="kbd docutils literal notranslate">b</kbd>.</p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/borders.png"><img alt="../_images/borders.png" src="../_images/borders.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Record borders in box mode on top of waveforms.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Border properties can be adjusted and signed records can be visualized by colors
+configured in the scheme parameters in <code class="file docutils literal notranslate"><span class="pre">global.cfg</span></code> or <code class="file docutils literal notranslate"><span class="pre">scrttv.cfg</span></code>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="global_gui.html#confval-scheme.records.borders.drawMode"><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.records.borders.drawMode</span></code></a>: Define where to draw borders, e.g. on top, bottom or as boxes.</p></li>
+<li><p><code class="xref std std-confval docutils literal notranslate"><span class="pre">scheme.colors.records.borders.*</span></code>: Define pen and brush properties.</p></li>
+</ul>
+</section>
+</section>
+<section id="waveform-quality-control">
+<span id="scrttv-waveform-qc"></span><h2>Waveform Quality Control<a class="headerlink" href="#waveform-quality-control" title="Permalink to this heading">¶</a></h2>
+<p>Use scrttv for regular visual waveform inspection and for enabling or disabling
+of stations. Disabled stations will not be used for automatic phase detections
+and can be excluded from manual processing in <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>. They will also be
+highlighted in <a class="reference internal" href="scmv.html#scmv"><span class="std std-ref">scmv</span></a> and <a class="reference internal" href="scqc.html#scqc"><span class="std std-ref">scqc</span></a>.</p>
+<p>To enable or disable a station for automatic data processing in <cite>SeisComP</cite> select
+a station code with the mouse and drag the stations to the disable / enable tab
+or simply double-click on the station code in the respective tab.</p>
+</section>
+<section id="stream-processing">
+<h2>Stream Processing<a class="headerlink" href="#stream-processing" title="Permalink to this heading">¶</a></h2>
+<section id="filtering">
+<span id="scrttv-filtering"></span><h3>Filtering<a class="headerlink" href="#filtering" title="Permalink to this heading">¶</a></h3>
+<p>scrttv allows filtering of waveforms.
+The Filter selection dropdown menu  (see <a class="reference internal" href="#fig-scrttv-overview"><span class="std std-ref">Figure above</span></a>)
+and the hotkey <kbd class="kbd docutils literal notranslate">f</kbd> can be used to toggle the list of filters pre-defined in
+<a class="reference internal" href="#confval-filter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filter</span></code></a> or in <a class="reference internal" href="#confval-filters"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filters</span></code></a>.  The applied filter is named in the
+lower left corner. To show filtered and raw data together use the hotkey <kbd class="kbd docutils literal notranslate">r</kbd>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The list of filters defined in <a class="reference internal" href="#confval-filters"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filters</span></code></a> overwrites <a class="reference internal" href="#confval-filter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filter</span></code></a>.
+Activate <a class="reference internal" href="#confval-autoApplyFilter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">autoApplyFilter</span></code></a> to filter all traces at start-up of scrttv
+with the first filter defined in <a class="reference internal" href="#confval-filters"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filters</span></code></a>.</p>
+</div>
+</section>
+<section id="gain-correction">
+<h3>Gain correction<a class="headerlink" href="#gain-correction" title="Permalink to this heading">¶</a></h3>
+<p>The stream gain is applied to waveforms and amplitude values are given in the
+physical units of the stream by default. For showing amplitudes in counts,
+deactivate the option <em>Apply gain</em> in the Interaction menu.</p>
+</section>
+</section>
+<section id="interactive-signal-detection">
+<span id="scrttv-signal-detection"></span><h2>Interactive Signal Detection<a class="headerlink" href="#interactive-signal-detection" title="Permalink to this heading">¶</a></h2>
+<p>Beside visual inspection of waveforms for quality control, scrttv can also be
+used for interactive signal detection in real time or for selected time windows
+in the past.</p>
+<section id="artificial-origins">
+<span id="scrttv-artificial-origins"></span><h3>Artificial origins<a class="headerlink" href="#artificial-origins" title="Permalink to this heading">¶</a></h3>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/artificial-origin1.png"><img alt="../_images/artificial-origin1.png" src="../_images/artificial-origin1.png" style="width: 16cm;" /></a>
+<figcaption>
+<p><span class="caption-text">Artifical origin.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>In case the operator recognizes several seismic signals which shall be processed
+further, e.g. in <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>, an artificial/preliminary origin can be set by
+either pressing the middle mouse
+button on a trace or by opening the context menu (right mouse button) on a trace
+and selecting “Create artificial origin”. The following pop-up window shows the
+coordinates of the selected station and the time the click was made on the
+trace. Both are used to generate the new artificial origin without any arrivals.
+Pressing “Create” sends this origin to the LOCATION group. This artificial
+origin is received e.g., by <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a> and enables an immediate manual analysis
+of the closest traces.</p>
+<p>In order to send receive articifial origins and receive them in other GUIs
+<a class="reference internal" href="global.html#confval-commands.target"><code class="xref std std-confval docutils literal notranslate"><span class="pre">commands.target</span></code></a> of the global module configuration must be set and
+must be in line with <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a> of the receiving GUI module.</p>
+<p>Alternatively, picks can be selected and origins can be located as preliminary
+solutions which are sent to the system as regular origin objects, see section
+<a class="reference internal" href="#scrttv-origin-association"><span class="std std-ref">Origin association</span></a>.</p>
+</section>
+<section id="origin-association">
+<span id="scrttv-origin-association"></span><h3>Origin association<a class="headerlink" href="#origin-association" title="Permalink to this heading">¶</a></h3>
+<p>scrttv comes with a minimal version of a phase associator and manual locator
+(Fig. <a class="reference internal" href="#fig-scrttv-overview"><span class="std std-ref">scrttv overview</span></a>). Picks can be selected, relocated and
+committed to the messaging system as manual preliminary location.
+In contrast to the artificial origin operation which requires an immediate
+intervention with, e.g. <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>, this operation allows to store all those
+detected origins and work on them later because they will be stored in the
+database.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>More detailed waveform and event analysis can be made in <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>.</p>
+</div>
+<section id="pick-selection">
+<h4>Pick selection<a class="headerlink" href="#pick-selection" title="Permalink to this heading">¶</a></h4>
+<p>In order to select picks, the pick selection mode must be entered. Then dragging
+a box (rubber band) around the picks in question will add them to the “cart”.
+The “cart” refers to the list of picks of the manual associated widget used to
+attempt to locate an origin. Simply dragging a box will remove all previously
+selected picks. Further options are:</p>
+<ul class="simple">
+<li><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Shift</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">drag</kbd></kbd>: Add selected picks while keeping the previous selection.</p></li>
+<li><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd> <kbd class="kbd docutils literal notranslate"></kbd>+<kbd class="kbd docutils literal notranslate"></kbd> <kbd class="kbd docutils literal notranslate">drag</kbd></kbd>: Remove selected picks while keeping the previous selection.</p></li>
+</ul>
+<p>If at least one pick has been added to the cart, the manual associator will
+open as a dock widget.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A dock widget is a special kind of window which can be docked to any border
+of the application or even displayed floated as kind of overlay window. The
+position of the dock widget will be persistent across application restarts.</p>
+</div>
+<p>At any change of the pick cart, the associator attempts a relocation and will
+display the result in the details or an error message at the top.</p>
+<p>To add more picks to the cart, shift has to be pressed while dragging the
+selection box. To remove picks from the cart, <kbd class="kbd docutils literal notranslate">Ctrl</kbd> has to be pressed while
+dragging the selection box. Picks can also be removed individually from the
+cart by clicking the close icon of each pick item.</p>
+<p>Picks being part of the cart are also highlighted in the traces.</p>
+</section>
+<section id="locating-from-picks">
+<h4>Locating from picks<a class="headerlink" href="#locating-from-picks" title="Permalink to this heading">¶</a></h4>
+<p>The associator adds all available locators in the system and presents them
+in a dropdown list at the bottom. The locator which should be selected as default
+can be controlled with <a class="reference internal" href="#confval-associator.defaultLocator"><code class="xref std std-confval docutils literal notranslate"><span class="pre">associator.defaultLocator</span></code></a>. The profile which
+is selected as default can be controlled with
+<a class="reference internal" href="#confval-associator.defaultLocatorProfile"><code class="xref std std-confval docutils literal notranslate"><span class="pre">associator.defaultLocatorProfile</span></code></a>.</p>
+<p>Whenever the operator changes any of the values, a new location attempt is being
+made which can succeed or fail. A successful attempt will update the details,
+a failed attempt will reset the details and print an error message at the top
+of the window.</p>
+<p>Each locator can be configured locally by clicking the wrench icon. This
+configuration is not persistent across application restarts. It can be used
+to tune and test various settings. Global locator configurations in the
+configuration files are of course being considered by scrttv.</p>
+<p>In addition to the locator and its profile a fixed depth can be set. By default
+the depth is free and it is up to the locator implementation to assign a depth
+to the origin. The depth dropdown list allows to set a predefined depth. The
+list of depth values can be controlled with <a class="reference internal" href="#confval-associator.fixedDepths"><code class="xref std std-confval docutils literal notranslate"><span class="pre">associator.fixedDepths</span></code></a>.</p>
+</section>
+<section id="committing-a-solution">
+<h4>Committing a solution<a class="headerlink" href="#committing-a-solution" title="Permalink to this heading">¶</a></h4>
+<p>Once a solution is accepted by the operator it can be committed to the system
+as regular origin as emitted by, e.g. <cite>scautoloc</cite>. Those origins will be sent to
+the message group defined by <code class="xref std std-confval docutils literal notranslate"><span class="pre">messaging.location</span></code> and grabbed by
+connected modules, e.g., <a class="reference internal" href="scevent.html#scevent"><span class="std std-ref">scevent</span></a> and possibly associated to an
+<a class="reference internal" href="../base/glossary.html#term-event"><span class="xref std std-term">event</span></a>.</p>
+<p>Alternatively, the button “Show Details” can be used to just send the origin to
+the GUI group and let <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a> or other GUIs pick it up and show it. This
+will not store the origin in the database and works the same way as creating an
+artificial origin.</p>
+</section>
+</section>
+</section>
+<section id="hotkeys">
+<span id="scrttv-hot-keys"></span><h2>Hotkeys<a class="headerlink" href="#hotkeys" title="Permalink to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Hotkey</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F1</kbd></p></td>
+<td><p>Open <cite>SeisComP</cite> documentation</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Shift</kbd>+<kbd class="kbd docutils literal notranslate">F1</kbd></kbd></p></td>
+<td><p>Open scrttv documentation</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">F2</kbd></p></td>
+<td><p>Setup connection dialog</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">F11</kbd></p></td>
+<td><p>Toggle fullscreen</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">ESC</kbd></p></td>
+<td><p>Set standard selection mode and deselect all traces</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">c</kbd></p></td>
+<td><p>Clear picker  markers</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">b</kbd></p></td>
+<td><p>Toggle record borders</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">h</kbd></p></td>
+<td><p>List hidden streams</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">a</kbd></kbd></p></td>
+<td><p>Toggle showing arrivals</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">p</kbd></kbd></p></td>
+<td><p>Toggle showing picks</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">n</kbd></p></td>
+<td><p>Restore default display</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">o</kbd></p></td>
+<td><p>Align by origin time</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">p</kbd></p></td>
+<td><p>Enable pick selection mode</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">left</kbd></kbd></p></td>
+<td><p>Reverse the data time window by buffer size</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">right</kbd></kbd></p></td>
+<td><p>Advance the data time window by buffer size</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Filtering</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">f</kbd></p></td>
+<td><p>Toggle filtering</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">d</kbd></p></td>
+<td><p>Switch to previous filter in list if filtering is enabled.</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">g</kbd></p></td>
+<td><p>Switch to next filter in list if filtering is enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">r</kbd></p></td>
+<td><p>Toggle showing all records</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Navigation</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">f</kbd></kbd></p></td>
+<td><p>Search traces</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">up</kbd></p></td>
+<td><p>Line up</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">down</kbd></p></td>
+<td><p>Line down</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">PgUp</kbd></p></td>
+<td><p>Page up</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">PgDn</kbd></p></td>
+<td><p>Page down</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">PgUp</kbd></kbd></p></td>
+<td><p>To top</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">PgDn</kbd></kbd></p></td>
+<td><p>To bottom</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">left</kbd></p></td>
+<td><p>Scroll left</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">right</kbd></p></td>
+<td><p>Scroll right</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">left</kbd></kbd></p></td>
+<td><p>Align left</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">right</kbd></kbd></p></td>
+<td><p>Align right</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Navigation and data</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">left</kbd></kbd></p></td>
+<td><p>Rewind time window by 30’ and load data</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Alt</kbd>+<kbd class="kbd docutils literal notranslate">right</kbd></kbd></p></td>
+<td><p>Progress time window by 30’ and load data</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">r</kbd></kbd></p></td>
+<td><p>(Re)load data in current visible time range</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">Shift</kbd>+<kbd class="kbd docutils literal notranslate">r</kbd></kbd></p></td>
+<td><p>Switch to real-time with configured buffer size</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Sorting</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">1</kbd></p></td>
+<td><p>Restore configuration order of traces</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">2</kbd></p></td>
+<td><p>Sort traces by distance</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">3</kbd></p></td>
+<td><p>Sort traces by station code</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">4</kbd></p></td>
+<td><p>Sort traces by network-station code</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">5</kbd></p></td>
+<td><p>Sort traces by group</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Zooming</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">&lt;</kbd></p></td>
+<td><p>Horizontal zoom-in</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd docutils literal notranslate">&gt;</kbd></p></td>
+<td><p>Horizontal zoom-out</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">y</kbd></p></td>
+<td><p>Vertical zoom-out</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Shift</kbd>+<kbd class="kbd docutils literal notranslate">y</kbd></kbd></p></td>
+<td><p>Vertical zoom-in</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">s</kbd></p></td>
+<td><p>Toggle amplitude normalization</p></td>
+</tr>
+<tr class="row-odd"><td><p><kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>+<kbd class="kbd docutils literal notranslate">mouse</kbd> <kbd class="kbd docutils literal notranslate">wheel</kbd></kbd></p></td>
+<td><p>Vertical and horizontal zooming</p></td>
+</tr>
+<tr class="row-even"><td><p><kbd class="kbd docutils literal notranslate">z</kbd></p></td>
+<td><p>Enable/disable zooming: Drag window with left mouse button</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-configuration">
+<span id="scrttv-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scrttv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scrttv.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scrttv.cfg</span></code></div>
+</div>
+<p>scrttv inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-maxDelay">
+<span class="sig-name descname"><span class="pre">maxDelay</span></span><a class="headerlink" href="#confval-maxDelay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>If greater than 0, then all traces for which the data latency is
+higher than this value are hidden.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-resortAutomatically">
+<span class="sig-name descname"><span class="pre">resortAutomatically</span></span><a class="headerlink" href="#confval-resortAutomatically" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, then all traces are sorted by distance when a new
+origin arrives.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-showPicks">
+<span class="sig-name descname"><span class="pre">showPicks</span></span><a class="headerlink" href="#confval-showPicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, picks are shown.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-mapPicks">
+<span class="sig-name descname"><span class="pre">mapPicks</span></span><a class="headerlink" href="#confval-mapPicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Map picks to best matching rows. This is important
+if picks created on BHN should be shown but only the BHZ trace
+is part of the list. Network code, station code and location code
+must match anyway.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><a class="headerlink" href="#confval-filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Define the filter to be used when filtering is activated. This
+is only being used if filters is not set otherwise it is
+overridden. This option is mainly for backward compatibility.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filters">
+<span class="sig-name descname"><span class="pre">filters</span></span><a class="headerlink" href="#confval-filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&quot;RMHP(2)&gt;&gt;ITAPER(5)&gt;&gt;BW(3,0.5,8.0)&quot;,&quot;RMHP(2)&gt;&gt;ITAPER(5)&gt;&gt;BW_HP(3,</span> <span class="pre">3)&quot;</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Define a list of filters that is cycles through when pressing ‘f’.
+This options supersedes the filter option. If not defined then
+filter is used instead. If defined then this filter list is
+used exclusively and the filter option is ignored.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-autoApplyFilter">
+<span class="sig-name descname"><span class="pre">autoApplyFilter</span></span><a class="headerlink" href="#confval-autoApplyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Activate the first filter of the configured filter list
+after startup. This is equivalent to pressing ‘f’.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-bufferSize">
+<span class="sig-name descname"><span class="pre">bufferSize</span></span><a class="headerlink" href="#confval-bufferSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1800</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Define the buffer size in seconds of the ring bu of each trace.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-allTracesInitiallyVisible">
+<span class="sig-name descname"><span class="pre">allTracesInitiallyVisible</span></span><a class="headerlink" href="#confval-allTracesInitiallyVisible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If set to true, all traces will be visible on application startup
+independent of data availability.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-autoResetDelay">
+<span class="sig-name descname"><span class="pre">autoResetDelay</span></span><a class="headerlink" href="#confval-autoResetDelay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">900</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>s</em></p>
+<p>Time span in seconds to switch back to the last view after an origin
+caused resorting. The default is 15 min.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-messaging.groups.config">
+<span class="sig-name descname"><span class="pre">messaging.groups.config</span></span><a class="headerlink" href="#confval-messaging.groups.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">CONFIG</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The messaging group to which config messages (such
+as station enable/disable messages) are being sent.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-messaging.groups.location">
+<span class="sig-name descname"><span class="pre">messaging.groups.location</span></span><a class="headerlink" href="#confval-messaging.groups.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">LOCATION</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The messaging group to which location messages
+are being sent.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.codes">
+<span class="sig-name descname"><span class="pre">streams.codes</span></span><a class="headerlink" href="#confval-streams.codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The list of channel codes to be displayed. List items
+may contain wildcards at any position and are separated
+by comma. Wildcard support depends on RecordStream,
+e.g.:</p>
+<p>caps/sdsarchive: *.*.*.*</p>
+<p>slink: NET.STA.*.*</p>
+<p>The channel list is intersected with all channels
+configured in inventory unless --no-inventory is used.</p>
+<p>Examples:</p>
+<p>default : display all streams configured by global
+bindings</p>
+<p>default, PF.BON.00.HH? : display default and all HH
+streams of PF.BON.00</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.blacklist">
+<span class="sig-name descname"><span class="pre">streams.blacklist</span></span><a class="headerlink" href="#confval-streams.blacklist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>If not empty then all stream patterns are part of the blacklist.
+The blacklist is only active if &quot;streams.codes&quot;
+is omitted and the default stream list according to the
+bindings is to be shown. Each pattern can include wildcards
+(either ? or *). The pattern is checked against the channel
+id which is a concatenation of network code, station code,
+location code and channel code separated with a dot,
+e.g. &quot;GE.MORC..BHZ&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.rows">
+<span class="sig-name descname"><span class="pre">streams.rows</span></span><a class="headerlink" href="#confval-streams.rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>integer</em></p>
+<p>Number of rows to show at once in one windows. If more traces
+than rows are loaded, the are accessible by a scroll bar.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.groups">
+<span class="sig-name descname"><span class="pre">streams.groups</span></span><a class="headerlink" href="#confval-streams.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Stream group profiles to be considered which must be defined in
+group section. Use comma separation for a list of groups.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profiles">
+<span class="sig-name descname"><span class="pre">streams.profiles</span></span><a class="headerlink" href="#confval-streams.profiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Stream profiles to be considered which must be defined in
+profile section. Use comma separation for a list of profiles.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.sort.*</strong>
+<em>Configure the initial stream sorting.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.sort.mode">
+<span class="sig-name descname"><span class="pre">streams.sort.mode</span></span><a class="headerlink" href="#confval-streams.sort.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">distance</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The sort mode applied initially. Allowed values
+are: config, distance, station, network, group.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.sort.latitude">
+<span class="sig-name descname"><span class="pre">streams.sort.latitude</span></span><a class="headerlink" href="#confval-streams.sort.latitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Latitude of the initial location for sorting traces.
+Only valid if mode == distance.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.sort.longitude">
+<span class="sig-name descname"><span class="pre">streams.sort.longitude</span></span><a class="headerlink" href="#confval-streams.sort.longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Longitude of the initial location for sorting traces.
+Only valid if mode == distance.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.region.*</strong>
+<em>Define a region used for clipping requested stations.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.region.lonmin">
+<span class="sig-name descname"><span class="pre">streams.region.lonmin</span></span><a class="headerlink" href="#confval-streams.region.lonmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-180.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Minimum longitude.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.region.lonmax">
+<span class="sig-name descname"><span class="pre">streams.region.lonmax</span></span><a class="headerlink" href="#confval-streams.region.lonmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">180.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Maximum longitude.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.region.latmin">
+<span class="sig-name descname"><span class="pre">streams.region.latmin</span></span><a class="headerlink" href="#confval-streams.region.latmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">-90.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Minimum latitude.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.region.latmax">
+<span class="sig-name descname"><span class="pre">streams.region.latmax</span></span><a class="headerlink" href="#confval-streams.region.latmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">90.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>deg</em></p>
+<p>Maximum latitude.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.group.*</strong>
+<em>Definiton of stream groups shown in scrttv with unique features.</em>
+<em>Register the profiles in “groups” to apply them.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.group.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <a class="reference internal" href="#confval-streams.groups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.groups</span></code></a> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>streams.groups<span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+streams.group.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+streams.group.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of streams.groups</span>
+streams.group.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.members">
+<span class="sig-name descname"><span class="pre">streams.group.$name.members</span></span><a class="headerlink" href="#confval-streams.group.-name.members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of channels codes to be displayed within
+this group. List items may contain wildcards at any position
+and are separated by comma.
+The list is  intersected with all channels configured in inventory.</p>
+<p>Example:</p>
+<p>CX.*..BH?,PF.BON.00.HH? : all BH streams of the CX network
+and all HH streams of PF.BON.00</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.title">
+<span class="sig-name descname"><span class="pre">streams.group.$name.title</span></span><a class="headerlink" href="#confval-streams.group.-name.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Title of the group visible as a tooltip of the traces.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.group.$name.pen.*</strong>
+<em>Define the trace pen of the group.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.pen.color">
+<span class="sig-name descname"><span class="pre">streams.group.$name.pen.color</span></span><a class="headerlink" href="#confval-streams.group.-name.pen.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>color</em></p>
+<p>The color of the pen. If not given, the default
+trace color is being used. The parameter is overridden
+by &quot;streams.group.$profile.gradient&quot; .</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.pen.gradient">
+<span class="sig-name descname"><span class="pre">streams.group.$name.pen.gradient</span></span><a class="headerlink" href="#confval-streams.group.-name.pen.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>gradient</em></p>
+<p>Define the color gradient used to generate the
+trace color for each group member. When given, the
+value in &quot;streams.group.$profile.pen.color&quot;
+is ignored. The colors are distributed equally and
+given in hexadecimal representation or by or
+<span class="xref std std-term">color keyword names</span>.
+The stop points
+can be set at any value. The final trace color
+will be interpolated from the normalized gradient
+where the value range is scaled to [0,1].</p>
+<p>Format: value1:color1,value2:color2</p>
+<p>Examples:</p>
+<p>0:yellow,1:green</p>
+<p>0:FFBF00,1:C70039</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.pen.style">
+<span class="sig-name descname"><span class="pre">streams.group.$name.pen.style</span></span><a class="headerlink" href="#confval-streams.group.-name.pen.style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">SolidLine</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The style of the pen. Supported values are: NoPen,
+SolidLine, DashLine, DotLine, DashDotLine,
+DashDotDotLine.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.group.-name.pen.width">
+<span class="sig-name descname"><span class="pre">streams.group.$name.pen.width</span></span><a class="headerlink" href="#confval-streams.group.-name.pen.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>px</em></p>
+<p>The width of the pen.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.*</strong>
+<em>Definiton of profiles for streams shown with unique decorations.</em>
+<em>Register the profiles in “profiles” to apply them.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <a class="reference internal" href="#confval-streams.profiles"><code class="xref std std-confval docutils literal notranslate"><span class="pre">streams.profiles</span></code></a> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>streams.profiles<span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+streams.profile.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+streams.profile.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of streams.profiles</span>
+streams.profile.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.match">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.match</span></span><a class="headerlink" href="#confval-streams.profile.-name.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Stream applying this profile to. Use regular expressions
+for defining multiple streams. Examples:</p>
+<p>GR.BFO.00.BHZ: One stream on vertical component</p>
+<p>GR.*.00.BHZ: All stations from GR network and their
+vertical components.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.description">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.description</span></span><a class="headerlink" href="#confval-streams.profile.-name.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Text added to streams.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minMaxMargin">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minMaxMargin</span></span><a class="headerlink" href="#confval-streams.profile.-name.minMaxMargin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Fraction of trace amplitude added to trace widgets.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.unit">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.unit</span></span><a class="headerlink" href="#confval-streams.profile.-name.unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The physical unit shown along with stream maximum and
+minimum values.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.gain">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.gain</span></span><a class="headerlink" href="#confval-streams.profile.-name.gain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>The gain applied to scale trace amplitudes. 0 disables
+showing trace amplitude value</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.fixedScale">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.fixedScale</span></span><a class="headerlink" href="#confval-streams.profile.-name.fixedScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.minimum.*</strong>
+<em>Properties defining the minimum line on each trace.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.value">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.value</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Value at which to draw a line.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.minimum.pen.*</strong>
+<em>Line properties.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.pen.width">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.pen.width</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.pen.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.pen.style">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.pen.style</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.pen.style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">solidline</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.pen.color">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.pen.color</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.pen.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">000000ff</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.minimum.brush.*</strong>
+<em>Properties of the area below the minimum.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.brush.style">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.brush.style</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.brush.style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">nobrush</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.minimum.brush.color">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.minimum.brush.color</span></span><a class="headerlink" href="#confval-streams.profile.-name.minimum.brush.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">000000ff</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.maximum.*</strong>
+<em>Properties defining the maximum line on each trace.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.value">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.value</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Value at which to draw a line.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.maximum.pen.*</strong>
+<em>Line properties.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.pen.width">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.pen.width</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.pen.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.pen.style">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.pen.style</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.pen.style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">solidline</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.pen.color">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.pen.color</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.pen.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">000000ff</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>streams.profile.$name.maximum.brush.*</strong>
+<em>Properties of the area above the maximum.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.brush.style">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.brush.style</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.brush.style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">nobrush</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-streams.profile.-name.maximum.brush.color">
+<span class="sig-name descname"><span class="pre">streams.profile.$name.maximum.brush.color</span></span><a class="headerlink" href="#confval-streams.profile.-name.maximum.brush.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">000000ff</span></code></p>
+<p>Type: <em>string</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>associator.*</strong>
+<em>Define parameters for manually associating phases to origin and</em>
+<em>for locating the origins.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-associator.defaultLocator">
+<span class="sig-name descname"><span class="pre">associator.defaultLocator</span></span><a class="headerlink" href="#confval-associator.defaultLocator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The locator which is activated as default locator.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-associator.defaultLocatorProfile">
+<span class="sig-name descname"><span class="pre">associator.defaultLocatorProfile</span></span><a class="headerlink" href="#confval-associator.defaultLocatorProfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The locator profile which is activated as default profile for
+the default locator.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-associator.fixedDepths">
+<span class="sig-name descname"><span class="pre">associator.fixedDepths</span></span><a class="headerlink" href="#confval-associator.fixedDepths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0,</span> <span class="pre">10,</span> <span class="pre">18</span></code></p>
+<p>Type: <em>list:double</em></p>
+<p>Unit: <em>km</em></p>
+<p>A list of depths used to populate the locator depth selection
+dropdown list.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scrttv [options] [miniSEED file]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-h">
+<span id="cmdoption-scrttv-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-V">
+<span id="cmdoption-scrttv-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-v">
+<span id="cmdoption-scrttv-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-q">
+<span id="cmdoption-scrttv-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-s">
+<span id="cmdoption-scrttv-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-l">
+<span id="cmdoption-scrttv-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-u">
+<span id="cmdoption-scrttv-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-H">
+<span id="cmdoption-scrttv-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-t">
+<span id="cmdoption-scrttv-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-g">
+<span id="cmdoption-scrttv-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-S">
+<span id="cmdoption-scrttv-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-d">
+<span id="cmdoption-scrttv-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="records">
+<h3>Records<a class="headerlink" href="#records" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-record-driver-list">
+<span class="sig-name descname"><span class="pre">--record-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-record-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported record stream drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-I">
+<span id="cmdoption-scrttv-record-url"></span><span class="sig-name descname"><span class="pre">-I</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--record-url</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-I" title="Permalink to this definition">¶</a></dt>
+<dd><p>The recordstream source URL, format:
+[<a class="reference external" href="service://">service://</a>]location[#type].
+&quot;service&quot; is the name of the recordstream driver
+which can be queried with &quot;--record-driver-list&quot;.
+If &quot;service&quot; is not given, &quot;<a class="reference external" href="file://">file://</a>&quot; is
+used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-record-file">
+<span class="sig-name descname"><span class="pre">--record-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-record-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a file as record source.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-record-type">
+<span class="sig-name descname"><span class="pre">--record-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-record-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a type for the records being read.</p>
+</dd></dl>
+
+</section>
+<section id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-i">
+<span id="cmdoption-scrttv-input-file"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--input-file</span></span><span class="sig-prename descclassname"> <span class="pre">xml</span></span><a class="headerlink" href="#cmdoption-scrttv-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load picks in given XML file during startup</p>
+</dd></dl>
+
+</section>
+<section id="mode">
+<h3>Mode<a class="headerlink" href="#mode" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-filter">
+<span class="sig-name descname"><span class="pre">--filter</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-filter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">filter</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-offline">
+<span class="sig-name descname"><span class="pre">--offline</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-offline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not connect to a messaging server and do not use the
+database.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-no-inventory">
+<span class="sig-name descname"><span class="pre">--no-inventory</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-no-inventory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not read streams from inventory but display all streams
+available from the specified record source. This option may
+be combined with the streams.codes parameter to filter the
+available streams.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-end-time">
+<span class="sig-name descname"><span class="pre">--end-time</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-end-time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the acquisition end time, e.g. ‘2017-09-08 13:30:00’,
+default: ‘gmt’.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-buffer-size">
+<span class="sig-name descname"><span class="pre">--buffer-size</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-buffer-size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the size of the waveform buffer in seconds, default: 1800</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-max-delay">
+<span class="sig-name descname"><span class="pre">--max-delay</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-max-delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum delay in seconds to keep a trace visible
+(0 to disable).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-start-at-now">
+<span class="sig-name descname"><span class="pre">--start-at-now</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-start-at-now" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subscribe to data starting at now rather than now - bufferSize</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-rt">
+<span class="sig-name descname"><span class="pre">--rt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-rt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not ask for time window at data server. This might be
+important if e.g. Seedlink does not allow time window
+extraction.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-map-picks">
+<span class="sig-name descname"><span class="pre">--map-picks</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-map-picks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map picks to best matching rows. This is important
+if picks created on BHN should be shown but only the BHZ trace
+is part of the list. Network code, station code and location code
+must match anyway.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-channels">
+<span class="sig-name descname"><span class="pre">--channels</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Channel(s) to display. The channel code may contain wildcards
+at any position but the support of wildcards depends on
+RecordStream. Repeat the option for multiple
+channel groups. Examples:</p>
+<p>default : all streams configured by global bindings.</p>
+<p>GE.*.*.HH? : all HH streams of all stations from GE network.</p>
+</dd></dl>
+
+</section>
+<section id="cities">
+<h3>Cities<a class="headerlink" href="#cities" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-city-xml">
+<span class="sig-name descname"><span class="pre">--city-xml</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scrttv-city-xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path to the cities XML file. This overrides the default
+paths. Compare with the global parameter &quot;citiesXML&quot;.</p>
+</dd></dl>
+
+</section>
+<section id="user-interface">
+<h3>User interface<a class="headerlink" href="#user-interface" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-F">
+<span id="cmdoption-scrttv-full-screen"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--full-screen</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the application filling the entire screen.
+This only works with GUI applications.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scrttv-N">
+<span id="cmdoption-scrttv-non-interactive"></span><span class="sig-name descname"><span class="pre">-N</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--non-interactive</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scrttv-N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use non-interactive presentation mode. This only works with
+GUI applications.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scrttv</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#modes-of-operation">Modes of Operation</a></li>
+<li><a class="reference internal" href="#waveform-visualization">Waveform Visualization</a><ul>
+<li><a class="reference internal" href="#stream-selection">Stream selection</a></li>
+<li><a class="reference internal" href="#time-windows">Time windows</a></li>
+<li><a class="reference internal" href="#zooming">Zooming</a></li>
+<li><a class="reference internal" href="#stream-grouping">Stream grouping</a></li>
+<li><a class="reference internal" href="#phase-picks-and-arrivals">Phase picks and arrivals</a></li>
+<li><a class="reference internal" href="#record-borders">Record borders</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#waveform-quality-control">Waveform Quality Control</a></li>
+<li><a class="reference internal" href="#stream-processing">Stream Processing</a><ul>
+<li><a class="reference internal" href="#filtering">Filtering</a></li>
+<li><a class="reference internal" href="#gain-correction">Gain correction</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interactive-signal-detection">Interactive Signal Detection</a><ul>
+<li><a class="reference internal" href="#artificial-origins">Artificial origins</a></li>
+<li><a class="reference internal" href="#origin-association">Origin association</a><ul>
+<li><a class="reference internal" href="#pick-selection">Pick selection</a></li>
+<li><a class="reference internal" href="#locating-from-picks">Locating from picks</a></li>
+<li><a class="reference internal" href="#committing-a-solution">Committing a solution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hotkeys">Hotkeys</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#records">Records</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
+<li><a class="reference internal" href="#mode">Mode</a></li>
+<li><a class="reference internal" href="#cities">Cities</a></li>
+<li><a class="reference internal" href="#user-interface">User interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scqcv.html"
+                          title="previous chapter">scqcv</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../modules.html"
+                          title="next chapter">Modules</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scrttv.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

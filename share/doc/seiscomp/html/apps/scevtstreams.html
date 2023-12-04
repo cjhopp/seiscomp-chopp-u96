@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scevtstreams &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scimex" href="scimex.html" />
+    <link rel="prev" title="scevtls" href="scevtls.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scimex.html" title="scimex"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scevtls.html" title="scevtls"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scevtstreams">
+<span id="id1"></span><h1>scevtstreams<a class="headerlink" href="#scevtstreams" title="Permalink to this heading">¶</a></h1>
+<p><strong>Extract stream information and time windows from an event.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scevtstreams reads all picks of an event and determines the time window between
+the first pick and the last pick. In addition a symmetric or an asymmetric time
+margin is added to this
+time window. It writes the streams that are picked including the determined
+time window for the event to stdout. This tool gives appropriate input
+information for <a class="reference internal" href="scart.html#scart"><span class="std std-ref">scart</span></a>, <a class="reference internal" href="fdsnws.html#fdsnws"><span class="std std-ref">fdsnws</span></a> and
+<a class="reference external" href="https://docs.gempa.de/caps/current/apps/capstool.html">caps</a>
+(Common Acquisition Protocol Server by gempa GmbH) to dump waveforms from archives
+based on event data.</p>
+</section>
+<section id="output-format">
+<h2>Output Format<a class="headerlink" href="#output-format" title="Permalink to this heading">¶</a></h2>
+<p>The generated list contains start and end time as well as stream information.</p>
+<p>Generic:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>starttime;endtime;streamID
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>2019-07-17 02:00:00;2019-07-17 02:10:00;GR.CLL..BHZ
+</pre></div>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Get the time windows for an event in the database:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scevtstreams<span class="w"> </span>-E<span class="w"> </span>gfz2012abcd<span class="w"> </span>-d<span class="w"> </span>mysql://sysop:sysop@localhost/seiscomp
+</pre></div>
+</div>
+</li>
+<li><p>Get the asymmetric time windows for an event in an XML file. The time window
+starts 120 s before the first pick and ends 500 s after the last pick:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scevtstreams<span class="w"> </span>-E<span class="w"> </span>gfz2012abcd<span class="w"> </span>-i<span class="w"> </span>event.xml<span class="w"> </span>-m<span class="w"> </span><span class="m">120</span>,500
+</pre></div>
+</div>
+</li>
+<li><p>Create a playback of an event with a time window of 5 minutes data and sort the records by end time:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scevtstreams<span class="w"> </span>-E<span class="w"> </span>gfz2012abcd<span class="w"> </span>-d<span class="w"> </span>mysql://sysop:sysop@localhost/seiscomp<span class="w"> </span>-m<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="p">|</span><span class="se">\</span>
+scart<span class="w"> </span>-dsvE<span class="w"> </span>--list<span class="w"> </span>-<span class="w"> </span>~/seiscomp/acquisition/archive<span class="w"> </span>&gt;<span class="w"> </span>gfz2012abcd-sorted.mseed
+</pre></div>
+</div>
+</li>
+<li><p>Download waveforms from Arclink and import into local archive. Include all stations from the contributing networks:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>scevtstreams<span class="w"> </span>-E<span class="w"> </span>gfz2012abcd<span class="w"> </span>-d<span class="w"> </span>mysql://sysop:sysop@localhost/seiscomp<span class="w"> </span>-m<span class="w"> </span><span class="m">300</span><span class="w"> </span>-R<span class="w"> </span>--all-stations<span class="w"> </span><span class="p">|</span><span class="se">\</span>
+scart<span class="w"> </span>--list<span class="w"> </span>-<span class="w"> </span>./my-archive
+</pre></div>
+</div>
+</li>
+<li><p>Create lists compatible with <a class="reference internal" href="fdsnws.html#fdsnws"><span class="std std-ref">fdsnws</span></a> or <a class="reference external" href="https://docs.gempa.de/caps/current/apps/capstool.html">caps</a>:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>scevtstreams -E gfz2012abcd -i event.xml -m 120,500 --fdsnws
+scevtstreams -E gfz2012abcd -i event.xml -m 120,500 --caps
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="module-configuration">
+<span id="scevtstreams-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scevtstreams.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scevtstreams.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scevtstreams.cfg</span></code></div>
+</div>
+<p>scevtstreams inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scevtstreams [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-h">
+<span id="cmdoption-scevtstreams-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-V">
+<span id="cmdoption-scevtstreams-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-D">
+<span id="cmdoption-scevtstreams-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-v">
+<span id="cmdoption-scevtstreams-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-q">
+<span id="cmdoption-scevtstreams-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-s">
+<span id="cmdoption-scevtstreams-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-l">
+<span id="cmdoption-scevtstreams-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-d">
+<span id="cmdoption-scevtstreams-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+<section id="input">
+<h3>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-i">
+<span id="cmdoption-scevtstreams-input"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--input</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input XML file name. Override reading from database.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-f">
+<span id="cmdoption-scevtstreams-format"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--format</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Input format to use (xml [default], zxml (zipped xml), binary).
+Only relevant with --input.</p>
+</dd></dl>
+
+</section>
+<section id="dump">
+<h3>Dump<a class="headerlink" href="#dump" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-E">
+<span id="cmdoption-scevtstreams-event"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--event</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-E" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the event id.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-m">
+<span id="cmdoption-scevtstreams-margin"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--margin</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time margin around the picked time window, default is 300.
+Added before the first and after the last pick, respectively.
+Use 2 comma-separted values (before,after) for asymmetric
+margins. Example: 120,300.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-S">
+<span id="cmdoption-scevtstreams-streams"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--streams</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Comma separated list of streams per station to add.
+Example: BH,SH,HH.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-C">
+<span id="cmdoption-scevtstreams-all-components"></span><span class="sig-name descname"><span class="pre">-C</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--all-components</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-C" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify whether to use all components (1) or just the
+picked ones (0). Default: 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-L">
+<span id="cmdoption-scevtstreams-all-locations"></span><span class="sig-name descname"><span class="pre">-L</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--all-locations</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-L" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify whether to use all location codes (1) or just
+the picked ones (0). Default: 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-all-stations">
+<span class="sig-name descname"><span class="pre">--all-stations</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-all-stations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump all stations from the same network. If unused, just
+stations with picks are dumped.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-all-networks">
+<span class="sig-name descname"><span class="pre">--all-networks</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-all-networks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump all networks. If unused, just networks with picks are
+dumped. This option implies all-stations, all-locations,
+all-streams, all-components and will only provide the time
+window.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-R">
+<span id="cmdoption-scevtstreams-resolve-wildcards"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--resolve-wildcards</span></span><span class="sig-prename descclassname"> <span class="pre">flag</span></span><a class="headerlink" href="#cmdoption-scevtstreams-R" title="Permalink to this definition">¶</a></dt>
+<dd><p>If all components are used, use inventory to resolve stream
+components instead of using ‘?’ (important when Arclink
+should be used).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-net-sta">
+<span class="sig-name descname"><span class="pre">--net-sta</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scevtstreams-net-sta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter streams by network code or network and station code.
+Format: NET or NET.STA</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-caps">
+<span class="sig-name descname"><span class="pre">--caps</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scevtstreams-caps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump in capstool format (Common Acquisition Protocol Server
+by gempa GmbH)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scevtstreams-fdsnws">
+<span class="sig-name descname"><span class="pre">--fdsnws</span></span><span class="sig-prename descclassname"> <span class="pre">flag</span></span><a class="headerlink" href="#cmdoption-scevtstreams-fdsnws" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump in FDSN dataselect webservice POST format</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scevtstreams</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#output-format">Output Format</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#dump">Dump</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scevtls.html"
+                          title="previous chapter">scevtls</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scimex.html"
+                          title="next chapter">scimex</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scevtstreams.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

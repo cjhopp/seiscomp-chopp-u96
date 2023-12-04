@@ -1,0 +1,9 @@
+
+
+ Input date file   --> HEAD          
+ Output print file --> RESET TEST(01)
+ Output punch file --> RESET TEST(02)
+ Output resum file --> RESET TEST(03)
+ Input milieu file --> RESET TEST(04)
+ Ouput reloc  file --> RESET TEST(05)
+

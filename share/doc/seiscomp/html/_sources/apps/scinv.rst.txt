@@ -1,0 +1,666 @@
+.. highlight:: rst
+
+.. _scinv:
+
+#####
+scinv
+#####
+
+**Inventory database synchronisation.**
+
+
+Description
+===========
+
+scinv merges and tests inventory XML files to a single inventory, synchronises
+an inventory with another (most common use is with database), creates initial
+key files and much more ...
+
+scinv is used by :file:`$SEISCOMP_ROOT/etc/init/scinv.py` to synchronise the
+inventory from :file:`$SEISCOMP_ROOT/etc/inventory` with the database.
+
+.. code-block:: sh
+
+   seiscomp update-config inventory
+
+.. hint::
+
+   Inventory files in :term:`SCML` format may be generated or modified by
+   :cite:t:`smp` or :ref:`invextr`. For conversion from FDSN station XML and
+   dataless SEED volume to :term:`SCML` use :ref:`fdsnxml2inv` and
+   :ref:`dlsv2inv`, respectively.
+
+
+Commands
+========
+
+scinv works with different commands:
+
+- :ref:`scinv_ls`: List the content of inventories in XML files,
+- :ref:`scinv_check`: Merge and test inventories, check the completeness and
+  consistency of parameters, report any issue,
+- :ref:`scinv_merge`: Merge and test inventory files,
+- :ref:`scinv_keys`: Merge and test inventories, generate key files or
+  remove key files without coorresponding inventory,
+- :ref:`scinv_sync`: Merge and test inventory files, generate or remove key
+  files, synchronise the inventory with the database and send updates by
+  notifiers to the messaging for saving to the database,
+- :ref:`scinv_apply`: Read and apply notifiers.
+
+The command **must** be given as **1st**
+parameter to the application. All others parameters must follow.
+
+.. code-block:: sh
+
+   scinv $command [options] [files]
+
+
+.. _scinv_sync:
+
+sync
+----
+
+Synchronises an applications inventory with a given source given as file(s).
+It checks the consistency of the inventory using :ref:`scinv_check` before
+synchronization.
+The applications inventory is either read from the database or given with
+:option:`--inventory-db`. As a result all information in the source is written
+to target and target does not contain any additional information. The source
+must hold all information. This works different to merge. If an output file is
+specified with :option:`-o` no notifiers are generated and sent via messaging.
+
+This command is used by :file:`etc/init/scinv.py` as follows:
+
+.. code-block:: sh
+
+   scinv sync --console=1 -H localhost:$p --filebase "$fb" \
+              --rc-dir "$rc" --key-dir "$kd"
+
+where
+
+.. code-block:: sh
+
+   $p = configured messaging port
+   $fb = $SEISCOMP_ROOT/etc/inventory
+   $rc = $SEISCOMP_ROOT/var/lib/rc
+   $kd = $SEISCOMP_ROOT/etc/key
+
+
+.. _scinv_merge:
+
+merge
+-----
+
+Merges two or more inventories into one inventory checking the consistency
+of the inventory by using :ref:`scinv_check`. This command is useful to merge
+existing subtrees into a final inventory before synchronization.
+
+.. code-block:: sh
+
+   scinv merge net1.xml net2.xml -o inv.xml
+
+.. note::
+
+   Merging inventory XML files is also supported by :ref:`scxmlmerge` but
+   without the full :ref:`consistency checks <scinv_check>`.
+
+
+.. _scinv_apply:
+
+apply
+-----
+
+Applies stored notifiers created with **sync** and option ``--create-notifier``
+which is saved in a file (``-o``). Source is the applications inventory read
+from the database or given with ``--inventory-db``.
+If ``-o`` is passed, no messages are sent but the result is stored in a file.
+Useful to test/debug or prepare an inventory for offline processing.
+
+
+.. code-block:: sh
+
+   # Synchronise inventory and save the notifiers locally. No messages are sent.
+   scinv sync -d mysql://sysop:sysop@localhost/seiscomp \
+         --create-notifier -o sync_patch.xml
+
+   # Sent the notifiers to the target system
+   scinv apply -H localhost sync_patch.xml
+
+This operation can be useful to save differences in synchronization for
+validation or debugging problems.
+
+
+.. _scinv_keys:
+
+keys
+----
+
+Synchronise station key files with current inventory pool. This command merges
+all XML files in the inventory pool (or the given files) and checks if a
+corresponding station key file in :file:`$SEISCOMP_ROOT/etc/key` exists. If not,
+an empty station key file is created. If a station key file without a
+corresponding station in the merged inventory is found, it is deleted.
+
+
+.. _scinv_ls:
+
+ls
+--
+
+List contained items up to response level. This command is useful to inspect
+an XML file or the complete inventory pool.
+
+.. code-block:: sh
+
+   $ scinv ls SK.KOLS.xml
+
+     network SK       Slovak National Network of Seismic Stations
+       epoch 1980-01-01
+       station KOLS   Kolonicke sedlo, Slovakia
+         epoch 2004-09-01
+         location __
+           epoch 2004-09-01
+           channel BHE
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel BHN
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel BHZ
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel EHE
+             epoch 2004-09-01 - 2006-04-25 10:00:00
+           channel EHN
+             epoch 2004-09-01 - 2006-04-25 10:00:00
+           channel EHZ
+             epoch 2004-09-01 - 2006-04-25 10:00:00
+           channel HHE
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel HHE
+             epoch 2010-03-25
+           channel HHN
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel HHN
+             epoch 2010-03-25
+           channel HHZ
+             epoch 2006-04-25 12:00:00 - 2010-03-24
+           channel HHZ
+             epoch 2010-03-25
+
+The default level of information printed is *chan*. Available levels are *net*,
+*sta*, *chan* and *resp*. The output level is controlled by :option:`--level``.
+
+For checking the available networks and stations in the inventory pool, calling
+
+.. code-block:: sh
+
+   scinv ls --level sta
+
+is enough.
+
+.. hint::
+
+   Stream lists in NSLC format (NET.STA.LOC.CHA) may be generated when combining
+   with :option:`--nslc`. Such lists can be used as input for filtering
+   waveforms, e.g., to :ref:`scmssort` or :ref:`scart`.
+
+   .. code-block:: sh
+
+      $ scinv ls --nslc inventory.xml
+
+        IU.WVT.00.BHZ 2017-11-16
+        IU.XMAS.00.BH1 2018-07-06 20:00:00
+
+
+.. _scinv_check:
+
+check
+-----
+
+Checks consistency of passed inventory files or a complete filebase. In the
+first step the inventory is merged from all files. In the second step several
+consistency checks are applied such as:
+
+- Overlapping epochs on each level (network, station, ...),
+- Valid epochs (start < end),
+- Defined gain in a stream,
+- Set gain unit,
+- Distance of the sensor location to the station location,
+- "Invalid" location 0/0.
+
+When inconsistencies or other relevant information are found, alerts are printed:
+
+- **!**: Error, user must take an action,
+- **C**: Conflict, user should take an action,
+- **W**: Warning, user should check if an action is required,
+- **I**: Information,
+- **D**: Debug,
+- **R**: Unresolvable, user should check if an action is required,
+- **?**: Question.
+
+.. note::
+
+   * Default test tolerances are adopted from typical values for global
+     networks. Consider adjusting :confval:`check.maxDistance`,
+     :confval:`check.maxElevationDifference` and :confval:`check.maxSensorDepth`
+     by configuration or command-line options.
+   * Errors must but conflicts and warnings should be resolved for maintaining a
+     correct inventory.
+   * :ref:`Merging <scinv_merge>` and :ref:`sychronization <scinv_sync>` stop
+     when finding errors.
+
+The following table lists checks of objects for deficiencies and the test
+results.
+
+* This test matrix may be incomplete. Consider adding more tests and results.
+* Please report inventory issues not caught by tests to the SeisComP
+  development team, e.g. on :cite:t:`seiscomp-github`.
+
+.. csv-table::
+   :widths: 10, 30, 5, 65
+   :header: Object, Check description, Alert, Comments
+   :align: left
+
+   network       , start time after end time        , !,
+                 , network without station          , W,
+                 , empty start time                 ,  , handled by SeisComP inventory reader: network is ignored
+                 , empty station                    , W,
+                 , empty code                       , W,
+
+   station       , start time after end time        , !,
+                 , empty or no start time           , W, station is ignored
+                 , start time after end time        , !,
+                 , empty code                       , W,
+                 , empty latitude                   , W,
+                 , empty longitude                  , W,
+                 , empty elevation                  , W,
+                 , elevation >   8900               , !,
+                 , elevation < -12000               , !,
+                 , has no sensor location           , W,
+
+   sensorLocation, coordinates far away from station, W,``--distance`` overrides default threshold (10 km)
+                 , elevation far away from station  , W,``--max-elevation-difference`` overrides default threshold (500 m)
+                 , epoch outside network epochs     , C,
+                 , epoch outside station epochs     , C,
+                 , empty or no start time           , W, sensorLocation is ignored
+                 , empty latitude                   , W,
+                 , empty longitude                  , W,
+                 , elevation >   8900               , !,
+                 , elevation < -12000               , !,
+                 , empty or no elevation            , W,
+                 , has no channel/stream            , W,
+
+   stream        , empty or no start time           ,  , handled by SeisComP inventory reader: stream is ignored
+                 , empty azimuth                    , C,
+                 , epoch outside sensorLocation     , C,
+                 , epoch outside station            , C,
+                 , epoch outside network            , C,
+                 , start time after end time        , C,
+                 , missing gain value               , W, empty value is handled by SeisComP inventory reader
+                 , gain value = 0                   , W,
+                 , missing gain unit                , W, empty value is handled by SeisComP inventory reader
+                 , missing gain frequency           ,  , empty value is handled by SeisComP inventory reader
+                 , missing sampling rate            ,  , empty value is handled by SeisComP inventory reader
+                 , missing depth                    , W, empty value is handled by SeisComP inventory reader
+                 , missing azimuth                  ,  , empty value is handled by SeisComP inventory reader
+                 , missing dip                      ,  , empty value is handled by SeisComP inventory reader
+                 , empty sensor ID                  , I,
+                 , large depth                      , W,``--max-sensor-depth`` overrides default threshold (500 m)
+
+   sensor        , referenced sensor not available  , R,
+
+
+.. _scinv_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/scinv.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/scinv.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/scinv.cfg`
+
+scinv inherits :ref:`global options<global-configuration>`.
+
+
+
+.. confval:: syncKeys
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Synchronise key files.
+
+
+.. confval:: purgeKeys
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Delete key files if a station does not exist in inventory.
+
+
+.. note::
+   **check.\***
+   *Quantities probed when using the check command.*
+
+
+
+.. confval:: check.maxDistance
+
+   Default: ``10``
+
+   Type: *double*
+
+   Unit: *km*
+
+   Maximum allowed distance between station and sensor location
+   coordinates.
+
+
+.. confval:: check.maxElevationDifference
+
+   Default: ``500``
+
+   Type: *double*
+
+   Unit: *m*
+
+   Maximum allowed differences between elevation of station and
+   sensor location.
+
+
+.. confval:: check.maxSensorDepth
+
+   Default: ``500``
+
+   Type: *double*
+
+   Unit: *m*
+
+   Maximum allowed depth of channel \(sensor\). This is the depth
+   of the sensor below the surface.
+
+
+
+Command-Line Options
+====================
+
+.. program:: scinv
+
+:program:`scinv command [options] [files]`
+
+Command is one of: sync, merge, apply, keys, ls and check.
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+.. option:: --plugins arg
+
+   Load given plugins.
+
+.. option:: -D, --daemon
+
+   Run as daemon. This means the application will fork itself
+   and doesn't need to be started with \&.
+
+.. option:: --auto-shutdown arg
+
+   Enable\/disable self\-shutdown because a master module shutdown.
+   This only works when messaging is enabled and the master
+   module sends a shutdown message \(enabled with \-\-start\-stop\-msg
+   for the master module\).
+
+.. option:: --shutdown-master-module arg
+
+   Set the name of the master\-module used for auto\-shutdown.
+   This is the application name of the module actually
+   started. If symlinks are used, then it is the name of
+   the symlinked application.
+
+.. option:: --shutdown-master-username arg
+
+   Set the name of the master\-username of the messaging
+   used for auto\-shutdown. If \"shutdown\-master\-module\" is
+   given as well, this parameter is ignored.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+.. option:: --print-component arg
+
+   For each log entry print the component right after the
+   log level. By default the component output is enabled
+   for file output but disabled for console output.
+
+.. option:: --trace
+
+   Execute in trace mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 \-\-print\-component\=1
+   \-\-print\-context\=1 .
+
+
+Messaging
+---------
+
+.. option:: -u, --user arg
+
+   Overrides configuration parameter :confval:`connection.username`.
+
+.. option:: -H, --host arg
+
+   Overrides configuration parameter :confval:`connection.server`.
+
+.. option:: -t, --timeout arg
+
+   Overrides configuration parameter :confval:`connection.timeout`.
+
+.. option:: -g, --primary-group arg
+
+   Overrides configuration parameter :confval:`connection.primaryGroup`.
+
+.. option:: -S, --subscribe-group arg
+
+   A group to subscribe to.
+   This option can be given more than once.
+
+.. option:: --content-type arg
+
+   Overrides configuration parameter :confval:`connection.contentType`.
+
+.. option:: --start-stop-msg arg
+
+   Set sending of a start and a stop message.
+
+
+Database
+--------
+
+.. option:: --db-driver-list
+
+   List all supported database drivers.
+
+.. option:: -d, --database arg
+
+   The database connection string, format:
+   service:\/\/user:pwd\@host\/database.
+   \"service\" is the name of the database driver which
+   can be queried with \"\-\-db\-driver\-list\".
+
+.. option:: --config-module arg
+
+   The config module to use.
+
+.. option:: --inventory-db arg
+
+   Load the inventory from the given database or file, format:
+   [service:\/\/]location .
+
+.. option:: --db-disable
+
+   Do not use the database at all
+
+
+Manager
+-------
+
+.. option:: --filebase dir
+
+   Directory to check for inventory XML files. If not given,
+   all XML files passed are checked.
+
+.. option:: --rc-dir dir
+
+   If given, rc \(resource\) files will be created in this
+   directory for each station. The station descriptions will be
+   from the last available epoch.
+
+.. option:: --key-dir dir
+
+   The directory to synchronise key files to. If not given,
+   \@SYSTEMCONFIGDIR\@\/key is assumed.
+
+.. option:: -o, --output file
+
+   Output file for writing inventory XML after merging.
+
+.. option:: --purge-keys
+
+   \(default\) Delete key files if a station does not exist in
+   inventory.
+
+.. option:: --no-purge-keys
+
+   Do not delete key files if a station does not exist in
+   inventory.
+
+
+Check
+-----
+
+.. option:: --distance
+
+   Maximum allowed distance between station and location
+   coordinates when using the check command.
+
+.. option:: --max-elevation-difference
+
+   Maximum allowed difference in elevation
+   between station and sensorlocation in m. Larger differences
+   will be reported.
+
+.. option:: --max-sensor-depth
+
+   Maximum allowed depth of channel \(sensor\). This is the depth
+   of the sensor below the surface in m. Larger depths will be
+   reported.
+
+
+List
+----
+
+.. option:: --compact
+
+   Enable compact output for ls: each object one line.
+
+.. option:: --level int
+
+   Information level reported by ls. One of \"net\", \"sta\",
+   \"cha\" or \"resp\". Default is \"cha\".
+
+.. option:: --nslc
+
+   Enable NSLC output for ls as  NET.STA.LOC.CHA. The option
+   implies level \= cha.
+
+
+Merge
+-----
+
+.. option:: --strip
+
+   Remove unreferenced objects \(data loggers, sensors, ...\).
+
+
+Sync
+----
+
+.. option:: --create-notifier
+
+   If an output file is given, then all notifiers will be saved
+   and not the result set itself.
+
+.. option:: --no-keys
+
+   Do not synchronise key files.
+
+.. option:: --no-rc
+
+   Do not synchronise rc files.
+
+.. option:: --test
+
+   Do not send any notifiers and just output resulting
+   operations and conflicts.
+

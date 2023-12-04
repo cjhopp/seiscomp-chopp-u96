@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="mapmultigrid">
+		<extends>global</extends>
+		<configuration>
+			<group name="map">
+				<group name="multigrid">
+					<description>
+					Dynamically display multiple grids in Surfer or GeoTIFF
+					format as layers on maps. Also add 'mapmultigrid' to
+					'plugins' and to 'map.customLayers' and define and register
+					grid profiles for activating the layers.
+					 </description>
+					<parameter name="profiles" type="list:string">
+						<description>
+						Name(s) of 'mapmultigrid' profiles to be considered.
+						Separate multiple names by comma.
+						</description>
+					</parameter>
+					<parameter name="mode" type="string" default="poly">
+						<description>
+						Render mode of the mapmultigrid plugin. Modes are: grid,
+						line, poly. May be overridden per grid profile.
+						</description>
+					</parameter>
+					<group name="profiles">
+						<description>
+						Define one grid profile per grid file to show on maps.
+						Add the name of the profile to 'map.mapmultigrid.profiles'
+						for using them.
+						</description>
+						<struct type="grid profile" link="profiles">
+							<parameter type="string" name="watch">
+								<description>
+								Absolute filename to track for changes with inotify. Supported
+								file formats are: Surfer 6 (binary grids) and GeoTIFF. The GeoTIFF
+								support is experimental and not all GeoTIFF datatypes are supported.
+								The file extension must be tif for GeoTIFF files.
+								</description>
+							</parameter>
+							<parameter type="string" name="title" default="">
+								<description>
+								The title of the legend.
+								</description>
+							</parameter>
+							<parameter type="string" name="legendArea" default="bottomright">
+								<description>
+								Sets the location of grid legend. Use either:
+								topleft, topright, bottomright or bottomleft.
+								</description>
+							</parameter>
+							<parameter type="boolean" name="discrete" default="true">
+								<description>
+								Use a discrete gradient is for rendering in grid mode.
+								</description>
+							</parameter>
+							<parameter name="mode" type="string">
+								<description>
+								Render mode of the grid profile. Modes are: grid, line, poly. Default
+								is the global render mode.
+								</description>
+							</parameter>
+							<parameter type="boolean" name="visible" default="true">
+								<description>
+								Make this item visible at startup.
+								</description>
+							</parameter>
+							<parameter type="string" name="composition" default="src-over">
+								<description>
+								Sets the composition mode. Specifies how the pixels
+								of the grid(the source) are merged with the pixels
+								of the map(the destination).
+
+								Available:
+
+								src-over, dst-over, clear, src, dst, src-in, dst-in,
+								src-out, dst-out, src-atop, dst-atop, xor, plus,
+								muliply, screen, darken,
+								lighten, color-dodge, color-burn, hard-light,
+								soft-light, difference, exclusion, src-or-dst,
+								src-and-dst, src-xor-dst, not-src-and-not-dst,
+								not-src-or-not-dst, not-src-xor-dst, not-src,
+								not-src-and-dst and src-and-not-dst
+
+								See the QT documentation: https://doc.qt.io/archives/qt-4.8/qpainter.html#CompositionMode-enum
+								for the modes.
+								</description>
+							</parameter>
+							<parameter type="boolean" name="renderBackToFront" default="false">
+								<description>
+								If true, render polygons in inverse value order,
+								highest value first and lowest value last.
+								</description>
+							</parameter>
+							<parameter type="gradient" name="stops">
+								<description>
+								Gradient used for rendering the grid.
+
+								Example (value:color:style):
+
+								30.00:ff00fa:"major",60.00:f25ffb:"minor"
+
+								where minor and major refer to the name of style
+								profiles which must be defined.
+								</description>
+							</parameter>
+							<parameter type="string" name="style">
+								<description>
+								Name of defined style profile(s) to be
+								considered. Can be ommitted if styles are named
+								in 'stops'.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+					<group name="styles">
+						<description>
+							Define style profiles used by the grid profiles.
+						</description>
+					<struct type="style profile">
+						<group name ="brush">
+							<description>
+							Brushes are used to fill a polygon. They have two
+							attributes: color and pattern.
+							</description>
+							<parameter type="string" name="color" default="000000FF">
+								<description>
+								The brush color following the color definition
+								in SeisComP: color-code name, rgb or
+								hexadecimal representation.
+								</description>
+							</parameter>
+							<parameter type="string" name="pattern" default="solid">
+								<description>
+								The brush pattern. Availble:
+								solid, dense1, dense2, dense3, dense4,
+								dense5, dense6, dense7, nobrush, horizontal,
+								vertical, cross, bdiag, fdiag, diagcross.
+								</description>
+							</parameter>
+						</group>
+						<group name ="pen">
+							<description>
+							Pens are used to draw lines with three
+							attributes: color, style and width.
+							</description>
+							<parameter type="string" name="color" default="000000FF">
+								<description>
+								The pen color following the color definition
+								in SeisComP: color-code name, rgb or
+								hexadecimal representation.
+								</description>
+							</parameter>
+							<parameter type="string" name="style" default="solidline">
+								<description>
+								The pen style. Available: nopen, solidline,
+								dotline, dashline, dashdotline, dashdotdotline.
+								</description>
+							</parameter>
+							<parameter type="double" name="width" default="1.0" unit="px">
+								<description>
+								The pen width. A double value.
+								</description>
+							</parameter>
+						</group>
+					</struct>
+					</group>
+				</group>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>

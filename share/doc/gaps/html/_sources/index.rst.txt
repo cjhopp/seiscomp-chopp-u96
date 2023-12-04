@@ -1,0 +1,52 @@
+|appname| documentation
+=======================
+
+This is the documentation for the |appname| package in version |version|.
+
+.. raw:: html
+
+   <div class="four column layout">
+
+.. image:: apps/media/gaps_gempa_eqview.png
+   :alt: EQView
+
+.. image:: apps/media/gaps_gempa_stationview.png
+   :alt: StationView
+
+.. image:: apps/media/gaps_gempa_traceview_1.png
+   :alt: TraceView
+
+.. image:: apps/media/gaps_gempa_scolv_location.png
+   :alt: OriginLocatorView
+
+EQView with event widgets and event details
+
+StationView with station and event details
+
+TraceView with interactive filtering and event notifications
+
+OriginLocatorView for analyzing events in detail
+
+.. raw:: html
+
+   </div>
+
+About
+#####
+
+.. toctree::
+   :maxdepth: 2
+
+   /base/introduction
+   /apps/gaps
+   /base/glossary
+   /base/references
+
+
+Software History
+################
+
+.. toctree::
+   :maxdepth: 1
+
+   /base/changelog

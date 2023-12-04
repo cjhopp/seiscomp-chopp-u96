@@ -1,0 +1,12 @@
+# Configure the filter used to process the horizontal components traces before
+# computing the L2-norm.
+spicker.L2.filter = BW(4,1,15)
+
+# Configure the detector filter applied on the filtered L2 trace.
+spicker.L2.detecFilter = STALTA(0.4,10)
+
+# Defines the filter to be used for picking.
+detecFilter = RMHP(1)>>ITAPER(5)>>BW(4,1,15)>>STALTA(0.4,10)
+
+# The time correction applied to a pick.
+timeCorr = 0.0

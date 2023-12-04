@@ -1,0 +1,236 @@
+.. highlight:: rst
+
+.. _qltool:
+
+######
+qltool
+######
+
+**Module to retrieve data from QuakeLink servers.**
+
+
+Description
+===========
+
+qltool is an application to retrieve event data from a :ref:`quakelink` server.
+It is part of the QuakeLink suite/software package.
+
+By command-line options qltool can filter event objects and use logical object
+criteria. Please read the command-line help for the options:
+
+.. code-block:: sh
+
+   qltool -h
+
+
+Examples
+========
+
+* Query a specifc event, output: XML, stdout
+
+  .. code-block:: sh
+
+     qltool -E gempa2018abcd
+
+* Query all events, output: line based file
+
+  .. code-block:: sh
+
+     qltool -Sy /tmp/events.txt
+
+
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/qltool.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/qltool.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/qltool.cfg`
+
+qltool inherits :ref:`global options<global-configuration>`.
+
+.. note::
+
+   Modules/plugins may require a license file. The default path to license
+   files is :file:`@DATADIR@/licenses/` which can be overridden by global
+   configuration of the parameter :confval:`gempa.licensePath`. Example: ::
+
+      gempa.licensePath = @CONFIGDIR@/licenses
+
+
+
+
+Command-Line Options
+====================
+
+:program:`qltool [options]`
+
+
+Connection settings
+-------------------
+
+.. option:: -H, --host
+
+   Host \(QuakeLink server\) to connect to.
+
+.. option:: -h, --help
+
+   Produce help message.
+
+.. option:: -s, --ssl
+
+   Use secure socket layer \(SSL\).
+
+.. option:: --ssl-no-hostname
+
+   Do not verify the server's hostname.
+
+.. option:: --ssl-no-cert
+
+   Do not verify the server certificate chain. Implicitly
+   disables the hostname check.
+
+.. option:: -c, --credentials arg
+
+   Username:password for authentication separated by colon. If
+   password is not given, it is asked for on tty.
+
+.. option:: --ping
+
+   Request and validate server identifier.
+
+.. option:: --alive
+
+   Request sever to send alive message every 30s, useful for
+   long running select updated queries to prevent connection
+   termination by routers.
+
+
+Single-event query
+------------------
+
+.. option:: -E, --event
+
+   Event ID to download.
+
+.. option:: -r, --rev
+
+   Revision of event.
+
+.. option:: -R, --all-rev
+
+   Request all revisions of event. The output
+   format is fixed to summary.
+
+
+Multi-event query
+-----------------
+
+.. option:: -S, --select
+
+   Search events by key event parameters.
+
+.. option:: --updated
+
+   Keep connection open and wait for event updates.
+
+.. option:: --archvied
+
+   Request archived events, only required in combination with
+   \-\-updated.
+
+.. option:: --from arg
+
+   Begin time. Format: %Y,%m,%d[,%H,%M,%S,%f]
+
+.. option:: --to time
+
+   End time. Format: %Y,%m,%d[,%H,%M,%S,%f]
+
+.. option:: --filter arg
+
+   SQL like where, order, limit and offset filter:
+   
+   [WHERE clause] [ORDER BY OTIME ASC\|DESC] [LIMIT %n [OFFSET %n]]
+   
+   clause    :\= condition[ AND\|OR [\(]clause[\)]]
+   
+   condition :\= MAG\|DEPTH\|LAT\|LON\|PHASES op {float} \|
+   
+   UPDATED\|OTIME op time \|
+   
+   AGENCY\|STATUS\|TYPE\|REGION\|MAG_T op 'string' \|
+   
+   MAG\|DEPTH\|LAT\|LON\|PHASES\|OTIME\|UPDATED IS [NOT] NULL
+   
+   op        :\=\=\|\!\=\|>\|>\=\|<\|<\=\|eq\|gt\|ge\|lt\|ge
+   
+   time      :\= %Y,%m,%d[,%H,%M,%S,%f]
+
+.. option:: --processor arg
+
+   Event processor script called with file path after XML
+   output file was created.
+
+
+Event content
+-------------
+
+.. option:: -P, --with-picks
+
+   Export all associated picks.
+
+.. option:: -A, --with-amplitudes
+
+   Export all associated amplitudes.
+
+.. option:: -M, --with-magnitudes
+
+   Export all station magnitudes.
+
+.. option:: -F, --with-stamts
+
+   Export moment tensor station contributions and phase
+   settings.
+
+.. option:: -a, --ignore-arrivals
+
+   Do not export origin arrivals.
+
+.. option:: -p, --preferred-only
+
+   When exporting events only the preferred origin
+   and the preferred magnitude will be dumped.
+
+
+Event format
+------------
+
+.. option:: -f, --formatted
+
+   Output formatted XML.
+
+.. option:: -n, --native
+
+   Request native format which is the unmodified data pushed
+   to the QuakeLink server. The parameters P, A, M, F, a, p, f
+   are ignored in this mode.
+
+.. option:: -z, --gzip
+
+   Request for gzip compressed data, not supported in summary
+   format.
+
+.. option:: -y, --summary
+
+   Request summary format which is a line based and semicolon
+   separated representation of the key event parameters.
+
+.. option:: -v, --version arg
+
+   The specific format version to request, currently only
+   supported by summary format.
+

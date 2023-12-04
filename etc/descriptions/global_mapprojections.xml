@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="mapprojections">
+		<extends>global</extends>
+		<description>
+			Configuration parameters specific to gempa map projections.
+		</description>
+		<configuration>
+			<group name="map">
+				<group name="mercator">
+					<parameter name="discrete" type="boolean" default="false">
+						<description>
+							Restricts the zoom level to discrete steps matching the resolution
+							of the map tiles. The intention is to avoid interpolation when operating
+							with tiles sets which use small font sizes.
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>

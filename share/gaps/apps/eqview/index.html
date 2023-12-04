@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" ng-app="eqview">
+	<head>
+		<meta charset="utf-8" />
+		<title>gempa eqview</title>
+		<meta name="viewport" content="width=640, initial-scale=0.5"/>
+		<link rel="stylesheet" href="../share/css/gempa-allinone.css" media="screen" />
+		<link rel="stylesheet" href="../share/css/leaflet.css"/>
+		<script src="../share/lib/jquery.min.js"></script>
+		<script src="../share/lib/leaflet.js"></script>
+		<script src="../share/lib/angular.min.js"></script>
+
+		<script language="javascript" type="text/javascript" src="lib/eqview.min.js"></script>
+	</head>
+	<body>
+		<noscript>Sorry, your browser does not support JavaScript! Enable JavaScript and
+		<a href="index.html">reload</a> the page.
+		</noscript>
+		<div id="app" ng-controller="MainCtrl">
+			<browser-check></browser-check>
+			<div id="loader" ng-if="progress !== undefined">
+				<h1><center>Initializing</center></h1>
+				<div class="progress progress-striped">
+					<div class="progress-bar progress-bar-success" style="width:{{progress}}%">
+						<span class="sr-only">{{progress}}% Complete</span>
+					</div>
+				</div>
+			</div>
+			<div id="content" class="main">
+				<div class="full-height">
+					<div class="full-height full-width">
+						<map-ll class="full-width full-height"
+						        id="bigmap"
+						        ng-if="selected"
+						        options="selected.options"
+						        events="selected.events.pool"
+						        map-interface="selected.mapHandler"
+						        ng-attr-title="{{hoveredEvent}}">
+						</map-ll>
+						<div class="gwidget-overlay">
+							<button ng-if="playing" class="audio" ng-click="stopAudio()" title="Stop audio" isolate-click>
+								<i class="icon glyphicon glyphicon-stop"></i>
+							</button>
+							<latest-overall-event
+							    ng-if="latestOverallEvent"
+							    event="globalEvents.latest"
+							    event-clicked="setCurrentManualEvent(ev, true, true)">
+							</latest-overall-event>
+							<audio loop autoplay ng-if="selected.playing">
+								<source ng-src="{{serverAPI}}{{selected.options.audioFile}}">
+							</audio>
+							<div class="gwidget" shake="widget.shaking" ng-repeat="widget in widgets">
+								<audio loop autoplay ng-if="widget.playing">
+									<source ng-src="{{serverAPI}}{{widget.options.audioFile}}">
+								</audio>
+								<small-map widget="widget" ng-click="switchMap(widget)"></small-map>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="goverlay"
+				     ng-hide="view.map"
+				     ng-controller="TableCtrl"
+				     ng-init="itemsPerPage = 19">
+					<div class="gtable">
+						<div class="gtableheader">
+							<div class="gcol gcol1"
+								 ng-click="set('otime')">Origin time
+								<span class="glyphicon pull-right"
+								      ng-class="{'glyphicon-chevron-down':reverse && col == 'otime','glyphicon-chevron-up':!reverse && col == 'otime'}">
+								</span>
+							</div>
+							<div class="gcol gcol4"
+								 ng-click="set('eventID')">Event ID
+								<span class="glyphicon pull-right"
+									  ng-class="{'glyphicon-chevron-down':reverse && col == 'eventID',
+												'glyphicon-chevron-up':!reverse && col == 'eventID'}"></span>
+							</div>
+							<div class="gcol gcol2" ng-click="set('lat')">Lat
+								<span class="glyphicon pull-right"
+									  ng-class="{'glyphicon-chevron-down':reverse && col == 'lat',
+												'glyphicon-chevron-up':!reverse && col == 'lat'}"></span>
+							</div>
+							<div class="gcol gcol3"
+								 ng-click="set('lon')">Lon
+								<span class="glyphicon pull-right"
+									  ng-class="{'glyphicon-chevron-down':reverse && col == 'lon',
+												'glyphicon-chevron-up':!reverse && col == 'lon'}"></span>
+							</div>
+							<div class="gcol gcol4"
+								 ng-click="set('depth')">Depth
+								<span class="glyphicon pull-right"
+									  ng-class="{'glyphicon-chevron-down':reverse && col == 'depth',
+												'glyphicon-chevron-up':!reverse && col == 'depth'}"></span>
+							</div>
+							<div class="gcol gcol5"
+								 ng-click="set('mag')">M
+								<span class="glyphicon pull-right"
+									  ng-class="{'glyphicon-chevron-down':reverse && col == 'mag',
+												'glyphicon-chevron-up':!reverse && col == 'mag'}"></span>
+							</div>
+							<div class="gcol gcol6"
+								 ng-click="set('agency')">Agency
+								<span class="glyphicon pull-right"
+								      ng-class="{'glyphicon-chevron-down':reverse && col == 'agency',
+								      'glyphicon-chevron-up':!reverse && col == 'agency'}"></span>
+							</div>
+							<div class="gcol gcol7"
+								 ng-click="set('status')">Stat
+								<span class="glyphicon pull-right"
+								      ng-class="{'glyphicon-chevron-down':reverse && col == 'status',
+								                 'glyphicon-chevron-up':!reverse && col == 'status'}"></span>
+							</div>
+							<div class="gcol gcol8"
+								 ng-click="set('phaseCount')">Phases
+								<span class="glyphicon pull-right"
+								      ng-class="{'glyphicon-chevron-down':reverse && col == 'phaseCount',
+								                 'glyphicon-chevron-up':!reverse && col == 'phaseCount'}"></span>
+							</div>
+							<div class="gcol gcol9">Region
+								<span class="glyphicon pull-right"
+								      ng-class="{'glyphicon-chevron-down':reverse && col == 'region',
+								                 'glyphicon-chevron-up':!reverse && col == 'region'}"></span>
+							</div>
+							<div id="eventtablectrl">
+								<a class="glyphicon glyphicon-fast-backward" href="#" ng-click="start()"></a>
+								<a class="glyphicon glyphicon-chevron-left" href="#" ng-click="prev()"></a>
+								<strong>{{page + 1}}/{{currentTable| toArray | pages:20}}</strong>
+								<a class="glyphicon glyphicon-chevron-right" href="#" ng-click="next(currentTable, 20)"></a>
+								<a class="glyphicon glyphicon-fast-forward" href="#" ng-click="end(currentTable, 20)"></a>
+								<a class="glyphicon glyphicon-download pull-right" href="#" ng-click="download(currentTable)"></a>
+							</div>
+						</div>
+						<div class="gbody">
+							<div class="grow" ng-repeat="evt in tableItems"
+								 ng-click="setCurrent(evt, true)">
+								<div class="gcol gcol1">{{evt.otime|gmdate:'%Y-%m-%d %H:%M:%S'}}</div>
+								<div class="gcol gcol4">{{evt.eventID}}</div>
+								<div class="gcol gcol2">{{evt.lat|lat}}</div>
+								<div class="gcol gcol3">{{evt.lon|lon}}</div>
+								<div class="gcol gcol4">{{evt.depth.toFixed(0)}}km</div>
+								<div class="gcol gcol5">{{evt.mag|mag}}</div>
+								<div class="gcol gcol6">{{evt.agency}}</div>
+								<div class="gcol gcol7 status-{{evt.status}}">{{evt.status}}</div>
+								<div class="gcol gcol8">{{evt.phaseCount}}</div>
+								<div class="gcol gcol9">{{evt.region}}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="gcontainer gpanel gleft">
+					<div class="gstatus gcontainer">
+						<div class="clock"><clock/></div>
+						<div>
+							<span class="icon glyphicon glyphicon-transfer"
+								  title="Shows the current QuakeLink connection state."
+								  ng-class="{'connected':connected, 'disconnected':!connected}">
+							</span>
+						</div>
+						<div class="brand">
+							<img ng-src="{{serverAPI}}{{logoPath}}"></img>
+							<span>powered by <a target="_blank" href="http://www.gempa.de">gempa GmbH</a></span>
+						</div>
+					</div>
+					<latest-event ng-if="latestMainWidgetEvent"
+					              widget="selected"
+					              event-clicked="setCurrentManualEvent(ev, true, true)"
+					              map-toggled="toggleMap()"
+					              with-title="configured.length > 0">
+					</latest-event>
+					<div style="flex-grow:1;position:relative">
+						<minimap class="minimap gcontainer" map="mapHandler.map.map"></minimap>
+						<div class="gcontent legend">
+							<div class="gcontent">
+								<div class="legend" legend-ll items="view.legend.colors"></div>
+								<div class="legend" legend-ll items="view.legend.magnitudes"></div>
+							</div>
+						</div>
+						<div class="gslider" ng-class="{'gshow': view.details}">
+							<div class="gcontent full-height">
+								<div ng-attr-title="{{view.currentEvent.region}}" class="gheader">
+									<div class="gspan">{{view.currentEvent.region}}</div>
+									<a ng-click="closeDetails()" class="icon">&times;</a>
+								</div>
+								<div class="body">
+									<div class="content">
+										<i ng-if="lockEventDetails" class="glyphicon glyphicon-user subtext" style="float:right"
+										   title="Details were opened manually and do not close or update automatically"></i>
+										<div ng-if="view.nextCity" class="subtext">
+										to {{view.nextCity.place.name}}: {{view.nextCity.dist|number:0}}&thinsp;km, {{view.nextCity.azimuth|number:0}}&deg;
+										</div>
+										<div ng-if="view.referencePlace" class="subtext">
+										to {{referencePlace.name}}: {{view.referencePlace.dist|number:0}}&thinsp;km, {{view.referencePlace.az|number:0}}&deg;
+										</div>
+										<hr ng-if="view.nextCity || view.referencePlace"/>
+										<div class="param">
+											<label class="name">Mag</label>
+											<div class="value">
+												<strong style="color: #7AD4E2">{{view.currentEvent.mag|mag}}</strong>
+											</div>
+										</div>
+										<div class="param">
+											<label class="name">Depth</label>
+											<div class="value">{{view.currentEvent.depth.toFixed(0)}}km</div>
+										</div>
+										<div class="param">
+											<label class="name">Time</label>
+											<div class="value">{{view.currentEvent.otime|gmdate:'%Y-%m-%d %H:%M:%S'}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Location</label>
+											<div class="value">{{view.currentEvent.lat|lat}} {{view.currentEvent.lon|lon}}</div>
+										</div>
+										<div class="param">
+											<label class="name">EventID</label>
+											<div class="value">{{view.currentEvent.eventID}}</div>
+										</div>
+										<hr/>
+										<div class="param">
+											<label class="name">Agency</label>
+											<div class="value">{{view.currentEvent.agency}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Status</label>
+											<div class="value status-{{view.currentEvent.status}}">{{view.currentEvent.status}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Phases</label>
+											<div class="value">{{view.currentEvent.phaseCount}}</div>
+										</div>
+									</div>
+								</div>
+								<div ng-controller="TraceCtrl" class="traces" auto-height-no-scope stretch-y min-height="view.minHeight" children=".trace-row" rows="rows">
+									<div class="trace-row" ng-repeat="trace in traces">
+										<div class="trace"
+											 timeseries
+											 data="trace.data"
+											 markers="trace.markers"
+											 options="trace.options"
+											 complete="renderComplete()"></div>
+										<div class="label label-info">{{trace.sid}} at {{trace.dist|number}}&deg; or {{trace.distKm|number}}km</div>
+									</div>
+									<div class="overlay" ng-class="{'busy':currentJob || fetchEvent.eventID}"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

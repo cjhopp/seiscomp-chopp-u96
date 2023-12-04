@@ -1,0 +1,24 @@
+# Activated plugins for category sources
+sources = NN07:chain, NN09:chain, NN17:chain, NN18:chain, NN24:chain, NN19-NN21:chain
+
+# Hostname or IP of the Seedlink server.
+sources.NN07.address = 63.46.224.38
+
+# Hostname or IP of the Seedlink server.
+sources.NN09.address = 63.46.224.37
+
+# Hostname or IP of the Seedlink server.
+sources.NN17.address = 63.46.224.7
+
+# Hostname or IP of the Seedlink server.
+sources.NN18.address = 63.46.224.9
+
+# Hostname or IP of the Seedlink server.
+sources.NN24.address = 63.46.224.8
+
+# Hostname or IP of the Seedlink server.
+sources.NN19-NN21.address = rtserve.iris.washington.edu
+
+# List of stream selectors. If left empty all available streams will be
+# requested. See slinktool manpage for more information.
+sources.NN19-NN21.selectors = ?H?.D

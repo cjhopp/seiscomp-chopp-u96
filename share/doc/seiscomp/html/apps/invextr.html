@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>invextr &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scinv" href="scinv.html" />
+    <link rel="prev" title="inv2dlsv" href="inv2dlsv.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scinv.html" title="scinv"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="inv2dlsv.html" title="inv2dlsv"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/inventory.html" accesskey="U">Inventory</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="invextr">
+<span id="id1"></span><h1>invextr<a class="headerlink" href="#invextr" title="Permalink to this heading">¶</a></h1>
+<p><strong>Extract channels from inventory.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>invextr reads and modifies inventory XML provided as file or on stdin:</p>
+<ul class="simple">
+<li><p>Extract or remove networks, stations and channels based on</p>
+<ul>
+<li><p>channel IDs</p></li>
+<li><p>geographic region</p></li>
+</ul>
+</li>
+<li><p>Clean inventories from unused objects such as data loggers, sensors or
+instrument responses.</p></li>
+</ul>
+<p>The important parameters are:</p>
+<ul class="simple">
+<li><p>Channel ID list (required)</p></li>
+<li><p>Input file or stdin</p></li>
+<li><p>Output file or stdout</p></li>
+<li><p>Region bounding box (optional)</p></li>
+</ul>
+<p>whereas the output file defaults to stdout and the input file to
+stdin if not given.</p>
+<p>The optional region box will be used to filter the read inventory based on the
+coordinates of sensor locations. Only stations with sensor locations within the
+region will be considered. All others will be ignored.</p>
+<p>A channel ID is a simple string that is matched against the final channel ID
+in the inventory. This final channel ID is constructed by joining the codes of
+all stages with a dot where the stages are network, station, location and
+channel.</p>
+<p>The content of the resulting inventory may be listed using <a class="reference internal" href="scinv.html#scinv"><span class="std std-ref">scinv</span></a>.</p>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h3>
+<p>Suppose an inventory with network GE, a station MORC and several channels:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>network<span class="w"> </span>GE
+<span class="w">  </span>station<span class="w"> </span>MORC
+<span class="w">    </span>location<span class="w"> </span>__
+<span class="w">      </span>channel<span class="w"> </span>BHZ<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..BHZ
+<span class="w">      </span>channel<span class="w"> </span>BHN<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..BHN
+<span class="w">      </span>channel<span class="w"> </span>BHE<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..BHE
+<span class="w">      </span>channel<span class="w"> </span>LHZ<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..LHZ
+<span class="w">      </span>channel<span class="w"> </span>LHN<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..LHN
+<span class="w">      </span>channel<span class="w"> </span>LHE<span class="w">    </span>ID:<span class="w"> </span>GE.MORC..LHE
+</pre></div>
+</div>
+<ul>
+<li><p>The IDs are matched against streams passed with –chans.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;GE*&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+<p>All streams are passed and nothing is filtered because GE* matches all
+available IDs and region filter is not used. Since <code class="file docutils literal notranslate"><span class="pre">inv.xml</span></code> only
+contains stations from the GE network the option <code class="xref std std-option docutils literal notranslate"><span class="pre">--chans</span></code> is not
+useful here at all.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="w">  </span>invextr<span class="w"> </span>-r<span class="w"> </span><span class="m">0</span>,-180,90,180<span class="w"> </span>inv.xml
+
+All<span class="w"> </span>streams<span class="w"> </span>located<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>northern<span class="w"> </span>hemisphere<span class="w"> </span>are<span class="w"> </span>passed<span class="w"> </span>as<span class="w"> </span>commanded<span class="w"> </span>by<span class="w"> </span>the
+region<span class="w"> </span>bounding<span class="w"> </span>box.
+</pre></div>
+</div>
+</li>
+<li><p>Nothing is filtered again because <em>MORC</em> matches all available IDs.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;*MORC*&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+</li>
+<li><p>Everything is filtered because GE.MORC does not match with any ID. To make it
+work, an asterisk needs to be appended: GE.MORC* or GE.MORC.*.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;GE.MORC&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+</li>
+<li><p>To extract all vertical components, use:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;*Z&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+</li>
+<li><p>To extract BHN and LHZ, use:</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;*BHN,*LHZ&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+<ul>
+<li><p>To remove all HH and SH channels, use:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>invextr<span class="w"> </span>--rm<span class="w"> </span>--chans<span class="w"> </span><span class="s2">&quot;*HH?,*SH?&quot;</span><span class="w"> </span>inv.xml
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="module-configuration">
+<span id="invextr-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/invextr.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/invextr.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/invextr.cfg</span></code></div>
+</div>
+<p>invextr inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">invextr [OPTIONS] [input=stdin] [output=stdout]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-h">
+<span id="cmdoption-invextr-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-V">
+<span id="cmdoption-invextr-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-D">
+<span id="cmdoption-invextr-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-v">
+<span id="cmdoption-invextr-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-q">
+<span id="cmdoption-invextr-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-s">
+<span id="cmdoption-invextr-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-l">
+<span id="cmdoption-invextr-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+</section>
+<section id="extract">
+<h3>Extract<a class="headerlink" href="#extract" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-chans">
+<span class="sig-name descname"><span class="pre">--chans</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-chans" title="Permalink to this definition">¶</a></dt>
+<dd><p>A comma separated list of channel IDs to extract
+which can contain wildcards. Default: *.*.*.* meaning
+all streams.</p>
+<p>Example: invextr --chans &quot;GE.*.*.BHZ,GE.MORC.*.*&quot; inv.xml</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-r">
+<span id="cmdoption-invextr-region"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--region</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter streams by geographic region given as
+&quot;South, East, North, West&quot;. Region is unused by default.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-rm">
+<span class="sig-name descname"><span class="pre">--rm</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-invextr-rm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all channels given with ‘--chans’ instead of
+extracting them.</p>
+<p>Example: invextr --rm --chans &quot;GE.*&quot; inv.xml</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-invextr-f">
+<span id="cmdoption-invextr-formatted"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--formatted</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-invextr-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables formatted XML output.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">invextr</a><ul>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#extract">Extract</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="inv2dlsv.html"
+                          title="previous chapter">inv2dlsv</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scinv.html"
+                          title="next chapter">scinv</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/invextr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

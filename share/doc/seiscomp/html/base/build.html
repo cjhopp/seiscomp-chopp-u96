@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Getting the Source Code &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing Documentation" href="contributing-docs.html" />
+    <link rel="prev" title="Examples" href="sdk-python-examples.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="contributing-docs.html" title="Contributing Documentation"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="sdk-python-examples.html" title="Examples"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="getting-the-source-code">
+<span id="build"></span><h1>Getting the Source Code<a class="headerlink" href="#getting-the-source-code" title="Permalink to this heading">¶</a></h1>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>For production systems only
+<a class="reference internal" href="installation.html#installation-packages"><span class="std std-ref">install the officially released packages</span></a>
+from <span id="id1">Helmholtz-Centre Potsdam - GFZ German Research Centre for Geosciences and gempa GmbH [<a class="reference internal" href="references.html#id251" title="Helmholtz-Centre Potsdam - GFZ German Research Centre for Geosciences and gempa GmbH. The SeisComP seismological software package. GFZ Data Services. 2008. URL: https://www.seiscomp.de, doi:10.5880/GFZ.2.4.2020.003.">62</a>]</span>, <span id="id2"><em>gempa GmbH</em> [<a class="reference internal" href="references.html#id118" title="gempa GmbH. The SeisComP development and maintenance company. URL: https://www.gempa.de/.">26</a>]</span> or compile from the corresponding
+release tags in this repository.</p>
+</div>
+<p>The <cite>SeisComP</cite> software collection is distributed among several repositories.
+For more information about compilation and build configuration head over to
+<span id="id3"><em>SeisComP on GitHub</em> [<a class="reference internal" href="references.html#id252" title="Seiscomp on github. URL: https://github.com/SeisComP.">1</a>]</span>.</p>
+<p>For building a complete <cite>SeisComP</cite> distribution checkout all repositories using
+the following script:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$#</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span>
+<span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$0</span><span class="s2"> &lt;target-directory&gt;&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nv">target_dir</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">repo_path</span><span class="o">=</span>https://github.com/SeisComP
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Cloning base repository into </span><span class="nv">$1</span><span class="s2">&quot;</span>
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/seiscomp.git<span class="w"> </span><span class="nv">$1</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Cloning base components&quot;</span>
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$1</span>/src/base
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/seedlink.git
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/common.git
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/main.git
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/extras.git
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Cloning external base components&quot;</span>
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/contrib-gns.git
+git<span class="w"> </span>clone<span class="w"> </span><span class="nv">$repo_path</span>/contrib-ipgp.git
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/swiss-seismological-service/sed-SeisComP-contributions.git<span class="w"> </span>contrib-sed
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Done&quot;</span>
+
+<span class="nb">cd</span><span class="w"> </span>../../
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;If you want to use &#39;mu&#39;, call &#39;mu register --recursive&#39;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;To initialize the build, run &#39;make&#39;.&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="compiling-scname-from-source-code">
+<span id="compiling-source"></span><h1>Compiling <cite>SeisComP</cite> from Source Code<a class="headerlink" href="#compiling-scname-from-source-code" title="Permalink to this heading">¶</a></h1>
+<p>To build from source you will need to clone from one or more repositories as
+described in <a class="reference internal" href="#build"><span class="std std-ref">Getting the Source Code</span></a>.</p>
+<p>Before building, <strong>install all the dependencies</strong>,
+as described below in <a class="reference internal" href="#build-dependencies"><span class="std std-ref">Dependencies</span></a>.</p>
+<p>The easiest way to compile <cite>SeisComP</cite> is to use the <code class="file docutils literal notranslate"><span class="pre">Makefile</span></code> file
+provided which creates a build directory inside the source tree.</p>
+<p>Perform the following steps:</p>
+<ul class="simple">
+<li><p>Clone all required repositories (see above)</p></li>
+<li><p>Run <code class="file docutils literal notranslate"><span class="pre">make</span></code></p></li>
+<li><p>Configure the build</p></li>
+<li><p>Press ‘c’ as long as ‘g’ appears</p></li>
+<li><p>Press ‘g’ to generate the Makefiles</p></li>
+<li><p>Enter the build directory and run <code class="file docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></li>
+</ul>
+<p>By default all files are installed under <code class="file docutils literal notranslate"><span class="pre">$HOME/seiscomp</span></code>.
+This location can be changed with <cite>cmake</cite> or with its front end <cite>ccmake</cite>.</p>
+<p>Basically the build directory can live anywhere. The following steps create
+a build directory, configure the build and start it:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>sc-build
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>sc-build
+$<span class="w"> </span>ccmake<span class="w"> </span>/path/to/sc-src
+<span class="c1"># Configure with ccmake</span>
+$<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+<section id="dependencies">
+<span id="build-dependencies"></span><h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<p>To compile the sources the following development packages are required
+(Debian/Ubuntu package names):</p>
+<ul class="simple">
+<li><p>g++</p></li>
+<li><p>git</p></li>
+<li><p>cmake + cmake-gui</p></li>
+<li><p>libboost</p></li>
+<li><p>libxml2-dev</p></li>
+<li><p>flex</p></li>
+<li><p>libfl-dev</p></li>
+<li><p>libssl-dev</p></li>
+<li><p>crypto-dev</p></li>
+<li><p>python3-dev (optional)</p></li>
+<li><p>python3-numpy (optional)</p></li>
+<li><p>libqt4-dev (optional)</p></li>
+<li><p>qtbase5-dev (optional)</p></li>
+<li><p>libmysqlclient-dev (optional)</p></li>
+<li><p>libpq-dev (optional)</p></li>
+<li><p>libsqlite3-dev (optional)</p></li>
+<li><p>ncurses-dev (optional)</p></li>
+</ul>
+<p>As of <cite>SeisComP</cite> in version 5.0.0 support for Python 2 is dropped and Python 3 has
+become the default.
+The Python development libraries are required if Python wrappers should be
+compiled which is the default configuration. The development files must
+match the used Python interpreter of the system.</p>
+<p>python3-numpy is required if Numpy support is enabled which is also
+the default configuration.</p>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Getting the Source Code</a></li>
+<li><a class="reference internal" href="#compiling-scname-from-source-code">Compiling <cite>SeisComP</cite> from Source Code</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="sdk-python-examples.html"
+                          title="previous chapter">Examples</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="contributing-docs.html"
+                          title="next chapter">Contributing Documentation</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/base/build.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

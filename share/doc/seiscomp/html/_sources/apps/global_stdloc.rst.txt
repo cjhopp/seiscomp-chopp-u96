@@ -1,0 +1,368 @@
+.. _global_stdloc:
+
+######
+StdLoc
+######
+
+Generic locator plugin for SeisComP.
+
+Description
+===========
+
+StdLoc is a SeisComP locator plugin that combines standard location methods
+and was developed with the focus on local seismicity, although the methods
+are generic enough to work at different scales.
+
+Plugin
+======
+
+To enable StdLoc the plugin ``stdloc`` must be loaded.
+
+
+How does it work?
+=================
+
+The locator can apply a multitude of location methods and it is particularly useful to
+combine them to achieve better solutions.
+The methods available are: LeastSquares, GridSearch, OctTree and, more interestingly,
+two mixed methods: GridSearch+LeastSquares and OctTree+LeastSquares:
+
+- LeastSquares: this is the classic algorithm that solve the linearized problem via
+  iterative Least Square. However an initial location estimate is required and that
+  makes its solutions dependent on a good initial location. For this reason this
+  method should be combined with GridSearch or OctTree, unless it is intended to be
+  used only as a re-locator of an existing solution e.g. in scolv or screloc
+- GridSearch: finds the source location by evaluating the hypocenter probability
+  of each grid cell and returning the maximum likelihood hypocenter.
+  The source time is derived from the weighted average of arrival travel times.
+  The downside of this method is that the resolution of the hypocenters depends on
+  the grid size, but dense grids can be very slow to compute,
+- GridSearch+LeastSquares: this method works similarly to GridSearch but it performs
+  an additional LeastSquares for each grid cell, using the cell centroid as initial
+  location estimate. This solves the major issues of both LeastSquares and
+  GridSearch: by trying multiple initial location estimates allow LeastSquares to
+  not be dependent on a bad initial location estimate and the grid doesn't need to
+  be dense, which makes the method faster than GridSearch and with higher resolution.
+  For very local seisicity monitoring it could be used with a single cell only,
+  which corresponds to starting LeastSquares from the same location with every
+  event.
+- OctTree: this method follows the NonLinLoc approach. The OctTree search starts 
+  similarly to GridSearch by evaluating the hypocenter probability of each grid cell,
+  computed as the probability density at the cell center coordinates times the cell
+  volume. The search then continues by repeatedly fetching the cell with high 
+  probability and dividing it in 8 sub-cells. These 8 cells are then inserted in the
+  pool of cells to fetch from at next iteration.
+  The search terminates after either a maximum number of iterations or after
+  reaching a minimum cell size. At that point the maximum likelihood hypocenter
+  is selected.
+- OctTree+LeastSquares: the solution can be further improved combining OctTree with
+  the Least Squares algorithm, which can use the OctTree solution as initial
+  location estimate. This allows OctTree to stop after reaching a big cell size
+  (i.e. it is fast) and letting LeastSquares to refine the solution. Knowing that
+  the initial location estimate for LeastSquares is the maximum probability cell of
+  OctTree the solution should not get stuck in a local minima. For example it is
+  possible to define a grid size that covers a whole network and set the OctTree
+  cell minimum size to a couple of kilometers. LeastSquares will then improve the
+  location resolution of that coarse grid.
+
+
+The algorithms implemented in StdLoc are standard methods described in "Routine Data
+Processing in Earthquake Seismology" by Jens Havskov and Lars Ottemoller. The OctTree
+search algorithm is based on NonLibLoc by Antony Lomax.
+
+
+
+Why is stdloc suitable for local seismicity?
+============================================
+
+When dealing with very local seismicity (few kilometers or hundreds of meters) 
+simplifications that are common for regional seismicity have to be removed. 
+In particular the locator should take into consideration:
+
+- station elevation and even negative elevation (e.g. borehole sensors)
+- earthquake location can be above a seismic sensor (e.g. borehole sensors)
+- possible negative earthquake depth (above surface)
+
+More importantly the travel time tables used by the locator must be able to take
+into consideration all the above too.
+
+StdLoc is simple, but can deal with all this requirements.
+
+
+Travel Time Table
+=================
+
+StdLoc can be configured with any Travel Time Table type available in SeisComP,
+however only the `homogeneous` type is able to take into consideration station
+elevation, negative source depth and sources happening above stations. For this
+reason `homogeneous` should be the preferred choice when working on very local
+seismicity and especially with borehole sensors.
+
+
+
+
+.. _global_stdloc_configuration:
+
+Module Configuration
+====================
+
+
+.. confval:: StdLoc.profiles
+
+   Type: *list:string*
+
+   Defines a list of profiles to make available to the plugin.
+
+
+.. note::
+
+   **StdLoc.profile.$name.\***
+   $name is a placeholder for the name to be used and needs to be added to :confval:`StdLoc.profiles` to become active.
+
+   .. code-block:: sh
+
+      StdLoc.profiles = a,b
+      StdLoc.profile.a.value1 = ...
+      StdLoc.profile.b.value1 = ...
+      # c is not active because it has not been added
+      # to the list of StdLoc.profiles
+      StdLoc.profile.c.value1 = ...
+
+
+.. confval:: StdLoc.profile.$name.method
+
+   Default: ``GridSearch+LeastSquares``
+
+   Type: *string*
+
+   The location method to use: LeastSquares, GridSearch, OctTree,
+   GridSearch+LeastSquares or OctTree+LeastSquares.
+
+
+.. confval:: StdLoc.profile.$name.tableType
+
+   Default: ``LOCSAT``
+
+   Type: *string*
+
+   Travel time table format type.
+
+
+.. confval:: StdLoc.profile.$name.tableModel
+
+   Default: ``iasp91``
+
+   Type: *string*
+
+   The model to be used. The format depends on tableType.
+
+
+.. confval:: StdLoc.profile.$name.PSTableOnly
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   If enabled the arrival travel time information are fetched
+   using 'P' and 'S' tables only and the user selected phase type is not
+   considered \(e.g Pg, Sg, PmP, SmS, P1, S1, etc\).
+
+
+.. confval:: StdLoc.profile.$name.usePickUncertainties
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Whether to use pick time uncertainties rather than a fixed
+   time error. If true, then the uncertainties are retrieved from
+   each individual picks and a weight associated accordingly to
+   'pickUncertaintyClasses' parameter.
+
+
+.. confval:: StdLoc.profile.$name.pickUncertaintyClasses
+
+   Default: ``0.000,0.025,0.050,0.100,0.200,0.400``
+
+   Type: *list:string*
+
+   Unit: *s*
+
+   Define the pick time uncertainty classes from which the pick weight is computed.
+   This parameter defines a list of uncertainty time intervals: the interval
+   in which a pick time uncertainty falls defines the pick class e.g. a pick
+   wich uncertainty of 0.150 falls in the 4th interval and the pick class
+   is then 4. if pick uncertainties are absent, the lowest class will be used.
+   The pick weight then is computed as: 1 \/ 2\^\(class\-1\)
+
+
+.. confval:: StdLoc.profile.$name.confLevel
+
+   Default: ``0.9``
+
+   Type: *double*
+
+   Confidence level, between 0.5 and 1.0, used in computing the confidence ellipsoid.
+
+
+.. confval:: StdLoc.profile.$name.enableConfidenceEllipsoid
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Compute the confidence ellipsoid for the location. This is optional since
+   if it is not required it can be disabled to save some computation.
+
+
+.. note::
+   **StdLoc.profile.$name.GridSearch.\***
+   *Find the source location by evaluating the hypocenter probability*
+   *of each grid cell and returning the maximum likelihood hypocenter.*
+   *The source time is derived from the weighted average of arrival*
+   *travel times.*
+   *The solution can be further improved combining it with the Least Squares*
+   *algorithm, which will then be run for each grid cell, using the cell*
+   *centroid as initial location estimate. In this case only few big cells*
+   *are required.*
+
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.center
+
+   Default: ``auto,auto,5``
+
+   Type: *list:string*
+
+   Latitude,longitude,depth[km].
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.autoLatLon
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   If enabled, the grid center latitude and longitude
+   are automatically computed as the average of the arrival station
+   locations. The center depth should still be provided.
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.size
+
+   Default: ``20,20,5``
+
+   Type: *list:string*
+
+   Unit: *km*
+
+   Grid X, Y, Z size in km
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.cellSize
+
+   Default: ``2.5,2.5,5``
+
+   Type: *list:string*
+
+   Unit: *km*
+
+   Cell X, Y, Z size in km
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.misfitType
+
+   Default: ``L1``
+
+   Type: *string*
+
+   The type of misfit to use, from which the likelyhood function is
+   derived: L1 or L2 norm. L1 is less sensitive to outliers and so more
+   suitable with automatic picks, L2 is the preferred choice for manual picks.
+
+
+.. confval:: StdLoc.profile.$name.GridSearch.travelTimeError
+
+   Default: ``0.25``
+
+   Type: *double*
+
+   Unit: *s*
+
+   Typical error in seconds for travel\-time to one station. This
+   value affects the uncertainty of the location. In OctTree it also
+   influences the probability density computation: a too conservative value
+   increases the number of iterations required by OctTree to converge to a
+   high resolution solution.
+
+
+.. note::
+   **StdLoc.profile.$name.OctTree.\***
+   *Find the source location and time via OctTree search. This method uses the*
+   *parameters defined in GridSearch, but applies the OctTree search algorithm.*
+   *The solution can be further improved combining OctTree with the Least Squares*
+   *algorithm, which can use the OctTree solution as initial location estimate.*
+
+
+
+.. confval:: StdLoc.profile.$name.OctTree.maxIterations
+
+   Default: ``50000``
+
+   Type: *int*
+
+   Number of iterations after which the search stops. A zero or negative
+   value disable this stopping mechanism.
+
+
+.. confval:: StdLoc.profile.$name.OctTree.minCellSize
+
+   Default: ``0.1``
+
+   Type: *double*
+
+   Unit: *km*
+
+   Minimum cell size to be generate by the OctTree search to stop. A zero
+   or negative value disable this stopping mechanism.
+
+
+.. note::
+   **StdLoc.profile.$name.LeastSquares.\***
+   *Find the source location and time via iterative Least Square.*
+   *However an initial location estatimate is required. if that is not*
+   *available then this method should be combined with GridSearch or*
+   *OctTree.*
+
+
+
+.. confval:: StdLoc.profile.$name.LeastSquares.iterations
+
+   Default: ``20``
+
+   Type: *int*
+
+   Number of iterations. Each iteration will use the
+   location and time from the previous Least
+   Square solution.
+
+
+.. confval:: StdLoc.profile.$name.LeastSquares.dampingFactor
+
+   Default: ``0``
+
+   Type: *double*
+
+   Damping factor value to be used when solving the equation system.
+   0 menas no damping factor.
+
+
+.. confval:: StdLoc.profile.$name.LeastSquares.solverType
+
+   Default: ``LSMR``
+
+   Type: *string*
+
+   Algorithm to use: either LSMR or LSQR
+
+

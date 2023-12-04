@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="OriginLocatorView">
+	<head>
+		<title>gempa scolv</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.5" />
+		<link rel="stylesheet" href="../share-v1/css/gempa-allinone.css" />
+		<link rel="stylesheet" href="../share-v1/css/leaflet.css"/>
+		<link rel="stylesheet" href="assets/picker.css"/>
+		<link rel="stylesheet" href="assets/hotkeys.css"/>
+		<script type="text/javascript" src="../share-v1/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../share-v1/lib/leaflet.js"></script>
+		<script type="text/javascript" src="../share-v1/lib/angular.min.js"></script>
+		<script type="text/javascript" src="../share-v1/lib/angular.hotkeys.min.js"></script>
+
+		<script language="javascript" type="text/javascript" src="lib/originlocatorview.min.js"></script>
+	</head>
+	<body ng-controller="MainCtrl">
+		<noscript>
+		Sorry, your browser does not support JavaScript! Enable JavaScript and
+		<a href="index.html">reload</a> the page.
+		</noscript>
+		<div id="app">
+			<browser-check></browser-check>
+			<div id="loader" ng-if="progress !== undefined">
+				<h1><center>Initializing</center></h1>
+				<div class="progress progress-striped">
+					<div class="progress-bar progress-bar-success"
+						 role="progressbar" aria-valuenow="{{progress}}"
+						 aria-valuemin="0" aria-valuemax="100"
+						 style="width:{{progress}}%">
+						<span class="sr-only">{{progress}}% Complete</span>
+					</div>
+				</div>
+				<span><center>{{progressMsg}}</center></span>
+			</div>
+			<div id="content" ng-class="{'active':!wfShown}">
+				<div class="evtsummary pad pad-rz">
+					<div class="outset pad full-height">
+						<div class="full-height scroll">
+							<event-summary ng-if="mapInit"/>
+						</div>
+					</div>
+				</div>
+				<div class="tabs">
+					<div class="pad full-width full-height">
+						<div class="full-width full-height rel">
+							<div class="tabcontent outset">
+								<div class="full-height">
+									<div ng-show="tab==='loc'" class="full-width full-height scroll pad2">
+										<div class="vl full-height">
+										<div class="hl spacing" style="flex-grow:1">
+											<div class="rel" style="flex-grow:10;width:0;min-width:200px">
+												<div class="highlight ellipsis">{{ced.event.region}}</div>
+												<div style="top:2em;bottom:0;height:auto;width:100%" class="abs">
+													<div class="rel full-height">
+														<map-ll ng-if="mapInit" title="{{ mapTitle }}" options="options.map" events="mapEvents" map-interface="mapAPI" class="full-width full-height"></map-ll>
+													</div>
+												</div>
+											</div>
+											<div style="flex-grow:1">
+												<origin-info class="nowrap org full-width"/>
+											</div>
+											<div style="flex-grow:10" class="rel">
+												<div class="tabcontent">
+													<div class="full-height" context-menu data-target="ctx-menu-plot">
+														<div class="dropdown outset fixed" id="ctx-menu-plot">
+															<ul>
+																<li>
+																	<a ng-click="zoomSelected()">Zoom into selected values</a>
+																</li>
+																<li>
+																	<a ng-click="zoomReset()">Reset zoom</a>
+																</li>
+															</ul>
+														</div>
+														<div plot data="plotData" title="{{ plotTitle }}" options="plotOptions" update-event="'updatePlot'" class="full-height no-focus" tabindex="0"></div>
+													</div>
+												</div>
+												<div class="tabheader" ng-init="plotTab('dist')">
+													<div ng-click="plotTab('dist')" ng-class="{'active':ltab==='dist'}">Distance</div>
+													<div ng-click="plotTab('az')" ng-class="{'active':ltab==='az'}">Azimuth</div>
+													<div ng-click="plotTab('tt')" ng-class="{'active':ltab==='tt'}">TravelTime</div>
+												</div>
+											</div>
+										</div>
+										<div class="rel" style="flex-grow:10">
+											<div class="spacing abs inset scroll area">
+												<div class="dropdown outset fixed" id="ctx-menu-artable">
+													<ul>
+														<li>
+															<a ng-click="deleteSelectedArrivals()">Delete selected arrivals</a>
+														</li>
+														<li>
+															<a ng-click="activateSelectedArrivals()">Activate selected arrivals</a>
+														</li>
+														<li>
+															<a ng-click="deactivateSelectedArrivals()">Deactivate selected arrivals</a>
+														</li>
+													</ul>
+												</div>
+												<arrival-table class="styled no-select interactive arrivals full-width" ng-controller="ArrTableCtrl"/>
+											</div>
+										</div>
+										<div class="rel spacing" style="flex-grow:0">
+											<div class="outset pad" style="display: flex; justify-content: space-between">
+												<div class="compact toolbar">
+													<button class="item" ng-click="relocate()" ng-disabled="!corg || blockRelocate"
+													        ng-attr-title="{{blockRelocate?'Waiting for result':''}}">
+														Relocate
+													</button>
+
+													<div class="spacer item"></div>
+													<select class="item" ng-model="currentLocator" ng-options="l[0] for l in config.locator" ng-change="applyLocator()">
+													</select>
+													<div class="spacer item"></div>
+													<span class="item">Profile:</span>
+													<select class="item" ng-model="currentLocatorProfile" ng-options="p for p in currentLocator[1]">
+													</select>
+													<div class="spacer item"></div>
+													<input class="item" type="checkbox" ng-model="fixDepth">
+													<span class="item">Fix depth</span>
+													<input ng-disabled="!fixDepth" class="item" ng-model="fixDepthValue" style="width:4em;text-align:right">
+													<span class="item">km</span>
+													<div class="spacer item"></div>
+													<input class="item" type="checkbox" ng-model="ignoreInitial">
+													<span class="item">Ignore initial location</span>
+													<div class="spacer item"></div>
+												</div>
+												<div class="compact toolbar">
+													<button class="item" ng-disabled="!corg" ng-click="openWaveforms()">
+														Picker
+													</button>
+													<button class="item" ng-disabled="!corg" ng-click="commit()" context-menu data-target="ctx-commit">
+														Commit
+													</button>
+													<div class="dropdown outset fixed" id="ctx-commit">
+														<ul>
+															<li>
+																<a open data-target="dlg-commit">With additional options ...</a>
+															</li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										</div>
+									</div>
+									<div ng-show="tab==='events'" class="pad2 full-width full-height vl">
+										<div class="rel" style="flex-grow:10">
+											<div class="hl abs full-width full-height pad2">
+												<div style="flex-grow:10" class="rel">
+													<div class="abs full-width full-height outset left attached" ng-controller="EvtTableCtrl">
+														<div ng-show="eventTab==='list'" class="spacing abs inset scroll area">
+															<event-table class="styled interactive events full-width"/>
+														</div>
+														<div ng-if="eventTab==='map'" class="rel pad full-width full-height">
+															<map-ll class="full-width full-height" ng-attr-title="{{hoveredEvent}}" map-interface="mapGlobalAPI" options="options.map" events="tableItems"></map-ll>
+															<div class="legend container">
+																<div class="content">
+																	<div class="legend" legend items="options.legend.colors"></div>
+																	<div class="legend" legend items="options.legend.magnitudes"></div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="vertical right tabbar" style="flex-grow:0">
+													<div ng-click="eventTab='list'" ng-class="{'active':eventTab==='list'}" title="Show event list"><i class="glyphicon glyphicon-list"></i></div>
+													<div ng-click="eventTab='map'" ng-class="{'active':eventTab==='map'}" title="Show events in map"><i class="glyphicon glyphicon-globe"></i></div>
+												</div>
+											</div>
+										</div>
+										<div class="rel spacing" style="flex-grow:0">
+											<div class="outset pad">
+												<div>
+												<span class="horizontal group">
+													<span>Last days:</span>
+													<input type="number" min="1" max="999" step="1" value="1" ng-model="list.days"></input>
+													<button ng-click="loadDays()" title="Read the events of the specified number of last days">Read</button>
+													<span>&nbsp;</span>
+												</span>
+												<span class="horizontal group text pull-right">
+													<span>From:</span>
+													<input type="text" ng-model="list.from" date-format="yyyy-MM-dd HH:mm:ss" datetime-picker></input>
+													<span>To:</span>
+													<input type="text" ng-model="list.to" date-format="yyyy-MM-dd HH:mm:ss" datetime-picker></input>
+													<span>{{config.useUTC ? 'GMT' : 'Localtime'}}</span>
+													<button ng-click="loadSpan()" title="Read the events of the specified timespan">Read</button>
+												</span>
+												</div>
+												<hr/>
+												<span class="horizontal group">
+													<span>Filter:</span>
+													<select name="Status" ng-init="list.filter='all'" ng-model="list.filter">
+														<option value="all">Show all events</option>
+														<option value="hide_x">Hide rejected events</option>
+														<option value="show_x">Show only rejected events</option>
+													</select>
+												</span>
+											</div>
+										</div>
+									</div>
+									<div ng-show="tab==='settings'" class="pad2 full-width full-height vl">
+										<div class="inset full-width full-height scroll area">
+											<div style="margin:1em">
+												<h2>Settings</h2>
+												<p>
+												This page controls various settings for the current session. As an option
+												is changed, it is already applied unless there is an explicit <strong>Apply</strong>
+												button. Changed options are not persistent, they are only valid for the current
+												session and do not survive a page reload.
+												</p>
+												<hr/>
+												<h3>Picker</h3>
+												<table class="form">
+													<tbody>
+														<tr>
+															<td>PreOffset</td>
+															<td><input class="right-text" type="number" ng-model="config.traces.preOnsetTimeWindow"/>&thinsp;s</td>
+														</tr>
+														<tr>
+															<td>PostOffset</td>
+															<td><input class="right-text" type="number" ng-model="config.traces.postOnsetTimeWindow"/>&thinsp;s</td>
+														</tr>
+														<tr>
+															<td>PreAlign</td>
+															<td><input class="right-text" type="number" ng-model="config.traces.preAlignTimeWindow"/>&thinsp;s</td>
+														</tr>
+														<tr>
+															<td>PostAlign</td>
+															<td><input class="right-text" type="number" ng-model="config.traces.postAlignTimeWindow"/>&thinsp;s</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tabheader">
+								<div ng-click="tab='loc';mapInit=true" ng-class="{'active':tab==='loc'}">Location</div>
+								<div ng-click="tab='events'" ng-class="{'active':tab==='events'}">Events</div>
+								<div ng-click="tab='settings'" ng-class="{'active':tab==='settings'}">Settings</div>
+								<span class="pull-right link" ng-click="showHelp()">Help</span>
+								<span class="pull-right light">GAPS {{ gaps }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="content2" ng-class="{'active':wfShown}">
+				<div ng-if="wf" class="window full-height">
+					<div class="title">
+						<div title="Close the picker window and free resources."
+							 class="button" ng-click="closeWaveforms()">x</div>
+						<div title="Switches back to the main window. Activate the picker again by clicking on the 'Waveforms' button."
+							 class="button" ng-click="minimizeWaveforms()">-</div>
+						Picker <i>{{ced.event.publicID}}</i>
+					</div>
+					<picker inventory="inventory" bindings="bindings" config="config" origin="corg"/>
+				</div>
+			</div>
+			<dialog-commit/>
+		</div>
+	</body>
+</html>

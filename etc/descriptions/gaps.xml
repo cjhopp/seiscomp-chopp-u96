@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<module name="gaps" category="gempa" inherit-global-bindings="true">
+		<description>gempa application server for the web.</description>
+		<configuration>
+			<parameter name="authbind" type="boolean" default="false">
+				<description>
+				Allows to bind sockets to privileged ports (&lt;1024).
+				</description>
+			</parameter>
+			<parameter name="bind" type="host-with-port" default="127.0.0.1:8080">
+				<description>
+				IP and port to bind the HTTP server to. Use 0.0.0.0
+				to bind to all interfaces. Either the port or the IP
+				address may be omitted, e.g., &quot;0.0.0.0&quot; or
+				&quot;:1234&quot;. If set to an empty string the application
+				will run without providing a HTTP server.
+				</description>
+			</parameter>
+			<parameter name="sbind" type="host-with-port" default="127.0.0.1:-1">
+				<description>
+				IP and port to bind the HTTPS server to. Use 0.0.0.0
+				to bind to all interfaces. Either the port or the IP
+				address may be omitted, e.g., &quot;0.0.0.0&quot; or
+				&quot;:1234&quot;. If set to an empty string the application
+				will run without providing a HTTPS server.
+				</description>
+			</parameter>
+			<parameter name="offline" type="boolean" default="false">
+				<description>
+				Whether to run offline (no messaging connection) or online
+				(messaging connection). In offline mode either the database
+				connection or the inventory and config XML files must be
+				provided.
+				</description>
+			</parameter>
+			<parameter name="computePGAVD" type="boolean" default="true">
+				<description>
+				Enable ground motion computation. If set to false then no ground motion
+				amplitudes are being computed.
+				</description>
+			</parameter>
+			<parameter name="windowPGAVD" type="double" default="10" unit="s">
+				<description>
+				Time window in seconds used to compute ground motion amplitudes.
+				The higher the time window the less amplitudes will be computed
+				over time.
+				</description>
+			</parameter>
+			<parameter name="users" type="file" default="@CONFIGDIR@/gaps/users">
+				<description>
+				Defines the users file for access control. The user file contains one line
+				per user where each line is of format &quot;username:encrypted_pwd&quot;.
+				To encrypt a password mkpasswd can be used. It is recommended to
+				apply a strong algorithm such as sha-256 or sha-512. E.g., the command
+				&quot;user=sysop pw=`mkpasswd -m sha-512` &amp;&amp; echo $user:$pw&quot;
+				would generate a line for the user &quot;sysop&quot;.
+				</description>
+			</parameter>
+			<parameter name="userProperties" type="file" default="@CONFIGDIR@/gaps/access">
+				<description>
+				Defines the file used to read user properties. Each line contains
+				the user name and a list of properties in format
+				&quot;username:prop1,prop2,prop3&quot;. Those properties are
+				used to grant access to certain functionalities in gaps such as
+				sending processing results back. There is currently only one
+				property which is interpreted by GAPS: &quot;staff&quot;.
+				</description>
+			</parameter>
+			<parameter name="accessLog" type="boolean" default="false">
+				<description>
+				Enables HTTP access logging to @LOGDIR@/gaps-http-access.
+				Log files are created for 24h and kept for 7 days using log
+				rotation.
+				</description>
+			</parameter>
+			<parameter name="indexTemplate" type="string" default="@DATADIR@/gaps/index.cs">
+				<description>
+				Path to the template that generated index.html.
+				</description>
+			</parameter>
+			<parameter name="mediaDirectory" type="string" default="@DATADIR@/gaps/apps">
+				<description>
+				Path to media files (index.html, .css, .js, .png, ...) served by GAPS.
+				</description>
+			</parameter>
+			<parameter name="bufferSize" type="int" default="65536" unit="b">
+				<description>
+				Minimum buffer size in bytes per acquisition thread.
+				</description>
+			</parameter>
+			<parameter name="maximumThreads" type="int" default="10">
+				<description>
+				Maximum number of acquisition threads. This corresponds to
+				the maximum number of parallel acquisition requests from
+				clients.
+				</description>
+			</parameter>
+			<parameter name="requestTimeout" type="int" default="10" unit="s">
+				<description>
+				Thread request timeout. If data of a thread has not been requested
+				for more than n seconds the thread will be closed and finished.
+				</description>
+			</parameter>
+			<parameter name="forceHTTP" type="boolean" default="false">
+				<description>
+				Disables usage of WebSocket protocol. Useful, if traffic is tunneled
+				through a web server that cannot handle WebSockets.
+				</description>
+			</parameter>
+			<parameter name="quakelink" type="string" default="http://localhost:18080/events/query">
+				<description>
+				The QuakeLink event request URI. This is used as a default for
+				all web applications.
+				</description>
+			</parameter>
+			<parameter name="quakelinkProxy" type="string" default="ql://localhost:18010">
+				<description>
+				The QuakeLink proxy connection initiated by GAPS to convert and
+				forward single events from QuakeLink to the browser.
+				Required since QuakeLink delivers only XML format but JSON format is needed.
+				</description>
+			</parameter>
+			<parameter name="tileDB" type="path">
+				<description>
+				Configures the MBTiles tile database if gaps should serve
+				tiles itself. If mapURI is configured with a remote tile
+				server, this is not required.
+				</description>
+			</parameter>
+			<parameter name="tileLayers" type="list:string">
+				<description>
+				List of additional tile layer profiles.
+				</description>
+			</parameter>
+			<group name="tileLayers">
+				<description>
+				Configuration of additional tile layers.
+				</description>
+				<struct type="TileLayer">
+					<parameter name="db" type="path">
+						<description>
+						Path to MBTiles database for this tile layer.
+						</description>
+					</parameter>
+					<parameter name="levels" type="string">
+						<description>
+						Range of zoom levels this tile layer is valid for.
+						The format is [min-level]:[max-level].
+						</description>
+					</parameter>
+					<parameter name="rects" type="list:string">
+						<description>
+						List of rectangles with respect to column / row indexes
+						of the minimum zoom level. The format per rect is
+						either +[min_x]+[min_y]+[max_x]+[max_y] or
+						[column]x[rows]+[min_x]+[min_y].
+						</description>
+					</parameter>
+				</struct>
+			</group>
+			<group name="map">
+				<parameter name="location" type="path" default="@DATADIR@/gaps/zoom12.mbtiles">
+					<description>
+					Alternative configuration parameter for @tileDB.
+					</description>
+				</parameter>
+				<parameter name="geoFeaturePath" type="path" default="">
+					<description>
+					Alternative path to geofeatures displayed on the map. The
+					default paths are ~/.seiscomp/bna and $SEISCOMP_ROOT/share/bna. To
+					consider a BNA file for map display the corresponding configuration
+					file (either map.cfg or gaps.cfg) in the respective bna directory
+					or sub-directory must contain &quot;apps.gaps=true&quot;.
+					</description>
+				</parameter>
+			</group>
+			<group name="SSL">
+				<parameter name="certificate" type="string">
+					<description>Path to SSL certificate file</description>
+				</parameter>
+				<parameter name="key" type="string">
+					<description>Path to SSL private key file</description>
+				</parameter>
+			</group>
+			<group name="apps">
+				<description>
+				Configuration of available web applications.
+				</description>
+				<parameter name="mapURI" type="string" default="../tiles/{z}/{y}/{x}">
+					<description>
+					Full URL for tiles, e.g., "http://example.com:8080/tiles/{z}/{y}/{x}".
+					The tile server URL for all applications.
+					</description>
+				</parameter>
+				<parameter name="mapMaxLevel" type="int" default="10">
+					<description>
+					Maximum zoom number for which the tiles source has available. The tiles
+					on all zoom levels higher than mapMaxLevel will be loaded
+					from mapMaxLevel level and auto-scaled.
+					</description>
+				</parameter>
+				<parameter name="mapMaxZoom" type="int" default="14">
+					<description>
+					Maximum allowed zoom level in the interactive map.
+					</description>
+				</parameter>
+				<parameter name="mapShowZoomControl" type="boolean" default="false">
+					<description>
+					Whether to show a zoom control on the map.
+					</description>
+				</parameter>
+				<parameter name="mapShowLegend" type="boolean" default="true">
+					<description>
+					Whether to show a map legend or not in web apps v2.
+					Some apps might offer to toggle this setting, others not.
+					</description>
+				</parameter>
+				<group name="mapRegion">
+					<description>
+					Configures the initial region to be shown, e.g., in TraceView
+					and StationView.
+					</description>
+					<parameter name="minimumLatitude" type="double" default="-90" unit="deg">
+						<description>
+						The minimum latitude of the region.
+						</description>
+					</parameter>
+					<parameter name="minimumLongitude" type="double" default="-225" unit="deg">
+						<description>
+						The minimum longitude of the region.
+						</description>
+					</parameter>
+					<parameter name="maximumLatitude" type="double" default="90" unit="deg">
+						<description>
+						The maximum latitude of the region.
+						</description>
+					</parameter>
+					<parameter name="maximumLongitude" type="double" default="225" unit="deg">
+						<description>
+						The maximum longitude of the region.
+						</description>
+					</parameter>
+				</group>
+				<parameter name="serverAPI" type="string" default="../">
+					<description>
+					Path of the server API for all applications. This parameter
+					can be overridden in each application.
+					</description>
+				</parameter>
+				<parameter name="serverWSAPI" type="string">
+					<description>
+					Path of the server WebSocket API for all applications. If not
+					explicitly configured then the serverAPI path will be used.
+					</description>
+				</parameter>
+				<parameter name="logoPath" type="string" default="share/images/gempa_logo.svg">
+					<description>
+					Relative path to a logo (brand) image shown in
+					web applications. Give path relative to SEISCOMP_ROOT/share/gaps/apps.
+					The image is scaled to the field dimension 157px x 38px preserving
+					the aspect ratio.
+					</description>
+				</parameter>
+				<parameter name="colorMode" type="string" default="depth">
+					<description>
+					Available modes are: depth, magnitude, age
+					</description>
+				</parameter>
+				<parameter name="eventSymbolAnimation" type="string" default="toggle">
+					<description>
+					Available animations are: toggle, three-circles
+					</description>
+				</parameter>
+				<parameter name="colorEventsUpdateInterval" type="int" default="60" unit="s">
+					<description>
+					If event symbol colors are derived from the event age then
+					the age must be recomputed at a certain interval. This
+					number defines the interval in seconds to update the event
+					colors. The lower the interval the more often the colors
+					must be updated which can decrease performance.
+					</description>
+				</parameter>
+				<group name="eqview">
+					<parameter name="geoCodeURL" type="string">
+						<description>
+						Configures the URL for geo coding. The placeholders
+						&quot;{lat}&quot; and &quot;{lon}&quot; will be replaced
+						by the respective earthquake location attributes.
+						</description>
+					</parameter>
+					<parameter name="showRegion" type="boolean" default="false">
+						<description>
+						On startup set central map to initial region (mapRegion.*).
+						</description>
+					</parameter>
+					<parameter name="showRegionBounds" type="boolean" default="false">
+						<description>
+						Shows the initial region rectangle (mapRegion.*) in the central map.
+						</description>
+					</parameter>
+					<parameter name="showWidgetBounds" type="boolean" default="false">
+						<description>
+						Shows the selected widget region rectangle in the central map.
+						This setting replaces the region rectangle (showRegionBounds)
+						if both are set to true.
+						</description>
+					</parameter>
+					<parameter name="showWaveSpreading" type="boolean" default="false">
+						<description>
+						Shows the spreading of P/S wave in the center-widget.
+						</description>
+					</parameter>
+					<parameter name="centerLatestEvent" type="boolean" default="true">
+						<description>
+						Whether map will center around the latest event or not.
+						</description>
+					</parameter>
+					<parameter name="singleEventMode" type="boolean" default="false">
+						<description>
+						If activated then the selected event is being shown
+						exclusively on the map.
+						</description>
+					</parameter>
+					<parameter name="useUTC" type="boolean" default="false">
+						<description>
+						Show UTC time in the front end.
+						</description>
+					</parameter>
+					<parameter name="externalData" type="boolean" default="true">
+						<description>
+						If enabled then all waveforms of an event will be
+						requested even if stations are not part of the
+						local inventory. If disabled then only stations are
+						allowed that are configured locally with bindings.
+						</description>
+					</parameter>
+					<parameter name="nearestCityMinPopulation" type="int" default="100000">
+						<description>
+						The minimum population of a city to be taken into
+						account as nearest city to an event.
+						</description>
+					</parameter>
+					<parameter name="nearestCityMaxDistance" type="double" default="20" unit="deg">
+						<description>
+						The maximum distance of the nearest city from an event.
+						</description>
+					</parameter>
+					<parameter name="showLatestMainEvent" type="boolean" default="true">
+						<description>
+						Whether to show the latest event in the top left
+						corner of the widget which is currently active as main widget.
+						</description>
+					</parameter>
+					<parameter name="showLatestOverallEvent" type="boolean" default="false">
+						<description>
+						Whether to show the latest overall event of all widgets.
+						It will be shown in the top right corner above the widgets.
+						</description>
+					</parameter>
+					<parameter name="overallTimeSpan" type="integer" default="24" unit="hours">
+						<description>
+						The time span for which the latest overall event will be
+						selected.
+						</description>
+					</parameter>
+					<parameter name="widgets" type="string" default="world">
+						<description>
+						Defines the available widgets. The first widget listed is taken as primary widget.
+						</description>
+					</parameter>
+					<group name="referencePlace">
+						<description>
+						Defines a reference place / city which is used to compute
+						the distance and azimuth from the event shown
+						in the event details.
+						</description>
+						<parameter name="name" type="string">
+							<description>
+							The name of the place.
+							</description>
+						</parameter>
+						<parameter name="lat" type="double" unit="deg">
+							<description>
+							The latitude of the reference place.
+							</description>
+						</parameter>
+						<parameter name="lon" type="double" unit="deg">
+							<description>
+							The longitude of the reference place.
+							</description>
+						</parameter>
+					</group>
+					<group name="widget">
+						<description>
+						The configured widgets.
+						</description>
+						<struct type="Widget">
+							<parameter name="title" type="string" default="">
+								<description>
+								The widget title as it appears in the widgets title bar.
+								</description>
+							</parameter>
+							<parameter name="minimumLatitude" type="double" default="" unit="deg">
+								<description>
+								The minimum latitude of the region.
+								</description>
+							</parameter>
+							<parameter name="minimumLongitude" type="double" default="" unit="deg">
+								<description>
+								The minimum longitude of the region.
+								</description>
+							</parameter>
+							<parameter name="maximumLatitude" type="double" default="" unit="deg">
+								<description>
+								The maximum latitude of the region.
+								</description>
+							</parameter>
+							<parameter name="maximumLongitude" type="double" default="" unit="deg">
+								<description>
+								The maximum longitude of the region.
+								</description>
+							</parameter>
+							<parameter name="eventRegion" type="region" unit="deg">
+								<description>
+								This overrides the configured widget region and defines the region
+								of the events to be shown. If not configured then the event region
+								will be the same as the widget region. The format is
+								[lat_width]x[lon_width]+[lat_min]+[lon_min]
+								or +[lat_min]+[lon_min]+[lat_max]+[lon_max].
+								</description>
+							</parameter>
+							<parameter name="timeSpan" type="integer" default="" unit="hours">
+								<description>
+								The time span to be shown in hours.
+								</description>
+							</parameter>
+							<parameter name="minimumMagnitude" type="double">
+								<description>
+								The minimum magnitude to be shown.
+								</description>
+							</parameter>
+							<parameter name="maximumMagnitude" type="double">
+								<description>
+								The maximum magnitude to be shown.
+								</description>
+							</parameter>
+							<parameter name="status" type="list:string" default="">
+								<description>
+								Event status code list that is accepted. Each item is a
+								character (A,M,...) that maps to the type code in
+								the QuakeLink summary format. To exclude types, a minus
+								can be prepended to each code, e.g., &quot;-X&quot;.
+								That would accept all solutions except rejected. An
+								empty list accepts everything.
+								</description>
+							</parameter>
+							<parameter name="tracePreOffset" type="double" default="2.0" unit="min">
+								<description>
+								The pre-offset of the traces with respect to the onset.
+								</description>
+							</parameter>
+							<parameter name="tracePostOffset" type="double" default="5.0" unit="min">
+								<description>
+								The post-offset of the traces with respect to the onset.
+								</description>
+							</parameter>
+							<parameter name="alignOnPredicatedArrivals" type="boolean" default="false">
+								<description>
+								Configures whether traces are aligned on first picked onset
+								or on theoretical arrivals.
+								</description>
+							</parameter>
+							<parameter name="showPicks" type="boolean" default="false">
+								<description>
+								Configures if picks are shown in the waveforms.
+								</description>
+							</parameter>
+							<parameter name="visualFeedback" type="boolean" default="false">
+								<description>
+								Whether to give visual feedback if a new event has been
+								set as latest in the widget. If enabled then the
+								widget shakes for a short time when the latest
+								event updates.
+								</description>
+							</parameter>
+							<parameter name="audioFilePath" type="path">
+								<description>
+								Path to an audio file played when adding a new event
+								to the widget. The audio file is played when the
+								event is the most recent one. For older events
+								the audio alert is not played.
+								Give path relative to
+								$SEISCOMP_ROOT/share/gaps/apps, e.g., share/audio/alert.mp3.
+								Preferred format: MP3.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+				</group>
+				<group name="traceview">
+					<parameter name="cluster" type="boolean" default="true">
+						<description>
+						Defines whether the station symbols should be clustered by default or not.
+						</description>
+					</parameter>
+					<parameter name="filters" type="list:string" default="&quot;0.7Hz - 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)&quot;, &quot;1Hz - 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)&quot;, &quot;2Hz - 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)&quot;, &quot;4Hz - 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)&quot;, &quot;HP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)&quot;">
+						<description>
+						The list of filters available in TraceView, format per
+						item is &quot;name;filter-string&quot;.
+						</description>
+					</parameter>
+					<parameter name="timeSpan" type="double" default="600" unit="s">
+						<description>
+						Timespan for trace display. The default is 10min.
+						</description>
+					</parameter>
+					<parameter name="utc" type="boolean" default="false">
+						<description>
+						Whether to show trace times in UTC or local time.
+						</description>
+					</parameter>
+				</group>
+				<group name="mapview">
+					<parameter name="mode" type="string" default="delay">
+						<description>
+						Defines the default MapView mode that is used to color
+						the station symbols. Valid values are &quot;delay&quot;,
+						&quot;latency&quot; and &quot;groundmotion&quot;.
+						</description>
+					</parameter>
+					<parameter name="cluster" type="boolean" default="true">
+						<description>
+						Defines whether the station symbols should be clustered by default or not.
+						</description>
+					</parameter>
+					<parameter name="eventTimeSpan" type="integer" default="168" unit="hours">
+						<description>
+						The events time span to be shown in hours.
+						</description>
+					</parameter>
+					<parameter name="customStationLink" type="string">
+						<description>
+						Defines an additional link that is rendered on the
+						station detail page. It supports two placeholders: ${net}
+						and ${sta} which are replaced during runtime.
+						</description>
+					</parameter>
+					<parameter name="customStationLinkName" type="string">
+						<description>
+						The name as displayed on the station panel for the custom
+						station link.
+						</description>
+					</parameter>
+					<parameter name="fetchGeoIP" type="boolean" default="false">
+						<description>
+						If enabled then the map will be centered around the clients
+						geolocation (fetched via web service from www.geoplugin.net).
+						</description>
+					</parameter>
+				</group>
+				<group name="scolv">
+					<parameter name="loadEventDB" type="double" unit="days" default="1">
+						<description>
+						Number of days to preload if scolv is started.
+						</description>
+					</parameter>
+					<parameter name="useUTC" type="boolean" default="true">
+						<description>
+						Show UTC time in the frontend.
+						</description>
+					</parameter>
+					<parameter name="distInKM" type="boolean" default="false">
+						<description>
+						Show distances in km instead of degree.
+						</description>
+					</parameter>
+					<group name="picker">
+						<parameter name="filters" type="list:string" default="&quot;@0.7Hz - 2Hz;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2.0)&quot;, &quot;1Hz - 3Hz;RMHP(5)>>ITAPER(10)>>BW(3,1,3)&quot;, &quot;2Hz - 4Hz;RMHP(5)>>ITAPER(10)>>BW(3,2,4)&quot;, &quot;4Hz - 8Hz;RMHP(5)>>ITAPER(10)>>BW(3,4,8)&quot;, &quot;HP 3 Hz;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)&quot;">
+							<description>
+							List of filters available in the picker. If @ is prepended
+							to the name of the filter it will be selected as default
+							filter. The format of each entry is &quot;name;definition&quot;,
+							e.g., &quot;BP 0.7 - 2 Hz  3rd order;BW(3,0.7,2)&quot;
+							</description>
+						</parameter>
+						<parameter name="phases" type="list:string" default="P,Pn,Pg,pP,S,Sg,sP">
+							<description>
+							List of phases enabled for picking.
+							</description>
+						</parameter>
+						<parameter name="preOffset" type="double" default="300" unit="s">
+							<description>
+							Begin of time window before origin time to load waveforms
+							when the picker is opened.
+							</description>
+						</parameter>
+						<parameter name="postOffset" type="double" default="600" unit="s">
+							<description>
+							End of time window after origin time to load waveforms
+							when the picker is opened.
+							</description>
+						</parameter>
+						<parameter name="preAlign" type="double" default="30" unit="s">
+							<description>
+							The default time window shown before the trace alignment.
+							Alignment is set interactively by origin time or P- or S-phase arrival.
+							</description>
+						</parameter>
+						<parameter name="postAlign" type="double" default="90" unit="s">
+							<description>
+							The default time window shown after the trace alignment.
+							Alignment is set interactively by origin time or P- or S-phase arrival.
+							</description>
+						</parameter>
+					</group>
+					<parameter name="ttt" type="list:string" default="libtau, LOCSAT">
+						<description>
+						The list of active travel time table interfaces.
+						</description>
+					</parameter>
+					<group name="ttt">
+						<description>
+						Travel time table related configuration. Travel time
+						tables can be added via plugins. Built-in interfaces
+						are libtau and LOCSAT. For each activated interface
+						a list of supported models must be provided.
+						</description>
+						<struct type="TTT">
+							<parameter name="models" type="list:string">
+								<description>
+								The list of supported model names per interface.
+								</description>
+							</parameter>
+						</struct>
+					</group>
+				</group>
+			</group>
+			<group name="processors">
+				<parameter name="events" type="list:string">
+					<description>
+					Activate event processor profiles, see
+					GAPSEventProcessorProfile.
+					</description>
+				</parameter>
+				<group name="events">
+					<description>
+					Configures one or more event processors which are executed
+					at server-side and displayed client-side in EQView after
+					selecting a set of events with ctrl + left mouse key.
+					</description>
+					<struct name="GAPSEventProcessorProfile" title="Event processor profile">
+						<parameter name="title" type="string">
+							<description>
+							The title of the processor shown at the client in
+							the processor selection popup and as header in the
+							output window.
+							</description>
+						</parameter>
+						<parameter name="script" type="path">
+							<description>
+							Path to the script to be called when the processor
+							has been triggered. This script must be executable,
+							take the CSV file from stdin and print the result
+							image to stdout. The input CSV file contains the
+							following columns separated by semicolon:
+
+							* eventID
+
+							* OT
+
+							* lat
+
+							* lon
+
+							* depth in km
+
+							* mag
+
+							* agency
+
+							* status
+
+							* phases
+
+							* region
+
+							* fm.strike
+
+							* fm.dip
+
+							* fm.rake
+
+							* fm.depth
+
+							* fm.mag
+
+							Only results from script runs with exit code zero
+							are taken into account.
+							</description>
+						</parameter>
+						<parameter name="type" type="string">
+							<description>
+							The type of the returned product. Valid values are
+							&quot;txt&quot;,
+							&quot;html&quot;,
+							&quot;json&quot;,
+							&quot;png&quot;,
+							&quot;jpeg&quot;,
+							&quot;svg&quot;,
+							&quot;xml&quot;
+							</description>
+						</parameter>
+						<parameter name="authorize" type="boolean" default="false">
+							<description>
+							If enabled then authorization will be requested for
+							this script from the browser. That means that a user
+							has to authenticate first before the result will be
+							displayed. Authorization is granted if an
+							authenticated user is staff member.
+							</description>
+						</parameter>
+					</struct>
+				</group>
+			</group>
+			<group name="scheme">
+				<group name="colors">
+					<group name="originSymbol">
+						<group name="age">
+							<parameter name="gradient" type="gradient" default="0:ff0000:&quot;1 hour&quot;,3600:ff8000:&quot;1 day&quot;,86400:ffff00:&quot;1 week&quot;,604800:ffffff:&quot;1 month&quot;,2592000:808080:&quot;older&quot;">
+								<description>
+								Configure the event age color gradient. Only applied
+								if color mode is &quot;magnitude&quot;.
+								</description>
+							</parameter>
+						</group>
+						<group name="magnitude">
+							<parameter name="gradient" type="gradient" default="0:ff0000:&quot;1 hour&quot;,3600:ff8000:&quot;1 day&quot;,86400:ffff00:&quot;1 week&quot;,604800:ffffff:&quot;1 month&quot;,2592000:808080:&quot;older&quot;">
+								<description>
+								Configure the event magnitude color gradient. Only applied
+								if color mode is &quot;magnitude&quot;.
+								</description>
+							</parameter>
+						</group>
+					</group>
+					<parameter name="stationTypes" type="map" default="BB:008000, SM:0000FF, SP:40E0D0">
+						<description>
+						Configure the station colors of a particular type. The
+						type is read from Station.type of the inventory. If unset,
+						the parent Network.type is used.
+						</description>
+					</parameter>
+				</group>
+				<group name="map">
+					<parameter name="stationShape" type="string" default="hexagon">
+						<description>
+						The station symbol shape. Valid values are: hexagon,
+						triangle and diamond.
+						</description>
+					</parameter>
+					<parameter name="stationBorder" type="integer" default="3" unit="px">
+						<description>
+						The width in pixels of the station symbol frame.
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+		<command-line>
+			<synopsis>
+				gaps [options]
+			</synopsis>
+			<group name="Generic">
+				<optionReference>generic#help</optionReference>
+				<optionReference>generic#version</optionReference>
+				<optionReference>generic#config-file</optionReference>
+				<optionReference>generic#plugins</optionReference>
+				<optionReference>generic#daemon</optionReference>
+			</group>
+			<group name="Verbosity">
+				<optionReference>verbosity#verbosity</optionReference>
+				<optionReference>verbosity#v</optionReference>
+				<optionReference>verbosity#quiet</optionReference>
+				<optionReference>verbosity#component</optionReference>
+				<optionReference>verbosity#syslog</optionReference>
+				<optionReference>verbosity#lockfile</optionReference>
+				<optionReference>verbosity#console</optionReference>
+				<optionReference>verbosity#debug</optionReference>
+				<optionReference>verbosity#log-file</optionReference>
+			</group>
+			<group name="Database">
+				<optionReference>database#db-driver-list</optionReference>
+				<optionReference>database#database</optionReference>
+				<optionReference>database#inventory-db</optionReference>
+				<optionReference>database#config-db</optionReference>
+				<optionReference>database#config-module</optionReference>
+			</group>
+			<group name="Messaging">
+				<optionReference>messaging#user</optionReference>
+				<optionReference>messaging#host</optionReference>
+				<optionReference>messaging#timeout</optionReference>
+				<optionReference>messaging#primary-group</optionReference>
+				<optionReference>messaging#subscribe-group</optionReference>
+				<optionReference>messaging#encoding</optionReference>
+				<optionReference>messaging#start-stop-msg</optionReference>
+			</group>
+			<group name="Records">
+				<optionReference>records#record-driver-list</optionReference>
+				<optionReference>records#record-url</optionReference>
+				<optionReference>records#record-file</optionReference>
+				<optionReference>records#record-type</optionReference>
+			</group>
+			<group name="Mode">
+				<option long-flag="offline">
+					<description>
+						Do not connect to a messaging server. The database
+						connection must be provided explicitly.
+					</description>
+				</option>
+			</group>
+			<group name="Users">
+				<option long-flag="list-users">
+					<description>
+					List available users.
+					</description>
+				</option>
+				<option long-flag="list-props" argument="arg">
+					<description>
+					List properties for a user.
+					</description>
+				</option>
+			</group>
+		</command-line>
+	</module>
+	<binding module="gaps">
+		<description>
+			Configure a station for the GAPS web applications. A station
+			without a binding assigned will not be displayed in e.g.,
+			StationView. Furthermore, the station will be removed from the
+			inventory if not bound.
+		</description>
+		<configuration>
+			<parameter name="enable" type="boolean" default="true">
+				<description>
+					Enable/disable the usage of a station with web apps.
+				</description>
+			</parameter>
+		</configuration>
+	</binding>
+</seiscomp>

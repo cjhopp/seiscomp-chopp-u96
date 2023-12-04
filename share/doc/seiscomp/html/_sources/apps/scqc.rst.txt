@@ -1,0 +1,2031 @@
+.. highlight:: rst
+
+.. _scqc:
+
+####
+scqc
+####
+
+**Derives quality control (QC) parameters from waveforms.**
+
+
+Description
+===========
+
+scqc determines waveform quality control (QC) parameters of data streams. The
+output parameters are time averaged in terms of waveform quality messages.
+In regular intervals report messages are sent containing the short term average
+representation of the specific QC parameter for a given time span. Alarm messages
+are generated if the short term average (e.g. 90 s) of a QC parameter differs from
+the long term average (e.g. 3600 s) by more than a defined threshold.
+To avoid an excessive load, QC messages are sent distributed over time. Storing
+QC parameters into the database should be avoided by configuring, e.g.,
+:confval:`plugins.default.archive.interval` as otherwise the database grows
+quickly.
+
+The QC parameters can be interactively observed using :ref:`scqcv` or :ref:`scmm`.
+
+
+Technology
+==========
+
+scqc uses :term:`plugins <plugin>` to compute the waveform quality control (QC)
+parameters. The plugins can be found in @DATADIR@/plugins/qc. They are loaded
+by default or selected by :ref:`configuration setup <scqc-setup>`.
+
+
+QC parameters
+=============
+
+.. _scqc-fig-times:
+
+.. figure:: media/times.png
+   :align: center
+   :width: 16cm
+
+   Times describing the data records, e.g., for calculating
+   :ref:`delay<scqc-delay>` or :ref:`latency<scqc-latency>`.
+   :math:`t_{now}` may be measured differently depending on the QC parameter.
+
+The following QC parameters are determined when the corresponding plugin is
+loaded:
+
+.. _scqc-availability:
+
+availability [%]
+ **Plugin:** qcplugin_availability
+
+ **Description:** Availability of data in the configured time span.
+
+.. _scqc-delay:
+
+delay [s]
+ **Plugin:** qcplugin_delay
+
+ **Description:** Time difference between current time, :math:`t_{now}`, and
+ time of the last record in the |scname| system (see :ref:`Figure<scqc-fig-times>`):
+
+ .. math::
+
+   delay = t_{now} - t_{2}.
+
+ .. note ::
+
+    Current time is measured during reception of a record and updated in the
+    report intervals configured for delay.
+
+.. _scqc-gaps:
+
+gaps (count [counts], interval [s], length [s])
+ **Plugin:** qcplugin_gap
+
+ **Description:** In case of a data gap between two consecutive records this
+ parameter delivers the gap interval time (interval), the mean length of the gaps
+ (length) and the number of the gaps (count) over the configured time interval.
+
+ .. hint ::
+
+    gaps interval = 0 for gaps count = 1 but gaps interval > 0
+    for gaps count > 1. This may be important when evaluating the intervals.
+
+.. _scqc-latency:
+
+latency [s]
+ **Plugin:** qcplugin_latency
+
+ **Description:** Time difference between current time, :math:`t_{now}`, and
+ arrival time of the last record (see :ref:`Figure<scqc-fig-times>`):
+
+ .. math::
+
+   latency = t_{now} - t_{arr}.
+
+ .. note ::
+
+    Current time is measured during reception of a record and updated in the
+    report intervals configured for latency.
+
+.. _scqc-offset:
+
+offset [counts]
+ **Plugin:** qcplugin_offset
+
+ **Description:** Average value of all samples of a record.
+
+.. _scqc-outage:
+
+outage [time string]
+ **Plugin:** qcplugin_outage
+
+ **Description:** Delivers the start and the end time of a data outage (gap).
+
+.. _scqc-overlap:
+
+overlaps (count [counts], interval [s], length [s])
+ **Plugin:** qcplugin_overlap
+
+ **Description:** In case of overlaps between two consecutive records this parameter
+ delivers the overlaps interval time (interval), the mean length (length) of the
+ overlaps and the number of the overlaps (count) over the configured time interval.
+
+ .. hint ::
+
+    overlaps interval = 0 for overlaps count = 1 but overlaps interval > 0
+    for overlaps count > 1. This may be important when evaluating the intervals.
+
+.. _scqc-rms:
+
+rms [counts]
+ **Plugin:** qcplugin_rms
+
+ **Description:** Offset corrected root mean square (RMS) value of a record.
+
+.. _scqc-spike:
+
+spikes (count [counts], interval [s], amplitude [counts])
+ **Plugin:** qcplugin_spike
+
+ **Description:** In case of the occurrence of a spike in a record this parameter
+ delivers the time interval between consecutive spikes (interval), the mean
+ amplitude of the spike (amplitude) and the number of the spikes (count) over the
+ configured time interval. Internally a list of spikes is stored (spike time,
+ spike amplitude); the spike finder algorithm is still preliminary.
+
+ .. hint ::
+
+    spikes interval = 0 for spikes count = 1 but spikes interval > 0
+    for spikes count > 1. This may be important when evaluating the intervals.
+
+.. _scqc-timing:
+
+timing [%]
+ **Plugin:** qcplugin_timing
+
+ **Description:** miniSEED record timing quality (0 - 100 %) as written into the
+ miniSEED records by the digitizer.
+
+
+.. _scqc-setup:
+
+Setup
+=====
+
+The configuration can be adjusted in the module configuration (:file:`scqc.cfg`).
+
+#. Select the streams for which to compute the QC parameters. Be default, only
+   streams defined global bindings are considered:
+
+   * :confval:`use3Components`: Select to consider the 3 components related to
+     the stream defined by global bingings. Reguires to **select**
+     :confval:`useConfiguredStreams`.
+   * :confval:`streamMask`: Freely choose any available stream to compute the QC
+     parameters for. This requires to **unselect** :confval:`useConfiguredStreams`.
+     Regular expressions may be used, e.g.:
+
+     * Consider BHZ streams from all networks, stations and locations: ::
+
+          streamMask = ""(.+)\.(.+)\.(.*)\.(BHZ)$"
+
+     * Consider any component from BH, LH and HH streams: ::
+
+          streamMask = "(.+)\.(.+)\.(.*)\.((BH)|(LH)|(HH))?$"
+
+#. Load the QC and other plugins, e.g. for data acquisition.
+   The QC plugins loaded by default are :code:`qcplugin_availability`,
+   :code:`qcplugin_delay`, :code:`qcplugin_gap`, :code:`qcplugin_latency`,
+   :code:`qcplugin_offset`, :code:`qcplugin_outage`, :code:`qcplugin_overlap`,
+   :code:`qcplugin_rms`, :code:`qcplugin_spike` and :code:`qcplugin_timing`.
+
+   Adjust :confval:`plugins` for setting plugins explicitly and to exclude the other
+   ones, e.g. ::
+
+      plugins = qcplugin_availability, qcplugin_spike
+
+   Further :term:`RecordStream` plugins for reading data may be considered.
+
+#. Configure the plugin parameters: Each plugin considers specific parameters
+   which can be configured separately or the default section.
+
+
+.. _scqc_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/scqc.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/scqc.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/scqc.cfg`
+
+scqc inherits :ref:`global options<global-configuration>`.
+
+
+
+.. confval:: CreatorId
+
+   Default: ``smi://de.gfz-potsdam/QcTool_0.3.1``
+
+   Type: *string*
+
+   ID of QC message creator
+
+
+.. confval:: useConfiguredStreams
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Limit QC determination to processed data streams which are
+   defined in global bindings with detecLocid and detecStream.
+
+
+.. confval:: use3Components
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   If useConfiguredStreams is true, this parameter decides whether
+   to use only the vertical component \(default\) or all three
+   components. The 3 components are collected from the inventory
+   according to channel orientation. If that is not possible,
+   the fixed components N and E will be used.
+
+
+.. confval:: streamMask
+
+   Type: *string*
+
+   If useConfiguredStreams is false, then
+   load \(from inventory\) only those streams, matching the streamMask
+   
+   RegEx e.g. \"\^\(NET1\|NET2\)\\.\(STA1\|STA2\|STA3\)\\.\(LOC\)\\.\(\(BH\)\|\(LH\)\|\(HH\)\)Z\$\"
+   
+   RegEx e.g. \"\^\(.+\)\\.\(.+\)\\.\(.\*\)\\.\(.+\)Z\$\"
+   
+   streamMask \= \"\^\(.+\)\\.\(.+\)\\.\(.\*\)\\.\(BHZ\)\$\"
+
+
+.. confval:: dbLookBack
+
+   Default: ``7``
+
+   Type: *int*
+
+   Unit: *days*
+
+   Database look up for past entries not older than x days
+   \(to determine the last QC parameter calculated\).
+
+
+.. note::
+   **plugins.\***
+   *Control parameters for individual QC plugins.*
+
+
+
+.. note::
+   **plugins.default.\***
+   *Default configuration parameters for the plugins.*
+   *Can be overwritten by the individual plugin configurations.*
+
+
+
+.. confval:: plugins.default.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.default.filter
+
+   Type: *string*
+
+   Filter string used to filter waveforms before
+   processing. Currently only used by QcRms.
+
+
+.. confval:: plugins.default.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.default.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.default.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.default.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.default.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.default.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.default.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.default.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.default.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.default.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.default.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.default.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcLatency.\***
+   *Configuration parameters for the plugin qcplugin_latency. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcLatency.realTimeOnly
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcLatency.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcLatency.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcLatency.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which, e.g.,
+   can be displayed by scqcv.
+
+
+.. confval:: plugins.QcLatency.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcLatency.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcLatency.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcLatency.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcLatency.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcLatency.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcLatency.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcLatency.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcLatency.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcDelay.\***
+   *Configuration parameters for the plugin qcplugin_delay. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcDelay.realTimeOnly
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to processd data AND realtime data streams.
+
+
+.. confval:: plugins.QcDelay.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcDelay.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcDelay.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcDelay.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcDelay.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcDelay.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcDelay.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcDelay.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcDelay.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcDelay.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcDelay.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcDelay.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcGap.\***
+   *Configuration parameters for the plugin qcplugin_gap. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcGap.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcGap.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcGap.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcGap.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcGap.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcGap.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcGap.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcGap.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcGap.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcGap.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcGap.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcGap.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcGap.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcOffset.\***
+   *Configuration parameters for the plugin qcplugin_offset. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcOffset.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcOffset.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcOffset.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcOffset.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcOffset.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOffset.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcOffset.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcOffset.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcOffset.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcOffset.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcOffset.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcOffset.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOffset.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcOverlap.\***
+   *Configuration parameters for the plugin qcplugin_overlap. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcOverlap.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcOverlap.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcOverlap.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcOverlap.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcOverlap.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOverlap.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcOverlap.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcOverlap.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcOverlap.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcOverlap.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcOverlap.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcOverlap.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOverlap.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcRms.\***
+   *Configuration parameters for the plugin qcplugin_rms. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcRms.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcRms.filter
+
+   Type: *string*
+
+   Filter string used to filter waveforms before processing.
+
+
+.. confval:: plugins.QcRms.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcRms.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcRms.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcRms.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcRms.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcRms.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcRms.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcRms.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcRms.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcRms.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcRms.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcRms.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcSpike.\***
+   *Configuration parameters for the plugin qcplugin_spike. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcSpike.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcSpike.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcSpike.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcSpike.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcSpike.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcSpike.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcSpike.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcSpike.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcSpike.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcSpike.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcSpike.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcSpike.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcSpike.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcTiming.\***
+   *Configuration parameters for the plugin qcplugin_timing. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcTiming.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcTiming.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcTiming.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcTiming.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcTiming.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcTiming.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcTiming.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcTiming.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcTiming.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcTiming.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcTiming.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcTiming.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcTiming.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcAvailability.\***
+   *Configuration parameters for the plugin qcplugin_availability. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcAvailability.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcAvailability.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. note::
+   **plugins.QcAvailability.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcAvailability.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcAvailability.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcAvailability.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcAvailability.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcAvailability.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcAvailability.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcAvailability.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcAvailability.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcAvailability.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcAvailability.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+.. note::
+   **plugins.QcOutage.\***
+   *Configuration parameters for the plugin qcplugin_outage. Overwrites the parameters from the default section.*
+
+
+
+.. confval:: plugins.QcOutage.realTimeOnly
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Enable to use this plugin only for realtime processing.
+   
+   Default [disable]: plugin is able to process archived data AND realtime data streams.
+
+
+.. confval:: plugins.QcOutage.buffer
+
+   Default: ``4000``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Qc\-Buffer Length [s] \(aka LTA\-Buffer\). Must be >\= plugins.\*.bufferLength.
+
+
+.. confval:: plugins.QcOutage.notifyDB
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   If there is a gap of more than notifyDB [s], write an OUTAGE entry into the database.
+
+
+.. note::
+   **plugins.QcOutage.report.\***
+   *Control interactions with the messaging system.*
+
+
+
+.. confval:: plugins.QcOutage.report.interval
+
+   Default: ``60``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for sending report messages which e.g.
+   will be  may be displayed by scqcv.
+
+
+.. confval:: plugins.QcOutage.report.buffer
+
+   Default: ``600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOutage.report.timeout
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Report messages are generated in case no data
+   is received since timeout. Only in real\-time processing.
+
+
+.. note::
+   **plugins.QcOutage.archive.\***
+   *Control sending QC reports as notifier to the messaging where*
+   *scmaster will write them to the database.*
+
+
+
+.. confval:: plugins.QcOutage.archive.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval to send the QC reports.
+   
+   Default [\-1]: Do not send any QC report. This will prevent writing
+   QC reports into the database.
+
+
+.. confval:: plugins.QcOutage.archive.buffer
+
+   Default: ``3600``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. note::
+   **plugins.QcOutage.alert.\***
+   *Control for sending alerts based on QC reports.*
+
+
+
+.. confval:: plugins.QcOutage.alert.interval
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Interval for checking and sending alert thresholds.
+   \-1 disables threshold checking.
+
+
+.. confval:: plugins.QcOutage.alert.buffer
+
+   Default: ``1800``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Time window for calculating QC reports.
+
+
+.. confval:: plugins.QcOutage.alert.thresholds
+
+   Default: ``150``
+
+   Type: *int*
+
+   List of thresholds for sending QC reports. Use comma to separate values.
+
+
+
+Command-Line Options
+====================
+
+.. program:: scqc
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+.. option:: --plugins arg
+
+   Load given plugins.
+
+.. option:: -D, --daemon
+
+   Run as daemon. This means the application will fork itself
+   and doesn't need to be started with \&.
+
+.. option:: --auto-shutdown arg
+
+   Enable\/disable self\-shutdown because a master module shutdown.
+   This only works when messaging is enabled and the master
+   module sends a shutdown message \(enabled with \-\-start\-stop\-msg
+   for the master module\).
+
+.. option:: --shutdown-master-module arg
+
+   Set the name of the master\-module used for auto\-shutdown.
+   This is the application name of the module actually
+   started. If symlinks are used, then it is the name of
+   the symlinked application.
+
+.. option:: --shutdown-master-username arg
+
+   Set the name of the master\-username of the messaging
+   used for auto\-shutdown. If \"shutdown\-master\-module\" is
+   given as well, this parameter is ignored.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+
+Messaging
+---------
+
+.. option:: -u, --user arg
+
+   Overrides configuration parameter :confval:`connection.username`.
+
+.. option:: -H, --host arg
+
+   Overrides configuration parameter :confval:`connection.server`.
+
+.. option:: -t, --timeout arg
+
+   Overrides configuration parameter :confval:`connection.timeout`.
+
+.. option:: -g, --primary-group arg
+
+   Overrides configuration parameter :confval:`connection.primaryGroup`.
+
+.. option:: -S, --subscribe-group arg
+
+   A group to subscribe to.
+   This option can be given more than once.
+
+.. option:: --content-type arg
+
+   Overrides configuration parameter :confval:`connection.contentType`.
+
+.. option:: --start-stop-msg arg
+
+   Set sending of a start and a stop message.
+
+
+Database
+--------
+
+.. option:: --db-driver-list
+
+   List all supported database drivers.
+
+.. option:: -d, --database arg
+
+   The database connection string, format:
+   service:\/\/user:pwd\@host\/database.
+   \"service\" is the name of the database driver which
+   can be queried with \"\-\-db\-driver\-list\".
+
+.. option:: --config-module arg
+
+   The config module to use.
+
+.. option:: --inventory-db arg
+
+   Load the inventory from the given database or file, format:
+   [service:\/\/]location .
+
+.. option:: --db-disable
+
+   Do not use the database at all
+
+
+Records
+-------
+
+.. option:: --record-driver-list
+
+   List all supported record stream drivers.
+
+.. option:: -I, --record-url arg
+
+   The recordstream source URL, format:
+   [service:\/\/]location[#type].
+   \"service\" is the name of the recordstream driver
+   which can be queried with \"\-\-record\-driver\-list\".
+   If \"service\" is not given, \"file:\/\/\" is
+   used.
+
+.. option:: --record-file arg
+
+   Specify a file as record source.
+
+.. option:: --record-type arg
+
+   Specify a type for the records being read.
+

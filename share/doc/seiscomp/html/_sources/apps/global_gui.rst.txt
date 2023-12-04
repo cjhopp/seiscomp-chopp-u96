@@ -1,0 +1,3751 @@
+.. _global_gui:
+
+###
+GUI
+###
+
+The GUI configuration plugin extends the configuration of
+graphical user interfaces to various options to adjust the look
+and feel.
+
+Description
+===========
+
+All |scname| graphical user interfaces are based on a common libraries.
+This chapter describes what configuration and styling options are available for
+all GUI applications. The GUI specific configuration options are additional to
+the standard application options. Setup the e.g., messaging connection and database
+is equal to the CLI (command line interface) applications.
+
+
+.. _sec-gui_styles:
+
+Styling
+=======
+
+To adjust the look-and-feel to the host desktop system and the personal taste
+several styling options are available. Since all GUI applications are using the
+Qt4 or QT5 library, the tool "qtconfig-qt4" can used to adjust the widget theme and the
+colors. If KDE is used as desktop system, the same style is used since KDE
+bases on Qt as well.
+
+The style options supported by |scname| (and not covered by the general Qt setup)
+have to be given in the applications (or global) configuration file. The
+parameters are configured with the *scheme.* parameters.
+
+In case of :ref:`map layers defined by geo feature files <sec-gui_layers>` the
+parameters may also be defined by :file:`map.cfg` in the directory of the geo
+feature file.
+
+
+.. _sec-gui_syntax:
+
+Configuration syntax
+====================
+
+Beside the usual integer, float, boolean and string parameters GUI applications
+support also :ref:`color <sec-gui_color>`, :ref:`color gradient <sec-gui_colorgradient>`,
+:ref:`pen <sec-gui_pen>`, :ref:`brush <sec-gui_brush>`, :ref:`font <sec-gui_font>`
+and :ref:`symbol <sec-gui_symbol>` parameters. The syntax is explained below:
+
+
+.. _sec-gui_color:
+
+Colors
+------
+
+.. code-block:: sh
+
+   color = red | RRGGBB | RRGGBBAA | "rgb(red,green,blue)" | "rgba(red,green,blue,alpha)"
+
+Colors are specified either by :term:`color keyword names <color keyword name>`,
+in a hexadecimal notation or in a rgb(a) notation. When using the rgb(a)
+notation it should be quoted. Otherwise the configuration
+parser would tokenize the value into 3 or 4 strings due to the comma.
+
+
+.. _sec-gui_colorgradient:
+
+Color gradients
+---------------
+
+.. code-block:: sh
+
+   gradient = 1:FF0000, 2:00FF00, 3:0000FF
+
+This defines a gradient from red through green to blue for the nodes 1, 2 and 3.
+Values out of range are clipped to the lower or upper bound.
+
+
+.. _sec-gui_font:
+
+Fonts
+-----
+
+.. code-block:: sh
+
+   # The font family
+   font.family = "Arial"
+
+   # Point size
+   font.size = 12
+
+   # Bold?
+   # Default: false
+   font.bold = false
+
+   # Italic?
+   # Default: false
+   font.italic = false
+
+   # Underline?
+   # Default: false
+   font.underline = false
+
+   # Overline?
+   # Default: false
+   font.overline = false
+
+An example to configure the SC3 base font:
+
+.. code-block:: sh
+
+   scheme.fonts.base.family = "Arial"
+   scheme.fonts.base.size = 10
+
+
+.. _sec-gui_pen:
+
+Pens
+----
+
+Pens are used in the vector layer configuration. Pens have three attributes:
+color, style and width. Color follows the described :ref:`color definition <sec-gui_color>`, width
+is a double and the styles are:
+
++------------------------------------+---------------------------------------+------------------------------------------+
+| .. figure:: media/gui/pen-no.png   | .. figure:: media/gui/pen-solid.png   | .. figure:: media/gui/pen-dot.png        |
++------------------------------------+---------------------------------------+------------------------------------------+
+| nopen                              | solidline                             | dotline                                  |
++------------------------------------+---------------------------------------+------------------------------------------+
+| .. figure:: media/gui/pen-dash.png | .. figure:: media/gui/pen-dashdot.png | .. figure:: media/gui/pen-dashdotdot.png |
++------------------------------------+---------------------------------------+------------------------------------------+
+| dashline                           | dashdotline                           | dashdotdotline                           |
++------------------------------------+---------------------------------------+------------------------------------------+
+| *Images from Qt 4.1 documentation: http://doc.qt.digia.com/4.1/qt.html#PenStyle-enum*                                 |
++------------------------------------+---------------------------------------+------------------------------------------+
+
+
+Example:
+
+.. code-block:: properties
+
+   # Blue dotted pen
+   pen.color = 0000ff
+   pen.style = dotline
+
+
+.. _sec-gui_brush:
+
+Brushes
+-------
+
+Brushes are also used in the vector layer configuration. Brushes are used to
+fill a polygon. They have two attributes: color and style. Color follows the
+described :ref:`color definition <sec-gui_color>` and styles are:
+
+.. figure:: media/gui/brush-patterns.png
+
+Example:
+
+.. code-block:: sh
+
+   # Red solid brush
+   brush.color = ff0000
+   brush.style = solid
+
+
+.. _sec-gui_symbol:
+
+Symbols
+-------
+
+Symbols configured by the :confval:`symbol.*` parameters can be plotted on coordinate
+points defined by :ref:`geo feature files <sec-gui_layers>` or by :confval:`symbol.icon.hotspot.x`
+and :confval:`symbol.icon.hotspot.y`. The symbols can be shapes (:confval:`symbol.shape`)
+or icons from a file (:confval:`symbol.icon`).
+
+
+.. _sec-gui_legend:
+
+Legends
+-------
+
+Legends are plotted on maps describing :ref:`map vector layers <sec-gui_layers>`.
+Styles are:
+
+.. csv-table::
+   :header: "Name", "Description", "Example"
+   :widths: 1, 3, 3
+
+   ":confval:`title`", "Title", "title = Faults"
+   ":confval:`orientation`", "Orientation: vertical, horizontal", "orientation =  vertical"
+   ":confval:`legendArea`", "Position: topleft, topright, bottomleft, bottomright", "legendArea = topleft"
+
+
+.. _sec-gui_layers:
+
+Map Layers
+==========
+
+Additional features may be added to maps using configurable layers:
+
+* :ref:`sec-gui_layers-vector`, e.g., points, polylines, polygons from FEP, BNA
+  or GeoJSON files. Files in BNA and GeoJSON format can be generated from other
+  formats by many GIS programs or web sites. BNA and GeoJSON are described below.
+* :ref:`sec-gui_layers-others`, e.g., cities, grids, events, custom layers.
+
+:ref:`sec-gui_layers-vector` are loaded and may be visualized together with
+:ref:`other layers <sec-gui_layers-others>`. The order of the drawing is defined
+by :confval:`map.layers`.
+
+The map layers can be explained on the maps by :ref:`configurable legends <sec-gui_legend>`
+and selected interactively by their :ref:`configurable category <sec-gui_layers-config>`.
+
+.. figure:: media/gui/map-layers.png
+   :align: center
+   :width: 18cm
+
+   Map with layers defined by polygons, cities and legends.
+
+
+.. _sec-gui_layers-vector:
+
+Vector layers
+-------------
+
+.. admonition:: Deprecation warning
+   :class: warning
+
+   The old directories :file:`@DATADIR@/bna` or :file:`@CONFIGDIR@/bna`
+   are still supported but superseded by :file:`@DATADIR@/spatial/vector` or
+   :file:`@CONFIGDIR@/spatial/vector`. The latter directories have higher priority.
+   If one of the old directories has been found, a warning will be logged.
+
+
+|scname| supports arbitrary polygons, polylines or points for drawing as layers
+on maps or for using by other :term:`modules <plugin>` and :term:`plugins <plugin>`.
+The polygons, polylines and points can be customized by the
+:ref:`available attributes <sec-gui_syntax>`. Currently supported data formats
+are:
+
+* :ref:`sec-gui_layers-vector-format-fep`
+* :ref:`sec-gui_layers-vector-format-bna`
+* :ref:`sec-gui_layers-vector-format-geojson`
+
+.. note::
+
+   Please note that segment lengths below 180 degrees must be used in order to
+   render polygons or polylines correctly and to avoid representation
+   ambiguities.
+
+
+.. _sec-gui_layers-vector-format:
+
+Data formats
+~~~~~~~~~~~~
+
+.. _sec-gui_layers-vector-format-fep:
+
+Flinn-Engdahl polygons (FEP)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Used for visualization of event regions and for setting the region name of
+  the event by :ref:`scevent`.
+* Stored in directories: :file:`@DATADIR@/fep` or :file:`@CONFIGDIR@/fep`
+* File name extension: *.fep*
+* File format example with one polygon:
+
+  .. code-block:: none
+
+     longitude1 latitude1
+     longitude2 latitude2
+     longitude3 latitude3
+     ...
+     99.0 99.0 length
+     L name
+
+  where the coordinates, *length* and *name* are to be replaced by actual values,
+* Visibility and style can be controlled by :ref:`configuration <sec-gui_layers-config>`
+  and :confval:`map.layers.fep.visible`.
+
+
+.. _sec-gui_layers-vector-format-bna:
+
+Boundary file format (BNA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Used for visualization, e.g., points, polylines, polygons for faults or
+  districts, respectively, and even symbols or images on maps. Some objects,
+  like closed lines, can be evaluated by other modules and plugins, e.g,. the
+  :ref:`region check <scevent_regioncheck>` plugin for :ref:`scevent`.
+* Stored in directories or sub-directories of:
+  :file:`$SEISCOMP_ROOT/share/spatial/vector` or
+  :file:`~/.seiscomp/spatial/vector`
+* File name extension: *.bna*
+* Properties are controlled as described in the section
+  :ref:`sec-gui_layers-config`
+* For closed polygons the list of coordinates does not need to end on start
+  coordinates.
+* File format example for one polygon/polyline:
+
+  .. code-block:: none
+
+     "name 1","rank 1",type/length
+     longitude1,latitude1
+     longitude2,latitude2
+     longitude3,latitude3
+     ...
+
+  where the coordinates, *name* and *type/length* are to be replaced by actual
+  values.  For polylines (open polygons) set type/length to the negative number
+  of points defining the line, e.g., -10. Positive numbers, e.g., 10, define
+  closed polygons. Such polygons are automatically closed between their end
+  points. Thus, the end points do not need to be identical.
+
+  The BNA file format also supports multiple vertices per line and the
+  definition of islands. Please refer to
+  https://www.softwright.com/faq/support/boundary_file_bna_format.html for more
+  format specifications.
+
+  .. note ::
+
+     * All |scname| map applications support the drawing of polygons and a
+       subsequent export to the BNA format.
+     * An extension of the header entries is possible. The extra entries can be
+       used by other modules or plugins, e.g., the :ref:`region check
+       <scevent_regioncheck>` plugin. Example ::
+
+          "coal","rank 1","eventType: mining explosion, minDepth: -5, maxDepth: 10",6
+     * The name is extracted from the first part of the header.
+     * The rank is extracted from the second part of the header if it has the
+       form "rank VALUE", e.g., rank 12.
+
+* Visibility and style can be controlled by
+  :ref:`configuration in map.cfg<sec-gui_layers-config>`.
+
+
+.. _sec-gui_layers-vector-format-geojson:
+
+GeoJSON
+^^^^^^^
+
+* Used for visualization, e.g., points, polylines, polygons for faults or
+  districts, respectively, and even symbols or images on maps.
+* Stored in directories or sub-directories of:
+  :file:`$SEISCOMP_ROOT/share/spatial/vector` or
+  :file:`~/.seiscomp/spatial/vector`
+* File name extension: *.geojson*
+* File format: https://geojson.org/
+
+  .. note ::
+
+     All coordinates must be given in the WGS-84 coordinate reference frame.
+
+* Rendering properties are controlled as described in the section
+  :ref:`sec-gui_layers-config`.
+* Additional properties may be defined in the `properties` member of a `Feature`
+  object. The name and rank of a GeoFeature are extracted from the `name` and
+  `rank` property. Other property keys and values are added to the `attributes`
+  map of a GeoFeature for module-specific processing.
+* Basic file format example containing a single point without any meta
+  information
+
+  .. code-block:: properties
+
+     {
+       "type": "Point",
+       "coordinates": [ 13.0, 52.0 ]
+     }
+
+* File format example with a feature collection containing one polygon, one line
+  string and one point:
+
+  .. code-block:: properties
+
+     {
+       "type": "FeatureCollection",
+       "features": [
+         {
+           "type": "Feature",
+           "properties": {
+             "name": "polygon 1",
+             "rank" : 1
+           },
+           "geometry": {
+             "type": "Polygon",
+             "coordinates": [
+               [
+                 [ 10.0, -15.0 ],
+                 [ 13.0, -15.0 ],
+                 [ 13.0, -12.0 ],
+                 [ 10.0, -12.0 ],
+                 [ 10.0, -15.0 ]
+               ]
+             ]
+           }
+         }, {
+           "type": "Feature",
+           "properties": {
+             "name": "line string 1",
+             "rank" : 4
+           },
+           "geometry": {
+             "type": "LineString",
+             "coordinates": [
+               [ 0.0, -5.0 ],
+               [ 3.0, -5.0 ],
+               [ 3.0, -2.0 ],
+               [ 0.0, -2.0 ]
+             ]
+           }
+         }, {
+           "type": "Feature",
+           "properties": {
+             "name": "point 1",
+             "rank" : 1
+           },
+           "geometry": {
+             "type": "Point",
+             "coordinates": [ 13.0, 52.0 ]
+           }
+         }
+       ]
+     }
+
+
+
+.. _sec-gui_layers-config:
+
+Layer configuration
+~~~~~~~~~~~~~~~~~~~
+
+Layers may be grouped into categories and form a hierarchy. The categories of the
+geo feature data are derived from the feature directory structure, i.e. the names
+of the directories below the feature directory, e.g., :file:`@DATADIR@/spatial/vector`.
+Feature data directly located within the feature directory have no special category.
+The FEP data set is assigned to the fep category.
+
+The depth of the feature directory tree is arbitrary and subfolders form
+sub-categories. E.g., the directory tree
+:file:`$SEISCOMP_ROOT/share/spatial/vector/coastline/europe/germany` will generate
+the categories *coastline*, *coastline.europe* and *coastline.europe.germany* which
+all may be configured individually. Every undefined property is inherited from
+the parent category.
+
+The layer properties can be configured either by
+
+* Global module configuration parameters or
+* Layer-specific configuration files (:file:`map.cfg`).
+
+.. note ::
+
+   The parameters in the global configuration of modules override the configurations
+   in :file:`map.cfg` allowing a specific configuration per application.
+
+All data set directories and sub-directories in the feature directory are
+scanned for an optional :file:`map.cfg` configuration file defining default
+drawing options. Parameters found in the lowest sub-directory take priority.
+This allows easy distribution of data sets and drawing properties without the
+need to change application configuration files.
+The available map layer configuration parameters are described further below.
+
+The default drawing options may be overridden in the global or application
+configuration file using the format *prefix.category.param*. If global layer
+properties are configured, then just use *prefix.param*. The prefix for layer
+configuration is *map.layers*. Due to its recursive structure the configuration
+options are not available through :ref:`scconfig`.
+
+
+Examples
+~~~~~~~~
+
+The example below shows files and directories for plotting fault lines with
+specific configurations. The geo features are defined in :file:`data.bna` or
+:file:`data.geojson`, configurations are in :file:`map.cfg`:
+
+.. code-block:: none
+
+   @DATADIR@/spatial/vector/
+   ├── maps.cfg
+   ├── faults/
+   |   ├── map.cfg
+   |   ├── reverse/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   |   |   ├── data.geojson
+   |   ├── normal/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   |   |   ├── data.geojson
+   |   ├── strike-slip/
+   |   |   ├── map.cfg
+   |   |   ├── data.bna
+   |   |   ├── data.geojson
+   ├── others/
+   |   ├── maps.cfg
+   |   ├── data.bna
+   |   ├── data.geojson
+
+Configuration examples for plotting the fault lines based on the example above:
+
+* Legend control in :file:`@DATADIR@/spatial/vector/faults/map.cfg`
+
+  .. code-block:: properties
+
+     # title of legend for all legend entries
+     title = "Faults"
+     # plot the legend vertically
+     orientation = vertical
+     # plot the legend in the top-right corner
+     legendArea = topright
+
+* Polygon property control in :file:`@DATADIR@/spatical/vector/faults/strike-slip/map.cfg`
+  common to all polygons in this directory. You may generate
+  different sub-directories with different parameters inheriting the legend and other
+  properties. Put this file, e.g., in the strike-slip directory.
+
+
+  .. code-block:: properties
+
+     # make the layer visible
+     visible = true
+     # do not draw the name of the polygon
+     drawName = false
+     # draw a solid line
+     pen.style = solidline
+     # set the pen with to 1 px
+     pen.width = 1
+     # set the pen line to blue
+     pen.color = blue
+     # label to be shown in legend
+     label = "strike-slip"
+
+Instead of using :file:`map.cfg`, the same properties can also be set per layer
+category by global parameters in module configurations, e.g., for the layer *strike-slip*
+below *faults* (:file:`global.cfg`):
+
+.. code-block:: properties
+
+   map.layers.faults.title = "Faults"
+   map.layers.faults.orientation = vertical
+   map.layers.faults.legendArea = topright
+   map.layers.faults.strike-slip.visible = true
+   map.layers.faults.strike-slip.drawName = false
+   map.layers.faults.strike-slip.pen.style = solidline
+   map.layers.faults.strike-slip.pen.width = 1
+   map.layers.faults.strike-slip.pen.color = blue
+   map.layers.faults.strike-slip.label = "strike-slip"
+
+
+Parameters
+~~~~~~~~~~
+
+Available map layer configuration parameters for each category are:
+
+.. confval:: visible
+
+   Type: *boolean*
+
+   Show/hide the layer
+   Default is ``true``.
+
+.. confval:: title
+
+   Type: *string*
+
+   Title of the legend for this directory. If the title is empty
+   then no legend will be created. A legend will show the label
+   of its own directory and all its subdirectories.
+
+.. confval:: label
+
+   Type: *string*
+
+   The legend label for this directory.
+
+.. confval:: index
+
+   Type: *int*
+
+   The index of the label in the legend. All labels will be
+   sorted by their index in ascending order.
+
+   Default is ``0``.
+
+.. confval:: legendArea
+
+   Type: *string*
+
+   The area in the map where the legend will be displayed.
+   Valid values are *topleft*, *topright*, *bottomleft* and
+   *bottomright*.
+
+   Default is ``topleft``.
+
+.. confval:: orientation
+
+   The orientation of the legend, either *vertical* or *horizontal*.
+
+   Default is ``vertical``.
+
+.. confval:: drawName
+
+   Type: *boolean*
+
+   Draws the segment name in the center of the bounding box.
+   Default is ``false``.
+
+.. confval:: rank
+
+   Type: *int*
+
+   Set or override the rank of the segment. The rank defines
+   the zoom level at which drawing of the segment starts.
+   Default is ``1``.
+
+
+.. confval:: roughness
+
+   Type: *int*
+
+   Sets the roughness of a polyline or polygon while zooming. The roughness
+   is somehow defined in pixels and removes successive vertices if the distance
+   in pixel is less than roughness. The higher the value the less vertices
+   a rendered polyline or polygon will finally have and the faster the rendering.
+   If set to 0 then the feature is disabled.
+   Default is ``3``.
+
+.. confval:: symbol.size
+
+   Type: *int*
+
+   In case of single points, this specifies the size of the symbol in pixels.
+
+   Default is ``8``.
+
+.. confval:: symbol.shape
+
+   Type: *string*
+
+   In case of single points, this specifies the shape of the symbol. Valid
+   values are *circle* and *square*.
+
+   Default is ``circle``.
+
+.. confval:: symbol.icon
+
+   Type: *string*
+
+   In case of single points this specifies the path to an image used as
+   icon to represent the map location. The image is scaled to :confval:`symbol.size`
+   if it is larger than zero otherwise the origin size is being used.
+
+.. confval:: symbol.icon.hotspot.x
+
+   Type: *int*
+
+   The X coordinate of the symbol image which is rendered at the map
+   location longitude. This coordinate is in unscaled image space.
+
+   Default is ``0``.
+
+.. confval:: symbol.icon.hotspot.y
+
+   Type: *int*
+
+   The Y coordinate of the symbol image which is rendered at the map
+   location latitude. This coordinate is in unscaled image space
+   starting at top.
+
+   Default is ``0``.
+
+.. confval:: debug
+
+   Type: *boolean*
+
+   If enabled, the bounding box of the segment is drawn.
+   Default is ``false``.
+
+.. confval:: pen.width
+
+   Type: *double*
+
+   Pen width.
+   Default is ``1.0``.
+
+.. confval:: pen.color
+
+   Type: *color*
+
+   Pen color.
+   Default is ``000000ff``.
+
+.. confval:: pen.style
+
+   Type: *string*
+
+   Line style. Supported values are: dashdotdotline, dashdotline, dashline,
+   dotline, nopen and solidline.
+   Default is ``solidline``.
+
+
+.. confval:: brush.color
+
+   Type: *color*
+
+   Fill color.
+   Default is ``000000ff``.
+
+.. confval:: brush.style
+
+   Type: *string*
+
+   Fill style. Supported values are:
+   nobrush, solid, dense1, dense2, dense3, dense4,
+   dense5, dense6, dense7, horizontal, vertical,
+   cross, bdiag, fdiag and diagcross.
+   Default is ``nobrush``.
+
+
+.. confval:: font.size
+
+   Type: *int*
+
+.. confval:: font.family
+
+   Type: *string*
+
+.. confval:: font.bold
+
+   Type: *boolean*
+
+.. confval:: font.italic
+
+   Type: *boolean*
+
+.. confval:: font.underline
+
+   Type: *boolean*
+
+.. confval:: font.overline
+
+   Type: *boolean*
+
+.. confval:: composition
+
+   The image composition mode. Valid values are
+   *src-in*, *dst-in*, *src-out*, *dst-out*, *src-atop*,
+   *dst-atop*, *xor*, *plus*, *multiply*, *screen*,
+   *overlay*, *darken*, *lighten*, *color-dodge*,
+   *color-burn*, *hard-light*, *soft-light*, *difference*,
+   *exclusion*, *src-or-dst*, *src-and-dst*, *src-xor-dst*,
+   *not-src-and-not-dst*, *not-src-or-not-dst*,
+   *not-src-xor-dst*, *not-src*, *not-src-and-dst* and
+   *src-and-not-dst*.
+
+   An explanation can be found at the Qt
+   developer documentation, e.g.
+   https://doc.qt.io/qt-5/qpainter.html#composition-modes.
+
+   Default is ``src-over``.
+
+
+.. _sec-gui_layers-others:
+
+Other layers
+------------
+
+Other layers may be displayed on maps depending on the application.
+
+* Events layer:
+
+  Event symbols are shown as an extra layer, e.g., in the Location tab of :ref:`scolv`.
+  Activate in the global module configuration by :confval:`map.layers.events.visible`.
+
+* Cities layer:
+
+  Cities are plotted based on the XML file :file:`@DATADIR@/cities.xml`. Custom
+  XML files, e.g., for multi-language support are provided by :confval:`cityXML`.
+  Properties are configured in various global module parameters :confval:`scheme.map.*`
+  and :confval:`scheme.colors.*`.
+
+* Grid layer:
+
+  The latitude/longitude grid plotted on top of maps. Properties are configured
+  in the global module parameters :confval:`scheme.colors.map.grid.*`.
+
+* Custom layers:
+
+  Additional custom layers may be added which can be loaded and displayed by specific
+  modules or plugins. They are added by :confval:`map.customLayers`.
+
+.. _global_gui_configuration:
+
+Module Configuration
+====================
+
+
+.. note::
+   **groups.\***
+   *Configures the target messaging groups for various object types.*
+   *These parameters should only be touched if you know what you*
+   *are doing.*
+
+
+
+.. confval:: groups.pick
+
+   Default: ``PICK``
+
+   Type: *string*
+
+   Defines the target messaging group for manual picks, e.g.
+   made in scolv.
+
+
+.. confval:: groups.amplitude
+
+   Default: ``AMPLITUDE``
+
+   Type: *string*
+
+   Defines the target messaging group for amplitudes, e.g.
+   computed in scolv.
+
+
+.. confval:: groups.magnitude
+
+   Default: ``MAGNITUDE``
+
+   Type: *string*
+
+   Defines the target messaging group for magnitudes. scolv does
+   not use this group but sends magnitudes together with the
+   origin to the origin group.
+
+
+.. confval:: groups.location
+
+   Default: ``LOCATION``
+
+   Type: *string*
+
+   Defines the target messaging group for origins created in
+   e.g. scolv.
+
+
+.. confval:: groups.focalMechanism
+
+   Default: ``FOCMECH``
+
+   Type: *string*
+
+   Defines the target messaging group for focal mechanisms created in
+   e.g. scolv.
+
+
+.. confval:: groups.event
+
+   Default: ``EVENT``
+
+   Type: *string*
+
+   Defines the target messaging group for events and event
+   journal entries.
+
+
+.. confval:: map.location
+
+   Default: ``@DATADIR@/maps/world%s.png``
+
+   Type: *string*
+
+   Specified the location and the structure of the map tiles to be used. This
+   path is composed of zero or more directives and must include at least one
+   conversion specification which starts with is introduced by the character %
+   followed by a conversion specifier.  Valid specifiers are s \(replaced by
+   tile ID\), l \(tile level\), c \(tile column\) and r \(tile row\). An example for
+   using the OpenStreetMap file structure is \/path\/to\/maps\/%l\/%c\/%r.png.
+
+
+.. confval:: map.format
+
+   Default: ``rectangular``
+
+   Type: *string*
+
+   Projection of the map tiles. Supported formats are: rectangular and mercator.
+
+
+.. confval:: map.cacheSize
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *bytes*
+
+   Cache size of the map tiles. If 0 is specified a default
+   cache size of 32mb is used. The higher the cache size
+   the better the performance in higher resolutions. A
+   higher cache size causes less image loader calls but
+   requires more client memory.
+
+
+.. confval:: map.type
+
+   Type: *string*
+
+   Used to distinguish tile store implementations provided by plug\-ins.
+
+
+.. confval:: map.customLayers
+
+   Type: *list:string*
+
+   Allows to add custom layers that are included via plugins.
+   This is a list of layer names. A plugin must implement
+   the layer interface and register itself with the
+   name used in this list. The order of layers is the
+   default order. The custom layers are prepended to
+   the maps defaults layers such as the grid and the cities.
+
+
+.. confval:: map.layers
+
+   Type: *string*
+
+   Defines the order of all configured layers. This
+   includes the standard layers \(grid, cities\) as
+   well as custom layers. The name of the grid layer
+   is \"grid\" and the name of the cities
+   layer is \"cities\".
+
+
+.. note::
+   **map.layers.events.\***
+   *Configuration options for the events layer that*
+   *shows all events on the map that are loaded in the*
+   *event list.*
+
+
+
+.. confval:: map.layers.events.visible
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Show the events layer on maps. Currently only supported
+   by scolv.
+
+
+.. note::
+   **map.layers.fep.\***
+   *Configuration for the fep layer showing the polygons*
+   *of FEP (FLinn-Engdahl-Polygon) files on maps if they*
+   *exist in @DATADIR@/fep or @CONFIGDIR@/fep.*
+
+
+
+.. confval:: map.layers.fep.visible
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show the fep layer on maps.
+
+
+.. confval:: map.layers.cities.topPopulatedPlaces
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Maximum number of cities to be rendered. If
+   cityPopulationWeight is less or equal than 0 then
+   all cities are rendered ordered by population count,
+   highest first.
+   To show the N most populated places in the visible
+   map region, set
+   \"scheme.map.cityPopulationWeight\" to 0
+   and set this parameter to N.
+
+
+.. confval:: map.zoom.sensitivity
+
+   Default: ``0.5``
+
+   Type: *double*
+
+   Zoom sensitivity of the map
+
+
+.. note::
+   **scheme.\***
+   *This group defines various options for color, pen, brush, font, etc. for SeisComP*
+   *graphical user interfaces. There are various conventions to*
+   *define colors, fonts and gradients.*
+   **
+   *Colors are defined in HTML*
+   *convention, e.g. as rgb values, hexadecimal numbers or color*
+   *keyword names defined by W3C. If rgb or rgba is used, it must*
+   *be quoted because the comma is handled as list separator by*
+   *the configuration.*
+   *Examples: "rgb(255,0,0)", FF00FF40, green.*
+   **
+   *Gradients are configured as lists of tuples where each tuple*
+   *is colon separated in the form value:color. Value is either*
+   *int or double and color is again a color definition.*
+   *Example: 0:yellow,10:red*
+
+
+
+.. confval:: scheme.showMenu
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show menu bar.
+
+
+.. confval:: scheme.showStatusBar
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show status bar.
+
+
+.. confval:: scheme.tabPosition
+
+   Type: *string*
+
+   Set position if tab bar. An unset value lets the application
+   decide where to place the tab bar. This option might not be
+   supported by all applications. Valid positions are: off, north,
+   south, east, west
+
+
+.. confval:: scheme.map.stationSize
+
+   Default: ``8``
+
+   Type: *int*
+
+   Unit: *px*
+
+   The station symbol size \(e.g. in scmv\).
+
+
+.. confval:: scheme.map.originSymbolMinSize
+
+   Default: ``9``
+
+   Type: *int*
+
+   Unit: *px*
+
+   The origin symbol minimum size. The formula to compute the
+   size of the origin symbol is: 4.9\*\(M\-1.2\).
+
+
+.. confval:: scheme.map.vectorLayerAntiAlias
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Apply antialiasing to map layers.
+   This improves the visual quality but decreases performance.
+
+
+.. confval:: scheme.map.bilinearFilter
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Apply bilinear filtering to maps.
+   The bilinear filter improves the visual quality but decreases
+   performance slightly. It is only used for static map images.
+   Not while dragging.
+
+
+.. confval:: scheme.map.showGrid
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Display the latitude\/longitude grid on maps
+
+
+.. confval:: scheme.map.showCities
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show cities defined in \"citiesXML\" on maps
+
+
+.. confval:: scheme.map.cityPopulationWeight
+
+   Default: ``150``
+
+   Type: *int*
+
+   Controls at which zoom level a city will be visible. The
+   following formula is used:
+   screen_width \(km\) \* weight >\= population
+
+
+.. confval:: scheme.map.showLayers
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Show custom layers on maps
+
+
+.. confval:: scheme.map.showLegends
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Show map legends initially. Some applications provide
+   controls to toggle the visibility in addition to this
+   option.
+
+
+.. confval:: scheme.map.projection
+
+   Default: ``Rectangular``
+
+   Type: *string*
+
+   SeisComP ships with the rectangular projection built\-in.
+   Other projections may be provided through plugins.
+
+
+.. confval:: scheme.map.toBGR
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Converts map colors from RGB color scheme to BGR.
+
+
+.. confval:: scheme.map.polygonRoughness
+
+   Default: ``3``
+
+   Type: *int*
+
+   Unit: *px*
+
+   Minimum screen distance to plot a polygon or polyline line segment.
+
+
+.. confval:: scheme.colors.background
+
+   Type: *color*
+
+   A general application background color. Can be used to give
+   each application a different background color. An unset value
+   lets Qt decide.
+
+
+.. confval:: scheme.colors.agencies
+
+   Type: *list:string-tuples*
+
+   Sets desired colors for particular agencyIDs. It depends on the
+   applications if they honor this setting or not. The event list
+   will render the agencyID string with the defined colors.
+   This is a list of tuples \(AGENCY:COLOR\),
+   e.g. \"GEOFON:black, USGS:blue\".
+
+
+.. confval:: scheme.colors.map.lines
+
+   Type: *color*
+
+   The color of lines in the map \(e.g. lines
+   connecting the origin and a station\).
+
+
+.. confval:: scheme.colors.map.outlines
+
+   Type: *color*
+
+   The color of station outlines in the map.
+
+
+.. confval:: scheme.colors.map.stationAnnotations
+
+   Type: *color*
+
+   The color of station annotations.
+
+
+.. confval:: scheme.colors.map.cityLabels
+
+   Type: *color*
+
+   The color of city labels.
+
+
+.. confval:: scheme.colors.map.cityOutlines
+
+   Type: *color*
+
+   The color of city outlines.
+
+
+.. confval:: scheme.colors.map.cityCapital
+
+   Type: *color*
+
+   The color of a capital.
+
+
+.. confval:: scheme.colors.map.cityNormal
+
+   Type: *color*
+
+   The color of a \"normal\" city.
+
+
+.. note::
+   **scheme.colors.map.grid.\***
+   *Defines the pen of the latitude/longitude grid of the map.*
+
+
+
+.. confval:: scheme.colors.map.grid.color
+
+   Default: ``FFFFFF``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.map.grid.style
+
+   Default: ``DotLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.map.grid.width
+
+   Default: ``1``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.map.annotations.\***
+   *Appearance of map annotations including a text*
+   *color (pen), a border color (pen) and a background*
+   *color (brush).*
+
+
+
+.. confval:: scheme.colors.map.annotations.textSize
+
+   Default: ``9``
+
+   Type: *int*
+
+   Unit: *pt*
+
+   Font point size of the label text.
+
+
+.. note::
+   **scheme.colors.map.annotations.normalText.\***
+   *Text pen for non highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.normalText.color
+
+   Default: ``c0c0c0``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.map.annotations.normalText.style
+
+   Default: ``SolidLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.map.annotations.normalText.width
+
+   Default: ``1``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.map.annotations.normalBorder.\***
+   *Border pen for non highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.normalBorder.color
+
+   Default: ``a0a0a4``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.map.annotations.normalBorder.style
+
+   Default: ``SolidLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.map.annotations.normalBorder.width
+
+   Default: ``1``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.map.annotations.normalBackground.\***
+   *Background brush for non highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.normalBackground.color
+
+   Default: ``202020c0``
+
+   Type: *color*
+
+   The color of the brush.
+
+
+.. confval:: scheme.colors.map.annotations.normalBackground.style
+
+   Default: ``solid``
+
+   Type: *string*
+
+   The style of the brush. Supported values are, e.g.:
+   solid, dense1, dense7, horizontal, vertical,
+   cross, bdiag, fdiag, diagcross.
+
+
+.. note::
+   **scheme.colors.map.annotations.highlightedText.\***
+   *Text pen for highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.highlightedText.color
+
+   Default: ``000000``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.map.annotations.highlightedText.style
+
+   Default: ``SolidLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.map.annotations.highlightedText.width
+
+   Default: ``1``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.map.annotations.highlightedBorder.\***
+   *Border pen for highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.highlightedBorder.color
+
+   Default: ``a0a0a4``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.map.annotations.highlightedBorder.style
+
+   Default: ``SolidLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.map.annotations.highlightedBorder.width
+
+   Default: ``1``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.map.annotations.highlightedBackground.\***
+   *Background brush for highlighted annotations.*
+
+
+
+.. confval:: scheme.colors.map.annotations.highlightedBackground.color
+
+   Default: ``ffffffa0``
+
+   Type: *color*
+
+   The color of the brush.
+
+
+.. confval:: scheme.colors.map.annotations.highlightedBackground.style
+
+   Default: ``solid``
+
+   Type: *string*
+
+   The style of the brush. Supported values are, e.g.:
+   solid, dense1, dense7, horizontal, vertical,
+   cross, bdiag, fdiag, diagcross.
+
+
+.. confval:: scheme.colors.records.foreground
+
+   Default: ``808080``
+
+   Type: *color*
+
+   The general color of records\/traces.
+
+
+.. confval:: scheme.colors.records.alternateForeground
+
+   Default: ``808080``
+
+   Type: *color*
+
+   A general trace color of the alternate trace \(eg scheli\).
+
+
+.. confval:: scheme.colors.records.background
+
+   Type: *color*
+
+   The general background color of records\/traces.
+
+
+.. confval:: scheme.colors.records.alternateBackground
+
+   Type: *color*
+
+   A general background color of the alternate trace.
+
+
+.. confval:: scheme.colors.records.spectrogram
+
+   Default: ``000000``
+
+   Type: *color*
+
+   The trace color used on top of a spectrogram.
+
+
+.. confval:: scheme.colors.records.gaps
+
+   Default: ``FFFF0040``
+
+   Type: *color*
+
+   The color of data gaps in trace views.
+
+
+.. confval:: scheme.colors.records.overlaps
+
+   Default: ``FF00FF40``
+
+   Type: *color*
+
+   The color of data overlaps in trace views.
+
+
+.. confval:: scheme.colors.records.alignment
+
+   Default: ``FF0000``
+
+   Type: *color*
+
+   The color of the alignment marker in trace views.
+
+
+.. note::
+   **scheme.colors.records.borders.\***
+   *Properties of record borders*
+
+
+
+.. note::
+   **scheme.colors.records.borders.standard.\***
+   *Standard properties*
+
+
+
+.. note::
+   **scheme.colors.records.borders.standard.pen.\***
+   *Defines the pen of the border line.*
+
+
+
+.. confval:: scheme.colors.records.borders.standard.pen.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.standard.pen.style
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.borders.standard.pen.width
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.borders.standard.brush.\***
+   *Defines the brush of the enlcosed area.*
+
+
+
+.. confval:: scheme.colors.records.borders.standard.brush.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.standard.brush.style
+
+   Type: *string*
+
+   The style of the brush. Supported values are, e.g.:
+   solid, dense1, dense7, horizontal, vertical,
+   cross, bdiag, fdiag, diagcross.
+
+
+.. note::
+   **scheme.colors.records.borders.signatureValid.\***
+   *Properties for records with valid signatures*
+
+
+
+.. note::
+   **scheme.colors.records.borders.signatureValid.pen.\***
+   *Defines the pen of the border line.*
+
+
+
+.. confval:: scheme.colors.records.borders.signatureValid.pen.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.signatureValid.pen.style
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.borders.signatureValid.pen.width
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.borders.signatureValid.brush.\***
+   *Defines the brush of the enlcosed area.*
+
+
+
+.. confval:: scheme.colors.records.borders.signatureValid.brush.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.signatureValid.brush.style
+
+   Type: *string*
+
+   The style of the pen. Supported values are, e.g.:
+   solid, dense1, dense7, horizontal, vertical,
+   cross, bdiag, fdiag, diagcross.
+
+
+.. note::
+   **scheme.colors.records.borders.signatureInvalid.\***
+   *Properties for records with invalid signatures*
+
+
+
+.. note::
+   **scheme.colors.records.borders.signatureInvalid.pen.\***
+   *Defines the pen of the border line.*
+
+
+
+.. confval:: scheme.colors.records.borders.signatureInvalid.pen.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.signatureInvalid.pen.style
+
+   Type: *string*
+
+   The style of the pen. Supported values are:
+   NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.borders.signatureInvalid.pen.width
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.borders.signatureInvalid.brush.\***
+   *Defines the brush of the enlcosed area.*
+
+
+
+.. confval:: scheme.colors.records.borders.signatureInvalid.brush.color
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.borders.signatureInvalid.brush.style
+
+   Type: *string*
+
+   The style of the pen. Supported values are, e.g.:
+   solid, dense1, dense7, horizontal, vertical,
+   cross, bdiag, fdiag, diagcross.
+
+
+.. note::
+   **scheme.colors.records.offset.\***
+   *Defines the pen of the record offset line.*
+
+
+
+.. confval:: scheme.colors.records.offset.color
+
+   Default: ``C0C0FF``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.offset.style
+
+   Default: ``SolidLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.offset.width
+
+   Default: ``0.0``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.gridPen.\***
+   *Defines the pen of the record grid.*
+
+
+
+.. confval:: scheme.colors.records.gridPen.color
+
+   Default: ``00000020``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.gridPen.style
+
+   Default: ``DashLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.gridPen.width
+
+   Default: ``1.0``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.subGridPen.\***
+   *Defines the pen of the secondary record grid.*
+
+
+
+.. confval:: scheme.colors.records.subGridPen.color
+
+   Default: ``00000000``
+
+   Type: *color*
+
+   The color of the pen.
+
+
+.. confval:: scheme.colors.records.subGridPen.style
+
+   Default: ``DotLine``
+
+   Type: *string*
+
+   The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+
+
+.. confval:: scheme.colors.records.subGridPen.width
+
+   Default: ``1.0``
+
+   Type: *double*
+
+   Unit: *px*
+
+   The width of the pen.
+
+
+.. note::
+   **scheme.colors.records.states.\***
+   *Defines the background color of records depending on their state.*
+
+
+
+.. confval:: scheme.colors.records.states.unrequested
+
+   Default: ``00000080``
+
+   Type: *color*
+
+   Additional data which was not requested.
+
+
+.. confval:: scheme.colors.records.states.requested
+
+   Default: ``ffff0080``
+
+   Type: *color*
+
+   Requested data Background color of requested data.
+
+
+.. confval:: scheme.colors.records.states.inProgress
+
+   Default: ``00ff0010``
+
+   Type: *color*
+
+   Data currently loading.
+
+
+.. confval:: scheme.colors.records.states.notAvailable
+
+   Default: ``ff000080``
+
+   Type: *color*
+
+   Data which was requested but is not available.
+
+
+.. confval:: scheme.colors.picks.manual
+
+   Default: ``00FF00``
+
+   Type: *color*
+
+   The color of manual picks.
+
+
+.. confval:: scheme.colors.picks.automatic
+
+   Default: ``FF0000``
+
+   Type: *color*
+
+   The color of automatic picks.
+
+
+.. confval:: scheme.colors.picks.undefined
+
+   Default: ``A0A0A4``
+
+   Type: *color*
+
+   The color of picks with undefined state.
+
+
+.. confval:: scheme.colors.picks.disabled
+
+   Default: ``A0A0A4``
+
+   Type: *color*
+
+   The color of disabled picks.
+
+
+.. confval:: scheme.colors.arrivals.manual
+
+   Default: ``00A000``
+
+   Type: *color*
+
+   The color of manual arrivals \(arrivals that bind manual picks,
+   e.g. residual plot of scolv, manual picker, ...\)
+
+
+.. confval:: scheme.colors.arrivals.automatic
+
+   Default: ``A00000``
+
+   Type: *color*
+
+   The color of automatic arrivals,
+
+
+.. confval:: scheme.colors.arrivals.theoretical
+
+   Default: ``0000A0``
+
+   Type: *color*
+
+   The color of theoretical arrivals.
+
+
+.. confval:: scheme.colors.arrivals.undefined
+
+   Default: ``A00000``
+
+   Type: *color*
+
+   The color of arrivals binding picks with undefined state.
+
+
+.. confval:: scheme.colors.arrivals.disabled
+
+   Default: ``A0A0A4``
+
+   Type: *color*
+
+   The color of disabled arrivals.
+
+
+.. confval:: scheme.colors.arrivals.residuals
+
+   Type: *gradient*
+
+   The gradient of arrivals residuals. A gradient is defined as
+   a list of tuples separated by colon where the first item is
+   the value and the second is the color. Colors can be given in
+   rgb notation or hexadecimal. When rgb is used double quotes are needed to
+   protect the comma inside the rgb definition, e.g.
+   \-8:\"rgb\(0,0,100\)\", \-4:\"rgb\(0,0,255\)\", \-3:\"rgb\(100,100,255\)\", ...
+
+
+.. confval:: scheme.colors.magnitudes.set
+
+   Default: ``00A000``
+
+   Type: *color*
+
+   The color of active magnitudes.
+
+
+.. confval:: scheme.colors.magnitudes.unset
+
+   Default: ``000000``
+
+   Type: *color*
+
+   The color of inactive magnitudes.
+
+
+.. confval:: scheme.colors.magnitudes.disabled
+
+   Default: ``A0A0A4``
+
+   Type: *color*
+
+   The color of disabled magnitudes.
+
+
+.. confval:: scheme.colors.magnitudes.residuals
+
+   Type: *gradient*
+
+   The gradient of magnitude residuals.
+
+
+.. confval:: scheme.colors.stations.text
+
+   Default: ``ffffff``
+
+   Type: *color*
+
+   The color of the station name.
+
+
+.. confval:: scheme.colors.stations.associated
+
+   Default: ``82AD58``
+
+   Type: *color*
+
+   The color of associated stations \(e.g. in scmv\).
+
+
+.. confval:: scheme.colors.stations.triggering
+
+   Type: *color*
+
+   The color of triggered stations.
+
+
+.. confval:: scheme.colors.stations.triggered0
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.stations.triggered1
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.stations.triggered2
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.stations.disabled
+
+   Type: *color*
+
+   The color of disabled stations.
+
+
+.. confval:: scheme.colors.stations.idle
+
+   Type: *color*
+
+   The color of idle stations.
+
+
+.. note::
+   **scheme.colors.qc.\***
+   *The color of QC.delay thresholds in scmv.*
+
+
+
+.. confval:: scheme.colors.qc.delay0
+
+   Default: ``00ffff``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay1
+
+   Default: ``00ff00``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay2
+
+   Default: ``fffd00``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay3
+
+   Default: ``ff6633``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay4
+
+   Default: ``ff0000``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay5
+
+   Default: ``cccccc``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay6
+
+   Default: ``999999``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.delay7
+
+   Default: ``666666``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.qcWarning
+
+   Default: ``ffff00``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.qcError
+
+   Default: ``ff0000``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.qcOk
+
+   Default: ``00ff00``
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.qc.qcNotSet
+
+   Default: ``000000``
+
+   Type: *color*
+
+   *No description available*
+
+.. note::
+   **scheme.colors.gm.\***
+   *The color of ground motion amplitudes in scmv.*
+
+
+
+.. confval:: scheme.colors.gm.gm0
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm1
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm2
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm3
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm4
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm5
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm6
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm7
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm8
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gm9
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.gm.gmNotSet
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.recordView.selectedTraceZoom
+
+   Default: ``C0C0FFC0``
+
+   Type: *color*
+
+   The color of the selected zoom area \(e.g. manual picker\).
+
+
+.. confval:: scheme.colors.legend.background
+
+   Type: *color*
+
+   The map legend background color.
+
+
+.. confval:: scheme.colors.legend.border
+
+   Type: *color*
+
+   The map legend border color.
+
+
+.. confval:: scheme.colors.legend.text
+
+   Type: *color*
+
+   The map legend text color.
+
+
+.. confval:: scheme.colors.legend.headerText
+
+   Type: *color*
+
+   The map legend header color.
+
+
+.. confval:: scheme.colors.originSymbol.classic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.colors.originSymbol.depth.gradient
+
+   Default: ``0:FF0000,50:ffA500,100:FFFF00,250:00FF00,600:0000FF``
+
+   Type: *gradient*
+
+   The depth gradient.
+
+
+.. confval:: scheme.colors.originSymbol.depth.discrete
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Setting this parameter to true will not interpolate between
+   the depth steps and the color for a depth <\= input is used.
+
+
+.. note::
+   **scheme.colors.originStatus.\***
+   *The origin status colors (e.g. in event list).*
+
+
+
+.. confval:: scheme.colors.originStatus.automatic
+
+   Type: *color*
+
+   *No description available*
+
+.. confval:: scheme.colors.originStatus.manual
+
+   Type: *color*
+
+   *No description available*
+
+.. note::
+   **scheme.colors.splash.\***
+   *Defines colors used in the splash screen shown at application startup.*
+
+
+
+.. confval:: scheme.colors.splash.message
+
+   Default: ``808080``
+
+   Type: *color*
+
+   Text color of the message string.
+
+
+.. confval:: scheme.colors.splash.version
+
+   Default: ``02589e``
+
+   Type: *color*
+
+   Text color of the version string.
+
+
+.. confval:: scheme.marker.lineWidth
+
+   Type: *int*
+
+   Unit: *px*
+
+   The line width of the marker \(e.g. picks of manual picker\).
+
+
+.. confval:: scheme.records.lineWidth
+
+   Default: ``1``
+
+   Type: *int*
+
+   Unit: *px*
+
+   The line width of the records \/ traces.
+
+
+.. confval:: scheme.records.antiAliasing
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Configures antialiasing of records \/ traces. Antialiasing
+   needs more two times to storage space as non antialiasing
+   but it improves visual quality.
+
+
+.. confval:: scheme.records.optimize
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Configures optimization of trace polylines. If activated
+   then lines on the same pixel line or same pixel row
+   collapse into single lines.
+
+
+.. confval:: scheme.records.borders.drawMode
+
+   Default: ``box``
+
+   Type: *string*
+
+   Mode for drawing record borders as box or line on top or
+   bottom.
+   
+   Supported values: \"topline\",\"box\",\"bottomline\"
+
+
+.. note::
+   **scheme.fonts.base.\***
+   *The general base font of an application. This overrides*
+   *the default Qt4 application font.*
+
+
+
+.. confval:: scheme.fonts.base.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.base.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.base.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.base.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.base.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.base.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.small.\***
+   *The smallest available font. If undefined the point size is 2 points smaller than the base font.*
+
+
+
+.. confval:: scheme.fonts.small.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.small.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.small.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.small.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.small.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.small.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.normal.\***
+   *The default text font. If undefined the point size is 2 points larger than the base font.*
+
+
+
+.. confval:: scheme.fonts.normal.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.normal.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.normal.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.normal.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.normal.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.normal.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.large.\***
+   *The largest text font. If undefined the point size is 6 points larger than the base font.*
+
+
+
+.. confval:: scheme.fonts.large.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.large.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.large.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.large.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.large.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.large.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.highlight.\***
+   *Font used to highlight text. If undefined it equals the normal font except for a bold font face.*
+
+
+
+.. confval:: scheme.fonts.highlight.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.highlight.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.highlight.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.highlight.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.highlight.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.highlight.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.heading1.\***
+   *The largest heading font. If undefined it uses a bold font face and a font size twice as large as the normal font.*
+
+
+
+.. confval:: scheme.fonts.heading1.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.heading1.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.heading1.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading1.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading1.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading1.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.heading2.\***
+   *The second largest heading font. If undefined it uses a bold font face and a font size twice as large as the base font.*
+
+
+
+.. confval:: scheme.fonts.heading2.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.heading2.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.heading2.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading2.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading2.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading2.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.heading3.\***
+   *The smallest heading font. If undefined it uses a bold font face and a font size 4 points larger than the base font.*
+
+
+
+.. confval:: scheme.fonts.heading3.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.heading3.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.heading3.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading3.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading3.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.heading3.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.cityLabels.\***
+   *Font used for city labels. If undefined it equals the base font.*
+
+
+
+.. confval:: scheme.fonts.cityLabels.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.cityLabels.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.cityLabels.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.cityLabels.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.cityLabels.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.cityLabels.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.splashVersion.\***
+   *Font used for version string in the splash dialog shown at application startup. If undefined it equals the base font with a bold font face and a font size of 12.*
+
+
+
+.. confval:: scheme.fonts.splashVersion.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.splashVersion.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.splashVersion.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashVersion.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashVersion.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashVersion.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. note::
+   **scheme.fonts.splashMessage.\***
+   *Font used for the message text in the splash dialog shown at application startup. If undefined it equals the base font with a font size of 12.*
+
+
+
+.. confval:: scheme.fonts.splashMessage.family
+
+   Type: *string*
+
+   Sets the family name of the font. The name is case insensitive and may include a foundry name.
+
+
+.. confval:: scheme.fonts.splashMessage.size
+
+   Type: *int*
+
+   Defines the point size of the font
+
+
+.. confval:: scheme.fonts.splashMessage.bold
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashMessage.italic
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashMessage.underline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.fonts.splashMessage.overline
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   *No description available*
+
+.. confval:: scheme.precision.depth
+
+   Default: ``0``
+
+   Type: *int*
+
+   The precision of depth values.
+
+
+.. confval:: scheme.precision.distance
+
+   Default: ``1``
+
+   Type: *int*
+
+   The precision of distance values.
+
+
+.. confval:: scheme.precision.location
+
+   Default: ``2``
+
+   Type: *int*
+
+   The precision of lat\/lon values.
+
+
+.. confval:: scheme.precision.magnitude
+
+   Default: ``1``
+
+   Type: *int*
+
+   The precision of magnitude values.
+
+
+.. confval:: scheme.precision.originTime
+
+   Default: ``0``
+
+   Type: *int*
+
+   The precision of origin times.
+
+
+.. confval:: scheme.precision.pickTime
+
+   Default: ``1``
+
+   Type: *int*
+
+   The precision of pick times.
+
+
+.. confval:: scheme.precision.traceValues
+
+   Default: ``1``
+
+   Type: *int*
+
+   Precision of displayed offset\/amp in all trace widgets.
+
+
+.. confval:: scheme.precision.rms
+
+   Default: ``1``
+
+   Type: *int*
+
+   Precision of RMS values.
+
+
+.. confval:: scheme.precision.uncertainties
+
+   Default: ``0``
+
+   Type: *int*
+
+   Precision of uncertainty values, e.g. latitude errors.
+
+
+.. confval:: scheme.unit.distanceInKM
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Display distances in km?
+
+
+.. confval:: scheme.dateTime.useLocalTime
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Display times in localtime or UTC \(default\).
+
+
+.. note::
+   **scheme.splash.\***
+   *Defines the appearance of the splash screen shown at application startup.*
+
+
+
+.. note::
+   **scheme.splash.message.\***
+   *Position of the message text.*
+
+
+
+.. confval:: scheme.splash.message.align
+
+   Default: ``44``
+
+   Type: *int*
+
+   Qt::Alignment bit mask. Default: AlignHCenter \| AlignBottom
+
+
+.. note::
+   **scheme.splash.message.pos.\***
+   *Position in screen coordinates.*
+
+
+
+.. confval:: scheme.splash.message.pos.x
+
+   Default: ``200``
+
+   Type: *int*
+
+   Unit: *px*
+
+   Horizontal position.
+
+
+.. confval:: scheme.splash.message.pos.y
+
+   Default: ``260``
+
+   Type: *int*
+
+   Unit: *px*
+
+   Vertical position.
+
+
+.. note::
+   **scheme.splash.version.\***
+   *Position of the version string*
+
+
+
+.. confval:: scheme.splash.version.align
+
+   Default: ``34``
+
+   Type: *int*
+
+   Qt::Alignment bit mask. Default: AlignRight \| AlignBottom
+
+
+.. note::
+   **scheme.splash.version.pos.\***
+   *Position in screen coordinates.*
+
+
+
+.. confval:: scheme.splash.version.pos.x
+
+   Default: ``362``
+
+   Type: *int*
+
+   Unit: *px*
+
+   Horizontal position.
+
+
+.. confval:: scheme.splash.version.pos.y
+
+   Default: ``190``
+
+   Type: *int*
+
+   Unit: *px*
+
+   Vertical position.
+
+
+.. note::
+   **events.timeAgo.\***
+   *Defines maximum age of events to load. The value of all parameters are aggregated.*
+
+
+
+.. confval:: events.timeAgo.days
+
+   Default: ``1``
+
+   Type: *int*
+
+   Unit: *d*
+
+   Age in days.
+
+
+.. confval:: events.timeAgo.hours
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *h*
+
+   Age in hours.
+
+
+.. confval:: events.timeAgo.minutes
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *m*
+
+   Age in minutes.
+
+
+.. confval:: events.timeAgo.seconds
+
+   Default: ``0``
+
+   Type: *int*
+
+   Unit: *s*
+
+   Age in seconds.
+
+
+.. note::
+   **mode.\***
+   *Configuration of special applications modes.*
+
+
+
+.. confval:: mode.interactive
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Defines if application interaction is allowed.
+
+
+.. confval:: mode.fullscreen
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Defines if the application should be launched in fullscreen
+   mode hiding title bar, main menu and status bar.
+
+
+.. confval:: picker.filters
+
+   Default: ``"BP 0.1 - 1 Hz  3rd order;RMHP(10)>>ITAPER(30)>>BW(3,0.1,1)",      "BP 0.1 - 2 Hz  3rd order;RMHP(10)>>ITAPER(30)>>BW(3,0.1,2)",      "BP 1 - 3 Hz  3rd order;RMHP(10)>>ITAPER(30)>>BW(3,1.0,3)",      "BP 0.4 - 1 Hz  3rd order;RMHP(10)>>ITAPER(30)>>BW(3,0.4,1)",      "@BP 0.7 - 2 Hz  3rd order;RMHP(10)>>ITAPER(30)>>BW(3,0.7,2)",      "BP 2 - 4 Hz  3rd order;RMHP(5)>>ITAPER(10)>>BW(3,2.0,4)",      "BP 3 - 6 Hz  3rd order;RMHP(5)>>ITAPER(10)>>BW(3,3.0,6)",      "BP 4 - 8 Hz  3rd order;RMHP(5)>>ITAPER(10)>>BW(3,4.0,8)",      "BP 1 - 5 Hz  3rd order;RMHP(5)>>ITAPER(10)>>BW(3,1.0,5)",      "HP 3 Hz  3rd order;RMHP(1)>>ITAPER(2)>>BW_HP(3,3)",      "BP 0.7 - 2 Hz + STA/LTA(1,50);RMHP(10)->ITAPER(30)->BW(3,0.7,2)->STALTA(1,50)"``
+
+   Type: *list:string*
+
+   Configures the default filters selectable in manual picker.
+   The entry with a leading \"\@\" is selected as default filter.
+
+
+.. note::
+   **eventlist.\***
+   *Control the Events tab, e.g. in scolv, showing the list of loaded events.*
+
+
+
+.. confval:: eventlist.visibleColumns
+
+   Default: ``M,MType,Phases,RMS,Lat,Lon,Depth,Stat,Agency,Region,ID``
+
+   Type: *list:string*
+
+   Configure the columns of the event list that are visible
+   initially. The first column containing the origin time is
+   always visible and cannot be hidden. Possible values are:
+   
+   Certainty, Type, M, MType, RMS, AzGap, Phases, Lat, Lon, Depth, DType,
+   Stat, FM, Origins, Agency, Author, Region, ID.
+   
+   Custom columns can be added by eventlist.customColumn.\* or
+   eventlist.scripts.\* parameters.
+
+
+.. note::
+   **eventlist.customColumn.\***
+   *Custom column showing origin or event comments.*
+
+
+
+.. confval:: eventlist.customColumn.name
+
+   Type: *string*
+
+   Name of the custom column to be shown in the column
+   header.
+
+
+.. confval:: eventlist.customColumn.originCommentID
+
+   Type: *string*
+
+   ID of the origin comment to look up.
+
+
+.. confval:: eventlist.customColumn.eventCommentID
+
+   Type: *string*
+
+   ID of the event comment to look up.
+   
+   originCommentID, if configured, takes priority.
+
+
+.. confval:: eventlist.customColumn.pos
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Position of the column. If the configured position is
+   less than 0 or if it exceeds the total number of columns,
+   then the column is appended to the right.
+
+
+.. confval:: eventlist.customColumn.default
+
+   Type: *string*
+
+   Default value to display if the specified origin or
+   event comment id was not found.
+
+
+.. confval:: eventlist.customColumn.colors
+
+   Type: *list:string*
+
+   Mapping of comment values to colors used as text color.
+   E.g. \"foo:#000,bar:red\".
+
+
+.. note::
+   **eventlist.scripts.\***
+   *Custom columns showing parameters extracted by scripts e.g.*
+   *from origins or events.*
+
+
+
+.. confval:: eventlist.scripts.columns
+
+   Type: *list:string*
+
+   Name of custom column profiles to be registered. Comma
+   separated list.
+
+
+.. note::
+   **eventlist.scripts.column.\***
+   *Definition of custom column profiles for creating custom*
+   *event list columns whose values are filled by external scripts.*
+   *The scolv documentation provides an example script.*
+
+
+
+.. note::
+
+   **eventlist.scripts.column.$name.\***
+   $name is a placeholder for the name to be used and needs to be added to :confval:`eventlist.scripts.profiles` to become active.
+
+   .. code-block:: sh
+
+      eventlist.scripts.profiles = a,b
+      eventlist.scripts.column.a.value1 = ...
+      eventlist.scripts.column.b.value1 = ...
+      # c is not active because it has not been added
+      # to the list of eventlist.scripts.profiles
+      eventlist.scripts.column.c.value1 = ...
+
+
+.. confval:: eventlist.scripts.column.$name.script
+
+   Type: *path*
+
+   External script to invoke for each event list entry. The object represented by the
+   list entry is serialized to XML and passed to the script on stdin. If the return
+   code of the script is 0 \('success'\) then the script result is read from stdout and
+   displayed in the corresponding event list cell.
+
+
+.. confval:: eventlist.scripts.column.$name.pos
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Position of the column. If the configured position is less than 0 or if it
+   exceeds the total number of columns, then the column is appended to the right.
+
+
+.. confval:: eventlist.scripts.column.$name.label
+
+   Type: *string*
+
+   Column name shown in header of event list table.
+
+
+.. confval:: eventlist.scripts.column.$name.types
+
+   Type: *list:string*
+
+   Object types passed to the script.
+   Supported values are 'Event' and 'Origin'.
+   Mandatory parameter.
+
+
+.. note::
+   **eventlist.filter.agencies.\***
+   *Filter the loaded event list by agency ID.*
+
+
+
+.. confval:: eventlist.filter.agencies.label
+
+   Default: ``Show only own events``
+
+   Type: *string*
+
+   Defines the text of the option \"Show only own events\".
+   Use double quotes '\"' around the string if it contains spaces.
+
+
+.. confval:: eventlist.filter.agencies.whitelist
+
+   Type: *list:string*
+
+   Sets a list of preferred agencies. Events from preferred
+   agencies are defined as \"own\" events.
+
+
+.. confval:: eventlist.filter.agencies.type
+
+   Default: ``events``
+
+   Type: *string*
+
+   Sets the type of the filter. If type is \"events\" the agency
+   of the preferred origin of the event is checked.
+   If type is \"origins\" the agency of all origins of
+   an event is checked and if at least one origins agency is part
+   of the whitelist it will pass the filter. Or in other words,
+   the event is hidden if no origin is from a preferred agency.
+
+
+.. confval:: eventlist.filter.agencies.enabled
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Sets the default state of the \"Show only own events\"
+   option.
+
+
+.. note::
+   **eventlist.filter.regions.\***
+   *Filter the loaded event list by region within or outside a*
+   *bounding box. Register the profile name in the regions parameter.*
+
+
+
+.. confval:: eventlist.filter.regions.profiles
+
+   Type: *list:string*
+
+   Add the defined region profiles separated by comma.
+   The order determines the ocurrence in the filter menu.
+
+
+.. confval:: eventlist.filter.regions.enabled
+
+   Default: ``false``
+
+   Type: *boolean*
+
+   Hide events by the defined region by default.
+
+
+.. note::
+
+   **eventlist.filter.regions.region.$name.\***
+   *Define a rectangular region to filter the loaded event list.*
+   $name is a placeholder for the name to be used and needs to be added to :confval:`eventlist.filter.regions.profiles` to become active.
+
+   .. code-block:: sh
+
+      eventlist.filter.regions.profiles = a,b
+      eventlist.filter.regions.region.a.value1 = ...
+      eventlist.filter.regions.region.b.value1 = ...
+      # c is not active because it has not been added
+      # to the list of eventlist.filter.regions.profiles
+      eventlist.filter.regions.region.c.value1 = ...
+
+
+.. confval:: eventlist.filter.regions.region.$name.name
+
+   Type: *string*
+
+   Defines the name of the region that shows up in the
+   listbox.
+
+
+.. confval:: eventlist.filter.regions.region.$name.rect
+
+   Type: *list:double*
+
+   Defines a rectangular region with a list of 4 values:
+   latmin, lonmin, latmax, lonmax.
+
+
+.. confval:: eventlist.filter.regions.region.$name.poly
+
+   Type: *string*
+
+   Defines the name of the polygon for the region check.
+   If defined then the rect region has no effect.
+   The configured polygon name is being search for
+   in the global FEP regions and the spatial
+   vector layer. The first polygon found with
+   the given name will be taken.
+
+
+.. note::
+   **eventlist.filter.types.\***
+   *Filter the loaded event list by event types.*
+
+
+
+.. confval:: eventlist.filter.types.label
+
+   Default: ``"Hide other/fake events"``
+
+   Type: *string*
+
+   Defines the text of the option \"Hide other\/fake events\".
+   Use double quotes '\"' around the string if it contains spaces.
+
+
+.. confval:: eventlist.filter.types.blacklist
+
+   Default: ``"not existing"``
+
+   Type: *list:string*
+
+   List of event type to be hidden if the \"Hide other\/fake events\"
+   option is ticked.
+   Use double quotes '\"' around the string if it contains spaces.
+
+
+.. confval:: eventlist.filter.types.enabled
+
+   Default: ``true``
+
+   Type: *boolean*
+
+   Sets the default state of the \"Hide other\/fake events\"
+   option.
+
+
+.. note::
+   **eventlist.filter.database.\***
+   *Pre-set options to filter a database request to load events*
+   *into the event list.*
+
+
+
+.. confval:: eventlist.filter.database.minlat
+
+   Type: *double*
+
+   Unit: *deg*
+
+   Minimum latitude
+
+
+.. confval:: eventlist.filter.database.maxlat
+
+   Type: *double*
+
+   Unit: *deg*
+
+   Maximum latitude
+
+
+.. confval:: eventlist.filter.database.minlon
+
+   Type: *double*
+
+   Unit: *deg*
+
+   Minimum longitude
+
+
+.. confval:: eventlist.filter.database.maxlon
+
+   Type: *double*
+
+   Unit: *deg*
+
+   Maximum longitude
+
+
+.. confval:: eventlist.filter.database.mindepth
+
+   Type: *double*
+
+   Unit: *km*
+
+   Minimum depth
+
+
+.. confval:: eventlist.filter.database.maxdepth
+
+   Type: *double*
+
+   Unit: *km*
+
+   Maximum depth
+
+
+.. confval:: eventlist.filter.database.minmag
+
+   Type: *double*
+
+   Minimum magnitude
+
+
+.. confval:: eventlist.filter.database.maxmag
+
+   Type: *double*
+
+   Maximum magnitude
+
+
+.. note::
+   **eventedit.\***
+   *Control the Event tab, e.g. in scolv, showing origins and*
+   *focal mechanisms of a selected event.*
+
+
+
+.. confval:: eventedit.origin.visibleColumns
+
+   Default: ``Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID``
+
+   Type: *list:string*
+
+   Configure the columns of the event edit origin table
+   that are visible initially. Origin creation time and
+   origin time are always visible.
+   Possible values are:
+   
+   Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID
+
+
+.. note::
+   **eventedit.origin.customColumn.\***
+   *Custom column showing origin comments.*
+
+
+
+.. confval:: eventedit.origin.customColumn.name
+
+   Type: *string*
+
+   Name of the custom column to be shown in the column
+   header.
+
+
+.. confval:: eventedit.origin.customColumn.originCommentID
+
+   Type: *string*
+
+   ID of the origin comment to look up.
+
+
+.. confval:: eventedit.origin.customColumn.pos
+
+   Default: ``-1``
+
+   Type: *int*
+
+   Position of the column. If the configured position is less than 0 or if it
+   exceeds the total number of columns then the column is appended to the right.
+
+
+.. confval:: eventedit.origin.customColumn.default
+
+   Type: *string*
+
+   Default value to display if the specified origin or event comment id was not found.
+
+
+.. confval:: eventedit.origin.customColumn.colors
+
+   Type: *list:string*
+
+   Mapping of comment values to colors used as text color. E.g. \"foo:#000,bar:red\".
+
+
+.. confval:: eventedit.fm.visibleColumns
+
+   Default: ``Depth, M, Count, Misfit, STDR, AzGap, Stat, DC, CLVD, ISO, S1, D1, R1, S2, D2, R2, Agency, Author``
+
+   Type: *list:string*
+
+   Configure the columns of the event edit focal mechanism
+   tab that are visible initially.
+   Possible values are: Depth, M, Count, Misfit, STDR,
+   AzGap, Stat, DC, CLVD, ISO, S1,
+   D1, R1, S2, D2, R2, Agency, Author
+
+
+.. note::
+   **eventsummary.\***
+   *Parameters controlling the event summary view used e.g. in scolv.*
+
+
+
+.. confval:: eventsummary.alertTimer.commentId
+
+   Type: *string*
+
+   Set an alert for every event comment that ID matches
+   the specified regular expression, e.g. \"alert_.\*\".
+
+
+.. confval:: eventsummary.alertTimer.commentBlacklist
+
+   Type: *list:string*
+
+   List of comments to ignore, e.g. \"nil\".
+
+
+.. confval:: eventsummary.alertTimer.alertGradient
+
+   Type: *list:string*
+
+   Unit: *s:color*
+
+   Discrete mapping of time values in seconds to colors used as
+   text color in case of an active alert. E.g. \"0:00FF00,900:FF0000\".
+
+
+.. confval:: eventsummary.alertTimer.textSize
+
+   Type: *int*
+
+   Unit: *pt*
+
+   The text size of the time ago label in case of an active alert.
+
+

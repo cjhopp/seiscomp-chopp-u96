@@ -1,0 +1,24 @@
+<div class="gcontainer gcontent"
+     ng-switch="widget.events.latest"
+     ng-class="{'gwprimary':widget.primary}">
+	<div class="gfilter">
+		<span>{{setTitle()}}</span>
+		<span>{{setDesc()}}, last {{widget.options.tspan|timeSpan}}</span>
+	</div>
+	<div class="gwbody">
+		<div class="smallmap"
+			 map-ll
+			 options="widget.options"
+			 events="widget.events.pool"
+			 static
+			 map-interface="widget.mapHandler"></div>
+	</div>
+	<div class="gwfooter">
+		<div class="gwmag">{{widget.events.latest.mag|mag}}</div>
+		<div class="gwtext">
+			<span title="{{widget.events.latest.region}}">
+				{{widget.events.latest.region|characters:22:true}}</span>
+			<span>{{widget.events.latest.otime|ago}}</span>
+		</div>
+	</div>
+</div>

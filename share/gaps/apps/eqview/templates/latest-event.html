@@ -1,0 +1,21 @@
+<nav class="gcontent gnav">
+	<div class="gheader">
+		<span>Latest event</span>
+		<a class="icon glyphicon glyphicon-list"
+		   ng-click="mapToggled()"
+		   href="#"
+		   title="Toggle map/table view of current widget">
+		</a>
+	</div>
+	<div class="gfilter" ng-if="withTitle">
+		<span>{{widget.title}}</span>
+		<span>{{widget.options.mag.min|magdesc}}, last {{widget.options.tspan|timeSpan}}</span>
+	</div>
+	<div class="footer zoom-link" ng-click="eventClicked({ev: widget.events.latest})">
+		<div class="mag">{{widget.events.latest.mag|mag}}</div>
+		<div class="text">
+			<span>{{widget.events.latest.region}}</span>
+			<span>{{widget.events.latest.otime|ago}}</span>
+		</div>
+	</div>
+</nav>

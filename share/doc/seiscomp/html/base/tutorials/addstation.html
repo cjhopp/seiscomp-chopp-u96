@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Add a new station &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Get real-time data from a remote Seedlink server (single station)" href="waveforms.html" />
+    <link rel="prev" title="Upgrading SeisComP" href="upgrading.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="waveforms.html" title="Get real-time data from a remote Seedlink server (single station)"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="upgrading.html" title="Upgrading SeisComP"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../tutorials.html" accesskey="U">Tutorials</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="add-a-new-station">
+<span id="tutorials-addstation"></span><h1>Add a new station<a class="headerlink" href="#add-a-new-station" title="Permalink to this heading">¶</a></h1>
+<p>This tutorial guides you through the most common activities
+involved in configuring a single new station in your existing SeisComP system.
+Depending on your needs, you will use parts of other tutorials to do this.</p>
+<p>Pre-requisites for this tutorial:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="postinstall.html#tutorials-postinstall"><span class="std std-ref">Installation on Ubuntu</span></a></p></li>
+<li><p>An understanding of <a class="reference internal" href="../concepts/inventory.html#concepts-inventory"><span class="std std-ref">Inventory</span></a>.</p></li>
+</ul>
+<p>You may also need to consult</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="waveforms.html#tutorials-waveforms"><span class="std std-ref">Get real-time data from a remote Seedlink server (single station)</span></a></p></li>
+<li><p><a class="reference internal" href="processing.html#tutorials-processing"><span class="std std-ref">Configure real-time processing</span></a></p></li>
+<li><p><a class="reference internal" href="archiving.html#tutorials-archiving"><span class="std std-ref">Set up local waveform archiving</span></a></p></li>
+</ul>
+<p>Afterwards/Results/Outcomes:</p>
+<ul class="simple">
+<li><p>Optionally, data for the new station are acquired and archived in real time.</p></li>
+<li><p>Optionally, the new station is used for automatic real-time data processing.</p></li>
+</ul>
+<p>Time range estimate:</p>
+<ul class="simple">
+<li><p>Variable</p></li>
+</ul>
+<hr class="docutils" />
+<section id="before-you-start">
+<h2>Before you start<a class="headerlink" href="#before-you-start" title="Permalink to this heading">¶</a></h2>
+<p>Try to answer the questions:</p>
+<ul class="simple">
+<li><p>where will you get data?</p></li>
+<li><p>if you want to process data locally, where will you get inventory?</p></li>
+<li><p>which data will you share?</p></li>
+<li><p>how long will you archive, and what streams?</p></li>
+</ul>
+<p>For this example, we’ll add the GRSN Station Collm (CLL)
+from the GR network.</p>
+<ul class="simple">
+<li><p>If you want to process data on this system, you will need
+inventory (metadata).
+Metadata can be obtained from many different sources or created from scratch.</p></li>
+<li><p>If you don’t want to process on this system, you won’t need inventory,
+but you will have to create key file by hand for acquisition and archiving.</p></li>
+</ul>
+</section>
+<section id="obtaining-inventory-for-your-station">
+<h2>Obtaining inventory for your station<a class="headerlink" href="#obtaining-inventory-for-your-station" title="Permalink to this heading">¶</a></h2>
+<p>For processing, you will need inventory for the new station.
+How to obtain this will vary.
+You can fetch inventory from:</p>
+<ul class="simple">
+<li><p>Other SeisComP systems. Use <a class="reference internal" href="../../apps/scxmldump.html#scxmldump"><span class="std std-ref">scxmldump</span></a> to fetch inventories.</p></li>
+<li><p>EIDA nodes <span id="id1">[<a class="reference internal" href="../references.html#id99" title="EIDA. European Integrated Data Archive, Orfeus. URL: https://www.orfeus-eu.org/data/eida/.">4</a>]</span>. Use web interfaces such as web browsers or <cite>wget</cite>
+to fetch an inventory.</p></li>
+<li><p>Data centers providing <span id="id2"><em>FDSNWS</em> [<a class="reference internal" href="../references.html#id106" title="FDSNWS. International Federation of Digital Seismograph Networks. URL: http://www.fdsn.org/webservices/.">8</a>]</span>. Use web interfaces such as web browsers
+or <cite>wget</cite> to fetch an inventory.</p></li>
+<li><p>Your own or shared user repositories on <span id="id3"><em>SMP</em> [<a class="reference internal" href="../references.html#id262" title="SMP. Station Management Portal by gempa GmbH. URL: https://smp.gempa.de/.">21</a>]</span>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Create and share inventories</p>
+<p>gempa’s <span id="id4"><em>SMP</em> [<a class="reference internal" href="../references.html#id262" title="SMP. Station Management Portal by gempa GmbH. URL: https://smp.gempa.de/.">21</a>]</span> is a tool for creating inventory from scratch and
+community sharing. Create inventories for new or old networks and stations
+from permanent or temporary deployments.
+SMP provides inventories in <a class="reference internal" href="../glossary.html#term-SCML"><span class="xref std std-term">SCML</span></a> format in multiple versions
+which can be used without modification.</p>
+</div>
+</section>
+<section id="configuring-inventory">
+<h2>Configuring inventory<a class="headerlink" href="#configuring-inventory" title="Permalink to this heading">¶</a></h2>
+<p>Suppose that, by one of the methods above,
+we have it in a single file, <code class="file docutils literal notranslate"><span class="pre">inventory_CLL.xml</span></code>.
+This must be converted from StationXML to SeisComP XML.
+The resulting file goes into
+<code class="file docutils literal notranslate"><span class="pre">~/seiscomp/etc/inventory</span></code>.
+See the chapter on <a class="reference internal" href="../concepts/inventory.html#concepts-inventory"><span class="std std-ref">Inventory</span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/seiscomp/bin/seiscomp<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>import_inv<span class="w">  </span>fdsnxml<span class="w"> </span>~/inventory_CLL.xml
+Generating<span class="w"> </span>output<span class="w"> </span>to<span class="w"> </span>/home/user/seiscomp/etc/inventory/inventory_CLL.xml
+No<span class="w"> </span>inventory<span class="w"> </span><span class="nb">read</span><span class="w"> </span>from<span class="w"> </span>inventory<span class="w"> </span>db
+Create<span class="w"> </span>empty<span class="w"> </span>one
+Processing<span class="w"> </span>/home/user/inventory_CLL.xml
+<span class="w"> </span>-<span class="w"> </span>parsing<span class="w"> </span>StationXML
+<span class="w"> </span>-<span class="w"> </span>converting<span class="w"> </span>into<span class="w"> </span>SeisComP-XML
+Finished<span class="w"> </span>processing
+Writing<span class="w"> </span>inventory<span class="w"> </span>to<span class="w"> </span>/home/user/seiscomp/etc/inventory/inventory_CLL.xml
+</pre></div>
+</div>
+<p>When inventory is loaded, you will see your station in the results
+of <a class="reference internal" href="../../apps/scinv.html#scinv"><span class="std std-ref">scinv</span></a> with the <cite>ls</cite> option:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>~/seiscomp/bin/seiscomp<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>scinv<span class="w"> </span>ls
+WARNING:<span class="w"> </span>/home/user/seiscomp/etc/inventory/README<span class="w"> </span>ignored:<span class="w"> </span>wrong<span class="w"> </span>extension
+<span class="o">[</span>..<span class="o">]</span>
+Parsing<span class="w"> </span>/home/user/seiscomp/etc/inventory/MY.xml<span class="w"> </span>...<span class="w"> </span><span class="k">done</span>
+Parsing<span class="w"> </span>/home/user/seiscomp/etc/inventory/GE.xml<span class="w"> </span>...<span class="w"> </span><span class="k">done</span>
+<span class="o">[</span>..<span class="o">]</span>
+Merging<span class="w"> </span>inventory<span class="w"> </span>...<span class="w"> </span><span class="k">done</span>
+<span class="w">  </span>network<span class="w"> </span>GR<span class="w">       </span>German<span class="w"> </span>Regional<span class="w"> </span>Seismic<span class="w"> </span>Network,<span class="w"> </span>BGR<span class="w"> </span>Hannover
+<span class="w">    </span>epoch<span class="w"> </span><span class="m">1976</span>-02-17
+<span class="w">    </span>station<span class="w"> </span>CLL<span class="w">    </span>GRSN<span class="w"> </span>Station<span class="w"> </span>Collm
+<span class="w">      </span>epoch<span class="w"> </span><span class="m">1993</span>-04-01
+<span class="w">      </span>location<span class="w"> </span>__
+<span class="w">        </span>epoch<span class="w"> </span><span class="m">2007</span>-02-07
+<span class="w">        </span>channel<span class="w"> </span>BHE
+<span class="w">          </span>epoch<span class="w"> </span><span class="m">2007</span>-02-07
+<span class="w">        </span>channel<span class="w"> </span>BHN
+<span class="w">          </span>epoch<span class="w"> </span><span class="m">2007</span>-02-07
+<span class="w">        </span>channel<span class="w"> </span>BHZ
+<span class="w">          </span>epoch<span class="w"> </span><span class="m">2007</span>-02-07
+<span class="w">        </span>channel<span class="w"> </span>HHE
+<span class="w">          </span>epoch<span class="w"> </span><span class="m">2007</span>-02-07
+</pre></div>
+</div>
+<p>This shows the networks, stations, and channels, and the time spans for
+which they are known.
+For active stations, there must be an epoch (time span) with a start date
+but no end date shown for the desired channel.</p>
+<p>The inventory is not yet synchronized with the database. To finalize
+inventory configuration, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ seiscomp update-config
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you get an error, make sure that MySQL/MariaDB is running and the
+database has been created correctly (see <a class="reference internal" href="postinstall.html#tutorials-postinstall"><span class="std std-ref">Installation on Ubuntu</span></a>).</p>
+</div>
+</section>
+<section id="configuring-for-acquisition">
+<h2>Configuring for acquisition<a class="headerlink" href="#configuring-for-acquisition" title="Permalink to this heading">¶</a></h2>
+<p>If you’ve configured inventory above, you’ll already have a top-level
+key file for the station in the <code class="file docutils literal notranslate"><span class="pre">~/seiscomp/etc/key</span></code> directory.</p>
+<ul class="simple">
+<li><p>You will need to know the waveform source, channels to be acquired,
+location code used, if any.
+See <a class="reference internal" href="waveforms.html#tutorials-waveforms"><span class="std std-ref">Get real-time data from a remote Seedlink server (single station)</span></a> for the remaining details.</p></li>
+</ul>
+</section>
+<section id="configuring-processing">
+<h2>Configuring processing<a class="headerlink" href="#configuring-processing" title="Permalink to this heading">¶</a></h2>
+<p>Now you can enable the station for processing.
+Follow the <a class="reference internal" href="processing.html#tutorials-processing"><span class="std std-ref">Configure real-time processing</span></a> tutorial.</p>
+</section>
+<section id="configuring-for-archiving">
+<h2>Configuring for archiving<a class="headerlink" href="#configuring-for-archiving" title="Permalink to this heading">¶</a></h2>
+<p>If you want to archive waveforms, consider how long they should be retained.
+See <a class="reference internal" href="archiving.html#tutorials-archiving"><span class="std std-ref">Set up local waveform archiving</span></a> for how to do this.</p>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Add a new station</a><ul>
+<li><a class="reference internal" href="#before-you-start">Before you start</a></li>
+<li><a class="reference internal" href="#obtaining-inventory-for-your-station">Obtaining inventory for your station</a></li>
+<li><a class="reference internal" href="#configuring-inventory">Configuring inventory</a></li>
+<li><a class="reference internal" href="#configuring-for-acquisition">Configuring for acquisition</a></li>
+<li><a class="reference internal" href="#configuring-processing">Configuring processing</a></li>
+<li><a class="reference internal" href="#configuring-for-archiving">Configuring for archiving</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="upgrading.html"
+                          title="previous chapter">Upgrading SeisComP</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="waveforms.html"
+                          title="next chapter">Get real-time data from a remote Seedlink server (single station)</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/base/tutorials/addstation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,252 @@
+.. highlight:: rst
+
+.. _invextr:
+
+#######
+invextr
+#######
+
+**Extract channels from inventory.**
+
+
+Description
+===========
+
+invextr reads and modifies inventory XML provided as file or on stdin:
+
+* Extract or remove networks, stations and channels based on
+
+  * channel IDs
+  * geographic region
+
+* Clean inventories from unused objects such as data loggers, sensors or
+  instrument responses.
+
+The important parameters are:
+
+* Channel ID list (required)
+* Input file or stdin
+* Output file or stdout
+* Region bounding box (optional)
+
+whereas the output file defaults to stdout and the input file to
+stdin if not given.
+
+The optional region box will be used to filter the read inventory based on the
+coordinates of sensor locations. Only stations with sensor locations within the
+region will be considered. All others will be ignored.
+
+A channel ID is a simple string that is matched against the final channel ID
+in the inventory. This final channel ID is constructed by joining the codes of
+all stages with a dot where the stages are network, station, location and
+channel.
+
+The content of the resulting inventory may be listed using :ref:`scinv`.
+
+
+Examples
+--------
+
+Suppose an inventory with network GE, a station MORC and several channels:
+
+.. code-block:: sh
+
+   network GE
+     station MORC
+       location __
+         channel BHZ    ID: GE.MORC..BHZ
+         channel BHN    ID: GE.MORC..BHN
+         channel BHE    ID: GE.MORC..BHE
+         channel LHZ    ID: GE.MORC..LHZ
+         channel LHN    ID: GE.MORC..LHN
+         channel LHE    ID: GE.MORC..LHE
+
+* The IDs are matched against streams passed with --chans.
+
+  .. code-block:: sh
+
+     invextr --chans "GE*" inv.xml
+
+  All streams are passed and nothing is filtered because GE* matches all
+  available IDs and region filter is not used. Since :file:`inv.xml` only
+  contains stations from the GE network the option :option:`--chans` is not
+  useful here at all.
+
+  .. code-block:: sh
+
+     invextr -r 0,-180,90,180 inv.xml
+
+   All streams located in the northern hemisphere are passed as commanded by the
+   region bounding box.
+
+* Nothing is filtered again because *MORC* matches all available IDs.
+
+  .. code-block:: sh
+
+     invextr --chans "*MORC*" inv.xml
+
+* Everything is filtered because GE.MORC does not match with any ID. To make it
+  work, an asterisk needs to be appended: GE.MORC* or GE.MORC.*.
+
+  .. code-block:: sh
+
+     invextr --chans "GE.MORC" inv.xml
+
+
+* To extract all vertical components, use:
+
+  .. code-block:: sh
+
+     invextr --chans "*Z" inv.xml
+
+* To extract BHN and LHZ, use:
+
+.. code-block:: sh
+
+   invextr --chans "*BHN,*LHZ" inv.xml
+
+* To remove all HH and SH channels, use:
+
+  .. code-block:: sh
+
+     invextr --rm --chans "*HH?,*SH?" inv.xml
+
+
+.. _invextr_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/invextr.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/invextr.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/invextr.cfg`
+
+invextr inherits :ref:`global options<global-configuration>`.
+
+
+
+
+Command-Line Options
+====================
+
+.. program:: invextr
+
+:program:`invextr [OPTIONS] [input=stdin] [output=stdout]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+.. option:: --plugins arg
+
+   Load given plugins.
+
+.. option:: -D, --daemon
+
+   Run as daemon. This means the application will fork itself
+   and doesn't need to be started with \&.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+.. option:: --print-component arg
+
+   For each log entry print the component right after the
+   log level. By default the component output is enabled
+   for file output but disabled for console output.
+
+.. option:: --trace
+
+   Execute in trace mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 \-\-print\-component\=1
+   \-\-print\-context\=1 .
+
+
+Extract
+-------
+
+.. option:: --chans arg
+
+   A comma separated list of channel IDs to extract
+   which can contain wildcards. Default: \*.\*.\*.\* meaning
+   all streams.
+   
+   Example: invextr \-\-chans \"GE.\*.\*.BHZ,GE.MORC.\*.\*\" inv.xml
+
+.. option:: -r, --region arg
+
+   Filter streams by geographic region given as
+   \"South, East, North, West\". Region is unused by default.
+
+.. option:: --rm arg
+
+   Removes all channels given with '\-\-chans' instead of
+   extracting them.
+   
+   Example: invextr \-\-rm \-\-chans \"GE.\*\" inv.xml
+
+.. option:: -f, --formatted
+
+   Enables formatted XML output.
+

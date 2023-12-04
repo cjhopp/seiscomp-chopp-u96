@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Magnitudes &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Locators" href="locators.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="locators.html" title="Locators"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="configuration.html" title="Configuration"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../concepts.html" accesskey="U">Concepts</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="magnitudes">
+<h1>Magnitudes<a class="headerlink" href="#magnitudes" title="Permalink to this heading">¶</a></h1>
+<p>Magnitudes are computed based on amplitudes measured from waveforms. Different
+types of amplitudes and magnitudes are available which are listed in
+<a class="reference internal" href="../../apps/scamp.html#scamp"><span class="std std-ref">scamp</span></a> and <a class="reference internal" href="../../apps/scmag.html#scmag"><span class="std std-ref">scmag</span></a>.</p>
+<section id="amplitudes">
+<h2>Amplitudes<a class="headerlink" href="#amplitudes" title="Permalink to this heading">¶</a></h2>
+<p>Amplitudes can be measured automatically from waveforms</p>
+<ul class="simple">
+<li><p>During phase picking by <a class="reference internal" href="../../apps/scautopick.html#scautopick"><span class="std std-ref">scautopick</span></a> with generally fixed time windows
+due to the absence of knowledge about source parameters or by,</p></li>
+<li><p><a class="reference internal" href="../../apps/scamp.html#scamp"><span class="std std-ref">scamp</span></a> as soon as <a class="reference internal" href="../glossary.html#term-origin"><span class="xref std std-term">origins</span></a> are available. Depending
+on the magnitude type, fixed or distance-dependent time windows apply.</p></li>
+</ul>
+<p>and interactively using <a class="reference internal" href="../../apps/scolv.html#scolv"><span class="std std-ref">scolv</span></a>.</p>
+<section id="instrument-simulation">
+<h3>Instrument simulation<a class="headerlink" href="#instrument-simulation" title="Permalink to this heading">¶</a></h3>
+<p>Amplitude measurements for some magnitude types require or allow the simulation
+of instruments such as <a class="reference internal" href="../filter-grammar.html#WA" title="WA"><code class="xref py py-func docutils literal notranslate"><span class="pre">Wood-Anderson</span> <span class="pre">torsion</span> <span class="pre">seismometers</span></code></a>
+(<span id="id1">Richter [<a class="reference internal" href="../references.html#id61" title="C.F. Richter. An instrumental earthquake magnitude scale. Bull. Seismol. Soc. Am., 1:1 - 32, 1935. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140804-143558638, doi:10.1785/BSSA0250010001.">53</a>], Uhrhammer and Collins [<a class="reference internal" href="../references.html#id78" title="R.A. Uhrhammer and E.R. Collins. Synthesis of Wood-Anderson seismograms from broadband digital records. Bull. Seismol. Soc. Am., 80(3):702–716, 1990. doi:10.1785/BSSA0800030702.">59</a>]</span>), <a class="reference internal" href="../filter-grammar.html#WWSSN_SP" title="WWSSN_SP"><code class="xref py py-func docutils literal notranslate"><span class="pre">WWSSN_SP()</span></code></a> or <a class="reference internal" href="../filter-grammar.html#WWSSN_LP" title="WWSSN_LP"><code class="xref py py-func docutils literal notranslate"><span class="pre">WWSSN_LP()</span></code></a>.
+The calibration parameters describing the Wood-Anderson seismometer are
+configurable in global bindings or global module configuration:
+<a class="reference internal" href="../../apps/global.html#confval-0"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.WoodAnderson.gain</span></code></a>, <a class="reference internal" href="../../apps/global.html#confval-1"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.WoodAnderson.T0</span></code></a>,
+<a class="reference internal" href="../../apps/global.html#confval-2"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.WoodAnderson.h</span></code></a>. Specifically, the difference in magnitude
+due to configuration using original values listed in
+<span id="id2">Richter [<a class="reference internal" href="../references.html#id61" title="C.F. Richter. An instrumental earthquake magnitude scale. Bull. Seismol. Soc. Am., 1:1 - 32, 1935. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140804-143558638, doi:10.1785/BSSA0250010001.">53</a>]</span> and updated ones given in <span id="id3">Uhrhammer and Collins [<a class="reference internal" href="../references.html#id78" title="R.A. Uhrhammer and E.R. Collins. Synthesis of Wood-Anderson seismograms from broadband digital records. Bull. Seismol. Soc. Am., 80(3):702–716, 1990. doi:10.1785/BSSA0800030702.">59</a>]</span>
+result in a constant offset of 0.13 in those magnitudes which apply
+Wood-Anderson simulation, e.g. <a class="reference internal" href="../glossary.html#term-magnitude-local-ML"><span class="xref std std-term">ML</span></a>,
+<a class="reference internal" href="../glossary.html#term-magnitude-local-vertical-MLv"><span class="xref std std-term">MLv</span></a>, <a class="reference internal" href="../glossary.html#term-magnitude-local-custom-MLc"><span class="xref std std-term">MLc</span></a>.</p>
+</section>
+</section>
+<section id="station-magnitudes">
+<h2>Station Magnitudes<a class="headerlink" href="#station-magnitudes" title="Permalink to this heading">¶</a></h2>
+<p>Station magnitudes are computed automatically by <a class="reference internal" href="../../apps/scmag.html#scmag"><span class="std std-ref">scmag</span></a> or interactively
+by <a class="reference internal" href="../../apps/scolv.html#scolv"><span class="std std-ref">scolv</span></a> from measured amplitudes based on distance-dependent
+calibration curves which depend on magnitude type.</p>
+<section id="regionalization">
+<h3>Regionalization<a class="headerlink" href="#regionalization" title="Permalink to this heading">¶</a></h3>
+<p>The computation of station magnitudes can be regionalized. This means that for a
+specific region different conditions apply for computing magnitudes. The conditions
+include calibration curves, distance and depth ranges, etc. Regionalization
+is achieved by adding magnitude-type profiles in the magnitudes section of
+global module configuration parameters.</p>
+</section>
+</section>
+<section id="network-magnitudes">
+<h2>Network magnitudes<a class="headerlink" href="#network-magnitudes" title="Permalink to this heading">¶</a></h2>
+<p>Network magnitudes are computed automatically by <a class="reference internal" href="../../apps/scmag.html#scmag"><span class="std std-ref">scmag</span></a> or interactively
+by <a class="reference internal" href="../../apps/scolv.html#scolv"><span class="std std-ref">scolv</span></a> from station magnitudes based on averaging station magnitudes.
+The averaging methods applied by <a class="reference internal" href="../../apps/scmag.html#scmag"><span class="std std-ref">scmag</span></a> are configurable by
+<span class="xref std std-ref">magnitudes.average</span>.</p>
+</section>
+<section id="summary-magnitude">
+<h2>Summary magnitude<a class="headerlink" href="#summary-magnitude" title="Permalink to this heading">¶</a></h2>
+<p>In order to account for different phenomena related to magnitude computation
+including magnitude saturation and application of different magnitude types at
+specific distance and depth ranges of the sources a summary magnitude can be
+computed by <a class="reference internal" href="../../apps/scmag.html#scmag"><span class="std std-ref">scmag</span></a> from network magnitudes.</p>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Magnitudes</a><ul>
+<li><a class="reference internal" href="#amplitudes">Amplitudes</a><ul>
+<li><a class="reference internal" href="#instrument-simulation">Instrument simulation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#station-magnitudes">Station Magnitudes</a><ul>
+<li><a class="reference internal" href="#regionalization">Regionalization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#network-magnitudes">Network magnitudes</a></li>
+<li><a class="reference internal" href="#summary-magnitude">Summary magnitude</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="configuration.html"
+                          title="previous chapter">Configuration</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="locators.html"
+                          title="next chapter">Locators</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/base/concepts/magnitudes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

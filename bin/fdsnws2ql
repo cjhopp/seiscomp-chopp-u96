@@ -1,0 +1,458 @@
+#!/usr/bin/env seiscomp-python
+
+###############################################################################
+# Copyright (C) 2020 by gempa GmbH                                            #
+#                                                                             #
+# All Rights Reserved.                                                        #
+#                                                                             #
+# NOTICE: All information contained herein is, and remains                    #
+# the property of gempa GmbH and its suppliers, if any. The intellectual      #
+# and technical concepts contained herein are proprietary to gempa GmbH       #
+# and its suppliers.                                                          #
+# Dissemination of this information or reproduction of this material          #
+# is strictly forbidden unless prior written permission is obtained           #
+# from gempa GmbH.                                                            #
+#                                                                             #
+# Author: Stephan Herrnkind                                                   #
+# Email: herrnkind@gempa.de                                                   #
+###############################################################################
+
+# pylint: disable=consider-using-f-string
+# remove once Python2 support can be dropped
+from __future__ import absolute_import, division, print_function
+
+import os
+import sys
+
+from seiscomp import client, logging, system
+
+from fdsnws2ql.host import Host
+from fdsnws2ql.event import Event
+
+
+###############################################################################
+class FDSNWS2QL(client.Application):
+    # -------------------------------------------------------------------------
+    class Config(object):
+        def __init__(self):
+            self.host = "localhost"
+            self.port = 18011
+            self.ssl = False
+            self.backlog = 1.0
+            self.interval = 60
+            self.requestTimeout = 10.0
+            self.journalDir = None
+
+    # -------------------------------------------------------------------------
+    def __init__(self, argc, argv):
+        client.Application.__init__(self, argc, argv)
+
+        self.setDatabaseEnabled(False, False)
+        self.setMessagingEnabled(False)
+
+        self.config = self.Config()
+        self._hosts = []
+
+    # -------------------------------------------------------------------------
+    def initConfiguration(self):
+        if not client.Application.initConfiguration(self):
+            return False
+
+        param = ""
+        hostNames = []
+        try:
+            param = "server"
+            try:
+                server = self.configGetString(param).split(":")
+                if len(server) > 2:
+                    raise ValueError("Found more than one colon")
+                if server[0]:
+                    self.config.host = server[0]
+                if len(server) == 2:
+                    self.config.port = int(server[1])
+            except RuntimeError:
+                pass
+
+            param = "ssl"
+            try:
+                self.config.ssl = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = "backlog"
+            try:
+                self.config.backlog = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+            param = "interval"
+            try:
+                self.config.interval = self.configGetInt(param)
+            except RuntimeError:
+                pass
+
+            param = "requestTimeout"
+            try:
+                self.config.requestTimeout = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+            param = "hosts"
+            try:
+                hostNames = self.configGetStrings(param)
+            except RuntimeError:
+                pass
+
+            # significant change definition
+            sigChangePrefix = "significantChange."
+            sig = Event.SignificantChange.getInstance()
+
+            param = sigChangePrefix + "time"
+            try:
+                sig.time = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "coordinates"
+            try:
+                sig.coordinates = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "depth"
+            try:
+                sig.depth = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "author"
+            try:
+                sig.author = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "catalog"
+            try:
+                sig.catalog = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "contributor"
+            try:
+                sig.contributor = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "contributorID"
+            try:
+                sig.contributorID = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "magType"
+            try:
+                sig.magType = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "magnitude"
+            try:
+                sig.magnitude = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "magAuthor"
+            try:
+                sig.magAuthor = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "locationName"
+            try:
+                sig.locationName = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            param = sigChangePrefix + "eventType"
+            try:
+                sig.eventType = self.configGetBool(param)
+            except RuntimeError:
+                pass
+
+            # precision for significant change properties
+            precisionPrefix = sigChangePrefix + "precision."
+
+            param = precisionPrefix + "time"
+            try:
+                sig.precision.time = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+            param = precisionPrefix + "coordinates"
+            try:
+                sig.precision.coordinates = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+            param = precisionPrefix + "depth"
+            try:
+                sig.precision.depth = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+            param = precisionPrefix + "magnitude"
+            try:
+                sig.precision.magnitude = self.configGetDouble(param)
+            except RuntimeError:
+                pass
+
+        except Exception as e:
+            logging.error("Invalid parameter {}: {}".format(param, e))
+            return False
+
+        if not hostNames:
+            logging.error("No hosts specified")
+            return False
+
+        self.config.journalDir = system.Environment_Instance().absolutePath(
+            "@ROOTDIR@/var/lib/{}/".format(self.name())
+        )
+
+        for name in hostNames:
+            try:
+                host = Host(self, name)
+                self._hosts.append(host)
+            except Exception as e:
+                logging.error("Invalid host configuration {}: {}".format(name, e))
+                return False
+
+        return True
+
+    # -------------------------------------------------------------------------
+    def createCommandLineDescription(self):
+        client.Application.createCommandLineDescription(self)
+
+        self.commandline().addGroup("Input")
+        self.commandline().addDoubleOption(
+            "Input",
+            "backlog",
+            "Maximum event age in days. Events older than the specified value "
+            "are neither fetched nor processed and are removed from the host "
+            "specific event journal.",
+        )
+        self.commandline().addIntOption(
+            "Input",
+            "interval,i",
+            "Interval in seconds to request event updates from FDSNWS source.",
+        )
+
+        self.commandline().addGroup("Output")
+        self.commandline().addStringOption(
+            "Output",
+            "server",
+            "Hostname and optional port of QuakeLink server to push data to.",
+        )
+        self.commandline().addBoolOption(
+            "Output", "ssl,s", "Use secure socket layer (SSL) for server connection."
+        )
+
+    # -------------------------------------------------------------------------
+    def run(self):
+        logging.debug(
+            "\nconfiguration:"
+            "\n    server         : {}:{}"
+            "\n    ssl            : {}"
+            "\n    backlog        : {}"
+            "\n    interval       : {}"
+            "\n    request timeout: {}"
+            "\n    hosts          :"
+            "\n{}".format(
+                self.config.host,
+                self.config.port,
+                self.config.ssl,
+                self.config.backlog,
+                self.config.interval,
+                self.config.requestTimeout,
+                "\n".join(x.format(4, 2) for x in self._hosts),
+            )
+        )
+
+        # instantiate lxml XSLT transformation required by all FDSNWS hosts
+        # configured to return XML but not capable of returning SeisComPML
+        # directly
+        quakeMLHosts = []
+        for host in self._hosts:
+            if (
+                host.content.xml
+                and not host.content.xml.sc3ml
+                and host.content.xml.xslt
+            ):
+                quakeMLHosts.append(host.name)
+
+        if quakeMLHosts:
+            try:
+                # conditional import to allow fdsnws2ql installations without
+                # etree library in case all datasources support SC3ML
+                from lxml import etree  # pylint: disable=C0415
+
+                env = system.Environment.Instance()
+
+                # search available XSLT versions
+                xsltDir = env.absolutePath("@DATADIR@/xml")
+                xsltVersions = [
+                    d
+                    for d in os.listdir(xsltDir)
+                    if os.path.isdir(os.path.join(xsltDir, d))
+                ]
+
+                # sort by major and minor version
+                xsltVersions.sort(key=lambda s: list(map(int, s.split("."))))
+                logging.debug(
+                    "available converter XSLT versions: {}".format(
+                        ", ".join(xsltVersions) if xsltVersions else "None"
+                    )
+                )
+
+                for host in self._hosts:
+                    if host.name not in quakeMLHosts:
+                        continue
+
+                    xsltConfig = host.content.xml.xslt
+
+                    # The parser is not thread safe, hence we need create a
+                    # separate instance for each host
+                    xmlParser = etree.XMLParser(
+                        ns_clean=True, recover=True, encoding="utf-8"
+                    )
+
+                    # custom xslt script
+                    if xsltConfig.custom:
+                        xsltFile = system.Environment.Instance().absolutePath(
+                            xsltConfig.custom
+                        )
+
+                    # default xslt script under share/xml/VERSION
+                    else:
+                        if not xsltVersions:
+                            raise RuntimeError(
+                                "could not find any QuakeML to SCML "
+                                "converter under: {}".format(xsltDir)
+                            )
+
+                        # no version specified: use latest available
+                        if not xsltConfig.version:
+                            xsltConfig.version = xsltVersions[-1]
+
+                        # check the specified version is available
+                        elif xsltConfig.version not in xsltVersions:
+                            raise RuntimeError(
+                                "could not find SCML converter version {} "
+                                "under {}".format(xsltConfig.version, xsltDir)
+                            )
+                        xsltFile = "{0}/{1}/quakeml_1.2__sc3ml_{1}.xsl".format(
+                            xsltDir, xsltConfig.version
+                        )
+
+                    try:
+                        # read the xslt file
+                        xslt = etree.parse(xsltFile, parser=xmlParser)
+                        qml2SCML = etree.XSLT(xslt)
+                    except Exception as e:
+                        logging.error(
+                            "could not parse XSLT file '{}' required by "
+                            "QuakeML host '{}': {}".format(xsltFile, host.name, e)
+                        )
+                        return False
+
+                    # wrap the prefix string into a XSLT parameter variable
+                    idPrefix = None
+                    if xsltConfig.idPrefix:
+                        idPrefix = etree.XSLT.strparam(xsltConfig.idPrefix)
+
+                    # register the parser including the XSLT script and
+                    # variables
+                    host.setParser(xmlParser, qml2SCML, idPrefix)
+            except ImportError as e:
+                logging.error(
+                    "could not import etree module from package lxml "
+                    "required by FDSNWS Host(s) {} to transform QuakeML to "
+                    "SeisComPML: {}".format(quakeMLHosts, e)
+                )
+                return False
+            except Exception as e:
+                logging.error(
+                    "could not initialize XSLT processing to transform "
+                    "QuakeML to SeisComPML: {}".format(e)
+                )
+                return False
+
+        # make sure journal directory exists
+        try:
+            if not os.path.exists(self.config.journalDir):
+                os.makedirs(self.config.journalDir)
+        except OSError as e:
+            logging.error(
+                "could not create journal directory {}: {}".format(
+                    self.config.journalDir, e
+                )
+            )
+            return False
+
+        # move journal files from previous location under var/run to var/lib
+        oldJournalDir = system.Environment_Instance().absolutePath(
+            "@ROOTDIR@/var/run/{}/".format(self.name())
+        )
+        if os.path.exists(oldJournalDir):
+            # process journal file of each configured host
+            for host in self._hosts:
+                filename = "{}.journal".format(host.name)
+                oldPath = os.path.join(oldJournalDir, filename)
+                newPath = os.path.join(self.config.journalDir, filename)
+
+                # no old journal file: continue with next host
+                if not os.path.isfile(oldPath):
+                    continue
+
+                # new journal file already exists: do NOT override but print
+                # warning
+                if os.path.exists(newPath):
+                    logging.warning(
+                        "found journal file under old and new location, "
+                        "compare both versions and consider removing the old "
+                        "one\n"
+                        "  old: {}\n"
+                        "  new: {}".format(oldPath, newPath)
+                    )
+                    continue
+
+                # move old journal file to new location
+                try:
+                    logging.info(
+                        "moving journal file from {} to {}".format(oldPath, newPath)
+                    )
+                    os.rename(oldPath, newPath)
+                except OSError as e:
+                    logging.error(
+                        "cloud not move journal file to new " "location: {}".format(e)
+                    )
+                    return False
+
+        # read journal files
+        for host in self._hosts:
+            if not host.readJournal():
+                return False
+
+        # start threads
+        for host in self._hosts:
+            host.start()
+
+        # wait for threads to terminate
+        for host in self._hosts:
+            host.join()
+
+        return True
+
+
+# -----------------------------------------------------------------------------
+fdsnws2ql = FDSNWS2QL(len(sys.argv), sys.argv)
+sys.exit(fdsnws2ql())

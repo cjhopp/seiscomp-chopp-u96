@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="StationView">
+	<head>
+		<title>gempa StationView</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.5" />
+		<link rel="stylesheet" href="../share/css/gempa-allinone.css" />
+		<link rel="stylesheet" href="../share/css/leaflet.css" />
+		<link rel="stylesheet" href="../share/css/leaflet.markercluster.css" />
+		<script type="text/javascript" src="../share/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../share/lib/angular.min.js"></script>
+		<script type="text/javascript" src="../share/lib/leaflet.js"></script>
+		<script type="text/javascript" src="../share/lib/leaflet.markercluster.js"></script>
+
+		<script language="javascript" type="text/javascript" src="lib/stationview.min.js"></script>
+	</head>
+	<body ng-controller="mainCtrl">
+		<noscript>
+		Sorry, your browser does not support JavaScript! Enable JavaScript and
+		<a href="index.html">reload</a> the page.
+		</noscript>
+		<div id="app">
+			<browser-check></browser-check>
+			<div id="loader" ng-if="progress !== undefined">
+				<h1><center>Initializing</center></h1>
+				<div class="progress progress-striped">
+					<div class="progress-bar progress-bar-success"
+						 role="progressbar" aria-valuenow="{{progress}}"
+						 aria-valuemin="0" aria-valuemax="100"
+						 style="width:{{progress}}%">
+						<span class="sr-only">{{progress}}% Complete</span>
+					</div>
+				</div>
+				<span><center>{{progressMsg}}</center></span>
+			</div>
+			<div id="content">
+				<div id="stMapBox" ng-if="initMap">
+					<map-ll id="maplayer"
+							options="config.map"
+							map-interface="mapHandler"
+							inventory="inventory"
+							events="events.pool"
+							current-feature="currentFeature"
+							select="viewOptions.mapSelect"
+							title="{{currentFeature._staid2}}{{currentFeature._sta.description}}">
+					</map-ll>
+				</div>
+				<gm-legend legend="config.map.legend"></gm-legend>
+				<div class="gcontainer gpanel gleft">
+					<div class="gstatus gcontainer">
+						<div class="clock"><clock/></div>
+						<div>
+							<span class="icon glyphicon glyphicon-transfer"
+								  title="Shows the current QuakeLink connection state."
+								  ng-class="{'connected':connected, 'disconnected':!connected}">
+							</span>
+						</div>
+						<div class="brand">
+							<img ng-src="{{config.serverAPI}}{{config.logoPath}}"></img>
+							<span>powered by <a target="_blank" href="http://www.gempa.de">gempa GmbH</a></span>
+						</div>
+					</div>
+					<div style="flex-grow:1;position:relative">
+						<minimap class="minimap gcontainer" map="mapHandler.map.map"></minimap>
+						<div class="gcontent legend" ng-if="config.map.showEvents">
+							<div class="gcontent">
+								<div class="legend" legend-ll items="view.legend.colors"></div>
+								<div class="legend" legend-ll items="view.legend.magnitudes"></div>
+							</div>
+						</div>
+						<div class="gslider"
+						     ng-class="{'gshow':viewOptions.stationDetails}">
+							<div class="gcontent full-height" style="overflow-y:auto">
+								<div class="gheader">
+									<div class="gspan">{{currentStation.net.code}}.{{currentStation.sta.code}}</div>
+									<a class="icon" ng-click="closeStationDetails()" >&times;</a>
+								</div>
+								<div class="body">
+									<div class="content">
+										<small><i>{{currentStation.sta.description}}</i></small><br/>
+										<small><i>{{currentStation.net.description}}</i></small>
+									</div>
+									<div ng-controller="TraceCtrl">
+										<div ng-if="trace.sid">
+											<hr/>
+											<div timeseries
+												 title="Last 10 minutes of sensor data"
+												 class="trace"
+												 data="trace.data"
+												 markers="trace.markers"
+												 options="trace.options"></div>
+											<small style="float:left">{{trace.sid}}</small>
+											<small style="float:right">{{config.map.triggerDuration|prettyms}}</small>
+											<div style="clear:both"></div>
+										</div>
+									</div>
+									<div ng-if="currentQuality">
+										<hr/>
+										<div class="sectionhead"><strong>Quality parameters</strong></div>
+										<div class="stparam" ng-repeat="(k, v) in currentQuality">
+											<label class="name">{{k}}</label>
+											<div class="value">{{v.value| number}}</div>
+										</div>
+									</div>
+									<div ng-if="currentGroundMotion">
+										<hr/>
+										<div class="sectionhead"><strong>Ground motion</strong></div>
+										<div class="stparam">
+											<label class="name">Accel.</label>
+											<div class="value">{{currentGroundMotion.acc|number:1}} ({{currentMaxGroundMotion.acc|number:1}}) µm/s<sup>2</sup></div>
+										</div>
+										<div class="stparam">
+											<label class="name">Velocity</label>
+											<div class="value">{{currentGroundMotion.vel|number:1}} ({{currentMaxGroundMotion.vel|number:1}}) µm/s</div>
+										</div>
+										<div class="stparam">
+											<label class="name">Displmt.</label>
+											<div class="value">{{currentGroundMotion.disp|number:1}} ({{currentMaxGroundMotion.disp|number:1}}) µm</div>
+										</div>
+									</div>
+									<div ng-if="currentStation.link">
+										<div class="sectionhead"><strong>Downloads</strong></div>
+										<div class="stparam">
+											<div>
+												<a ng-href="{{currentStation.link}}" target="_blank">{{currentStation.linkName||'Link'}}</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="gslider" ng-class="{'gshow': viewOptions.eventDetails}">
+							<div class="gcontent full-height">
+								<div class="gheader" title="{{currentEvent.region}}">
+									<div class="gspan">{{currentEvent.region}}</div>
+									<a class="icon" ng-click="viewOptions.eventDetails = false">&times;</a>
+								</div>
+								<div class="body">
+									<div class="content">
+										<div class="param">
+											<label class="name">Mag</label>
+											<div class="value">
+												<strong style="color: #7AD4E2">{{currentEvent.mag|mag}}</strong>
+											</div>
+										</div>
+										<div class="param">
+											<label class="name">Depth</label>
+											<div class="value">{{currentEvent.depth.toFixed(0)}}km</div>
+										</div>
+										<div class="param">
+											<label class="name">Time</label>
+											<div class="value">{{currentEvent.otime|date:'yyyy-MM-dd HH:mm:ss'}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Location</label>
+											<div class="value">{{currentEvent.lat|lat}} {{currentEvent.lon|lon}}</div>
+										</div>
+										<div class="param">
+											<label class="name">EventID</label>
+											<div class="value">{{currentEvent.eventID}}</div>
+										</div>
+										<hr/>
+										<div class="param">
+											<label class="name">Agency</label>
+											<div class="value">{{currentEvent.agency}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Status</label>
+											<div class="value status-{{currentEvent.status}}">{{currentEvent.status}}</div>
+										</div>
+										<div class="param">
+											<label class="name">Phases</label>
+											<div class="value">{{currentEvent.phaseCount}}</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<menu class="gmenu gcontent"
+					  ng-class="{show:showConfig}"
+					  ng-mouseover="setConfigVisibility()"
+					  ng-mouseleave="setConfigVisibility('hide')"
+					  type="list">
+					<li class="gheader">
+						<span>Station View</span>
+						<span><i class="icon glyphicon glyphicon-question-sign"></i></span>
+					</li>
+					<li>
+						<menu label="Mode">
+							<li class="menudivider" >Mode</li>
+							<li class="gradio" ng-click="setQCMode('delay')">
+								<i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:qualityMode === 'delay' && !groundMotion}"></i>
+								QC delay</li>
+							<li class="gradio" ng-click="setQCMode('latency')">
+								<i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:qualityMode === 'latency' && !groundMotion}"></i>
+								QC latency</li>
+							<li class="gradio" ng-click="setGMMode()">
+								<i class="glyphicon glyphicon-ok"
+								   ng-class="{enabled:groundMotion}"></i>
+								Ground Motion</li>
+						</menu>
+					</li>
+					<li>
+						<menu label="Settings">
+							<li class="menudivider" >Settings</li>
+							<li class="gtoggle" ng-click="toggleCluster()">
+								<i class="glyphicon glyphicon-ok-sign"
+								   ng-class="{active:config.map.inventory.cluster.enable}"></i>
+								Cluster</li>
+							<li class="gtoggle" ng-click="config.map.showEvents = !config.map.showEvents;">
+								<i class="glyphicon glyphicon-ok-sign"
+								   ng-class="{active:config.map.showEvents}"></i>
+								Events</li>
+						</menu>
+					</li>
+				</menu>
+			</div>
+		</div>
+	</body>
+</html>

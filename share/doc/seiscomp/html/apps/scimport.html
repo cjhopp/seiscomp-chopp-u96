@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scimport &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scm" href="scm.html" />
+    <link rel="prev" title="scimex" href="scimex.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="scm.html" title="scm"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="scimex.html" title="scimex"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scimport">
+<span id="id1"></span><h1>scimport<a class="headerlink" href="#scimport" title="Permalink to this heading">¶</a></h1>
+<p><strong>Forward messages across two SeisComP systems.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scimport is responsible to forward messages from one system to another. The
+difference to <a class="reference internal" href="scimex.html#scimex"><span class="std std-ref">scimex</span></a> is that scimport does not handle the messages
+event based. scimport supports two different modes. The relay mode does a
+simple mapping from GROUP:SYSTEM_A to GROUP:SYSTEM_B. This mode is default.</p>
+<p>In case GROUP is not defined in the second system the message is forwarded to
+IMPORT_GROUP. The import mode supports custom mapping and filter functionality.
+It is possible to forward GROUP1:SYSTEM_A to GROUP2:SYSTEM_B. In addition the
+forwarded objects can be filtered by:</p>
+<dl class="simple">
+<dt>Pick</dt><dd><ul class="simple">
+<li><p>Status</p></li>
+<li><p>Mode</p></li>
+<li><p>Phase</p></li>
+<li><p>AgencyID</p></li>
+</ul>
+</dd>
+<dt>Amplitude</dt><dd><ul class="simple">
+<li><p>Amplitude</p></li>
+</ul>
+</dd>
+<dt>Origin</dt><dd><ul class="simple">
+<li><p>Location</p></li>
+<li><p>Depth</p></li>
+<li><p>AgencyID</p></li>
+<li><p>Status</p></li>
+<li><p>Mode</p></li>
+</ul>
+</dd>
+<dt>Event</dt><dd><ul class="simple">
+<li><p>Type</p></li>
+</ul>
+</dd>
+<dt>StationMagnitude</dt><dd><ul class="simple">
+<li><p>Type</p></li>
+</ul>
+</dd>
+<dt>Magnitude</dt><dd><ul class="simple">
+<li><p>Type</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Example scimport.cfg</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># The address of the importing system</span>
+<span class="nv">sink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>sinkAddress
+
+<span class="c1"># This option has to be set if the application runs in import mode.</span>
+<span class="c1"># The routing table has to be defined in the form of source_group:sink_group</span>
+<span class="nv">routingtable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>PICK:PICK
+
+<span class="c1"># List of sink groups to subscribe to. If this option is not set the message</span>
+<span class="c1"># groups will be determined automatically. If this option is set but not</span>
+<span class="c1"># needed for a setup it can be ignored with the option --ignore-groups</span>
+<span class="nv">msggroups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>GROUP_ONE,<span class="w"> </span>GROUP_TWO
+
+<span class="c1"># Available filter options</span>
+filter.pick.mode<span class="w">     </span><span class="o">=</span><span class="w"> </span>manual
+filter.pick.status<span class="w">   </span><span class="o">=</span><span class="w"> </span>confirmed
+filter.pick.phase<span class="w">    </span><span class="o">=</span><span class="w"> </span>P
+filter.pick.agencyID<span class="w"> </span><span class="o">=</span><span class="w"> </span>GFZ
+
+<span class="c1"># Values: eq (==), lt (&lt;=) ,gt (&gt;=), *</span>
+filter.amplitude.operator<span class="w"> </span><span class="o">=</span><span class="w"> </span>gt
+filter.amplitude.amplitude<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+
+<span class="c1"># Values: lat0:lat1 (range)</span>
+filter.origin.latitude<span class="w"> </span><span class="o">=</span><span class="w"> </span>-90:90
+
+<span class="c1"># Values: lon0:lon1 (range)</span>
+filter.origin.longitude<span class="w"> </span><span class="o">=</span><span class="w"> </span>-180:180
+filter.origin.depth<span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>:100
+filter.origin.agencyID<span class="w">  </span><span class="o">=</span><span class="w"> </span>GFZ
+
+<span class="c1"># Values: automatic, manual</span>
+filter.origin.mode<span class="w">      </span><span class="o">=</span><span class="w"> </span>manual
+filter.origin.status<span class="w">    </span><span class="o">=</span><span class="w"> </span>confirmed
+
+<span class="c1"># Values: earthquake, explosion, quarry blast, chemical explosion,</span>
+<span class="c1"># nuclear explosion, landslide, debris avalanche, rockslide,</span>
+<span class="c1"># mine collapse, volcanic eruption, meteor impact, plane crash,</span>
+<span class="c1"># building collapse, sonic boom, other</span>
+filter.event.type<span class="w"> </span><span class="o">=</span><span class="w"> </span>earthquake
+
+<span class="c1"># Values: Whatever your magnitudes are named</span>
+filter.stationMagnitude.type<span class="w"> </span><span class="o">=</span><span class="w"> </span>MLv
+
+<span class="c1"># Values: Whatever your magnitudes are named</span>
+filter.magnitude.type<span class="w"> </span><span class="o">=</span><span class="w"> </span>MLv
+
+<span class="c1"># Values: latency, delay, timing quality, gaps interval, gaps length,</span>
+<span class="c1"># spikes interval, spikes amplitude, offset, rms</span>
+filter.qc.type<span class="w"> </span><span class="o">=</span><span class="w"> </span>latency
+</pre></div>
+</div>
+</section>
+<section id="module-configuration">
+<span id="scimport-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scimport.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scimport.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scimport.cfg</span></code></div>
+</div>
+<p>scimport inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-sink">
+<span class="sig-name descname"><span class="pre">sink</span></span><a class="headerlink" href="#confval-sink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>URI of receiving host which runs scmaster. The URI contains
+the host name with an optional protocol and port.</p>
+<p>Format: protocol://host:port</p>
+<p>Examples:</p>
+<p>- proc</p>
+<p>- scmp://proc:18180</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-routingtable">
+<span class="sig-name descname"><span class="pre">routingtable</span></span><a class="headerlink" href="#confval-routingtable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>This option has to be set if the application runs in import mode.
+The routing table has to be defined in the form of
+source_group:sink_group</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-msggroups">
+<span class="sig-name descname"><span class="pre">msggroups</span></span><a class="headerlink" href="#confval-msggroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Define a list of message groups of the source system
+(connection.server). If not specified, the source system is
+queried for a list of message groups which are then used to check
+each subscription extracted from the routing table.
+This parameter allows to override to source query result.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-useFilter">
+<span class="sig-name descname"><span class="pre">useFilter</span></span><a class="headerlink" href="#confval-useFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p><em>No description available</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.*</strong>
+<em>Define filter criteria before sending.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.pick.*</strong>
+<em>Criteria for filtering picks.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.pick.mode">
+<span class="sig-name descname"><span class="pre">filter.pick.mode</span></span><a class="headerlink" href="#confval-filter.pick.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The mode of picks to filter for. Allowed values:
+&quot;automatic&quot; and &quot;manual&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.pick.status">
+<span class="sig-name descname"><span class="pre">filter.pick.status</span></span><a class="headerlink" href="#confval-filter.pick.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The status of picks to filter for. Allowed values:
+&quot;preliminary&quot;, &quot;confirmed&quot;,
+&quot;reviewed&quot;, &quot;final&quot;,
+&quot;rejected&quot; and &quot;reported&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.pick.phase">
+<span class="sig-name descname"><span class="pre">filter.pick.phase</span></span><a class="headerlink" href="#confval-filter.pick.phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The pick phase hint to filter for. Allowed values:
+all possible phase codes.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.pick.agencyIDs">
+<span class="sig-name descname"><span class="pre">filter.pick.agencyIDs</span></span><a class="headerlink" href="#confval-filter.pick.agencyIDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The pick agencyIDs to filter for. Allowed values:
+all possible agency ids;</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.pick.networkCode">
+<span class="sig-name descname"><span class="pre">filter.pick.networkCode</span></span><a class="headerlink" href="#confval-filter.pick.networkCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The pick network code of the processed waveforms.
+Allowed values: all possible network codes.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.amplitude.*</strong>
+<em>Criteria for filtering amplitudes</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.amplitude.operator">
+<span class="sig-name descname"><span class="pre">filter.amplitude.operator</span></span><a class="headerlink" href="#confval-filter.amplitude.operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The amplitude comparison operator. Allowed values:
+&quot;eq&quot;, &quot;lt&quot;, &quot;gt&quot; and &quot;*&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.amplitude.amplitude">
+<span class="sig-name descname"><span class="pre">filter.amplitude.amplitude</span></span><a class="headerlink" href="#confval-filter.amplitude.amplitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>The amplitude threshold to filter for. The operator
+configured with &quot;operator&quot; is used to compare this threshold with
+the incoming value. If &quot;operator&quot; is &quot;*&quot; then
+values will pass.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.amplitude.agencyIDs">
+<span class="sig-name descname"><span class="pre">filter.amplitude.agencyIDs</span></span><a class="headerlink" href="#confval-filter.amplitude.agencyIDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The amplitude agencyIDs to filter for. Allowed values:
+all possible agency ids.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.origin.*</strong>
+<em>Criteria for filtering origins</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.latitude">
+<span class="sig-name descname"><span class="pre">filter.origin.latitude</span></span><a class="headerlink" href="#confval-filter.origin.latitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The latitude range in format [min]:[max].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.longitude">
+<span class="sig-name descname"><span class="pre">filter.origin.longitude</span></span><a class="headerlink" href="#confval-filter.origin.longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The longitude range in format [min]:[max].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.depth">
+<span class="sig-name descname"><span class="pre">filter.origin.depth</span></span><a class="headerlink" href="#confval-filter.origin.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The depth range in format [min]:[max].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.agencyIDs">
+<span class="sig-name descname"><span class="pre">filter.origin.agencyIDs</span></span><a class="headerlink" href="#confval-filter.origin.agencyIDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>The origin agencyIDs to filter for. Allowed values:
+all possible agency ids;</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.mode">
+<span class="sig-name descname"><span class="pre">filter.origin.mode</span></span><a class="headerlink" href="#confval-filter.origin.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The origin evaluation mode to filter for. Allowed values:
+&quot;automatic&quot; and &quot;manual&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.status">
+<span class="sig-name descname"><span class="pre">filter.origin.status</span></span><a class="headerlink" href="#confval-filter.origin.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The origin status to filter for. Allowed values:
+&quot;preliminary&quot;, &quot;confirmed&quot;,
+&quot;reviewed&quot;, &quot;final&quot;,
+&quot;rejected&quot; and &quot;reported&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.origin.arrivalcount">
+<span class="sig-name descname"><span class="pre">filter.origin.arrivalcount</span></span><a class="headerlink" href="#confval-filter.origin.arrivalcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The minimum number of arrivals of an origin to pass
+the filter.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.event.*</strong>
+<em>Criteria for filtering events</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.event.type">
+<span class="sig-name descname"><span class="pre">filter.event.type</span></span><a class="headerlink" href="#confval-filter.event.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The event type to filter for, e.g. &quot;earthquake&quot;,
+&quot;explosion&quot; …</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.stationMagnitude.*</strong>
+<em>Criteria for filtering station magnitudes</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.stationMagnitude.type">
+<span class="sig-name descname"><span class="pre">filter.stationMagnitude.type</span></span><a class="headerlink" href="#confval-filter.stationMagnitude.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The station magnitude type. Allowed values: all possible
+magnitude types such as &quot;MLv&quot;.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.magnitude.*</strong>
+<em>Criteria for filtering network magnitudes</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.magnitude.type">
+<span class="sig-name descname"><span class="pre">filter.magnitude.type</span></span><a class="headerlink" href="#confval-filter.magnitude.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The magnitude type. Allowed values: all possible
+magnitude types such as &quot;MLv&quot;.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>filter.qc.*</strong>
+<em>Criteria for filtering QC parameters</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-filter.qc.type">
+<span class="sig-name descname"><span class="pre">filter.qc.type</span></span><a class="headerlink" href="#confval-filter.qc.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>The QC parameter type. Allowed values: all possible
+types such as &quot;latency&quot;, &quot;delay&quot; …</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scimport [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-h">
+<span id="cmdoption-scimport-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-V">
+<span id="cmdoption-scimport-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-D">
+<span id="cmdoption-scimport-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-v">
+<span id="cmdoption-scimport-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-q">
+<span id="cmdoption-scimport-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-s">
+<span id="cmdoption-scimport-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-l">
+<span id="cmdoption-scimport-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-u">
+<span id="cmdoption-scimport-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-H">
+<span id="cmdoption-scimport-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-t">
+<span id="cmdoption-scimport-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-g">
+<span id="cmdoption-scimport-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-S">
+<span id="cmdoption-scimport-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scimport-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="import">
+<h3>Import<a class="headerlink" href="#import" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-o">
+<span id="cmdoption-scimport-sink"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sink</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-sink"><code class="xref std std-confval docutils literal notranslate"><span class="pre">sink</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-i">
+<span id="cmdoption-scimport-import"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--import</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to import mode (default is relay). Im import mode the
+routing table has to be specified whereas in relay the
+routing table will be calculated  automatically.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-no-filter">
+<span class="sig-name descname"><span class="pre">--no-filter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-no-filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable message filtering and ignore all configured filters.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-routeunknowngroup">
+<span class="sig-name descname"><span class="pre">--routeunknowngroup</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-routeunknowngroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route unknown groups to the default group IMPORT_GROUP.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-ignore-groups">
+<span class="sig-name descname"><span class="pre">--ignore-groups</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-ignore-groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore user specified groups.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scimport-test">
+<span class="sig-name descname"><span class="pre">--test</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scimport-test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not send any messages.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scimport</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#import">Import</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scimex.html"
+                          title="previous chapter">scimex</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scm.html"
+                          title="next chapter">scm</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scimport.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

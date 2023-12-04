@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>scmaster &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Processing" href="../toc/processing.html" />
+    <link rel="prev" title="Messaging" href="../toc/messaging.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="../toc/processing.html" title="Processing"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="../toc/messaging.html" title="Messaging"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/messaging.html" accesskey="U">Messaging</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="scmaster">
+<span id="id1"></span><h1>scmaster<a class="headerlink" href="#scmaster" title="Permalink to this heading">¶</a></h1>
+<p><strong>The messaging system</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>scmaster is the implementation of the <a class="reference internal" href="../base/concepts/messaging.html#concepts-messaging"><span class="std std-ref">messaging</span></a>
+mediator.</p>
+</section>
+<section id="message-groups">
+<span id="section-scmaster-groups"></span><h2>Message Groups<a class="headerlink" href="#message-groups" title="Permalink to this heading">¶</a></h2>
+<p>scmaster provides the <a class="reference internal" href="../base/concepts/messaging.html#messaging-groups"><span class="std std-ref">message groups</span></a>. Configure</p>
+<ul>
+<li><p><a class="reference internal" href="#confval-defaultGroups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">defaultGroups</span></code></a>: Add the groups which can be used by all queues.</p></li>
+<li><p><a class="reference internal" href="#confval-queues.-name.groups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">queues.$name.groups</span></code></a>: Set all groups which are used by the given
+queue. You may inherit <a class="reference internal" href="#confval-defaultGroups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">defaultGroups</span></code></a>, e.g.:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>queues.production.groups = ${defaultGroups},L1PICK
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Setting any value without inheriting <a class="reference internal" href="#confval-defaultGroups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">defaultGroups</span></code></a> ignores all
+values of <a class="reference internal" href="#confval-defaultGroups"><code class="xref std std-confval docutils literal notranslate"><span class="pre">defaultGroups</span></code></a>.</p>
+</div>
+</li>
+</ul>
+</section>
+<section id="queues">
+<h2>Queues<a class="headerlink" href="#queues" title="Permalink to this heading">¶</a></h2>
+<p>scmaster provides <em>queues</em> for separating the processing.
+Typically, the default queue <em>production</em> is used. To add new queues</p>
+<ol class="arabic simple">
+<li><p>Define a new queue by adding a new profile with some name,</p></li>
+<li><p>Configure the profile parameters <code class="xref std std-confval docutils literal notranslate"><span class="pre">queues.$name.*</span></code>,</p></li>
+<li><p>Register the queue in <a class="reference internal" href="#confval-queues"><code class="xref std std-confval docutils literal notranslate"><span class="pre">queues</span></code></a>.</p></li>
+</ol>
+</section>
+<section id="scheme">
+<h2>Scheme<a class="headerlink" href="#scheme" title="Permalink to this heading">¶</a></h2>
+<p>scmaster provides unsecured and secured connection which is addressed by the
+scheme values <em>scmp</em> and <em>scmps</em>, respectively, in <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>
+when connecting to the messaging.
+Read the <a class="reference internal" href="../base/concepts/messaging.html#messaging-scheme"><span class="std std-ref">concepts section</span></a> for more details. <em>scmps</em>
+is in use when configuring <a class="reference internal" href="#confval-interface.ssl.bind"><code class="xref std std-confval docutils literal notranslate"><span class="pre">interface.ssl.bind</span></code></a>.</p>
+</section>
+<section id="database-access">
+<h2>Database Access<a class="headerlink" href="#database-access" title="Permalink to this heading">¶</a></h2>
+<p>scmaster reads from and writes to the database and reports the database connection
+to the clients of the messaging system (compare with the <a class="reference internal" href="../base/concepts/messaging.html#messaging-db"><span class="std std-ref">concepts section</span></a>).</p>
+<p>The database is configured per queue.</p>
+<section id="single-machine">
+<h3>Single machine<a class="headerlink" href="#single-machine" title="Permalink to this heading">¶</a></h3>
+<p>When running all <cite>SeisComP</cite> modules on a single machine, the read and write
+parameters are typically configured with <em>localhost</em> as a <em>host name</em>.</p>
+<p>Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>queues.production.processors.messages.dbstore.read = sysop:sysop@localhost/seiscomp
+queues.production.processors.messages.dbstore.write = sysop:sysop@localhost/seiscomp
+</pre></div>
+</div>
+</section>
+<section id="multiple-machines">
+<h3>Multiple machines<a class="headerlink" href="#multiple-machines" title="Permalink to this heading">¶</a></h3>
+<p>If the clients are located on machines different from the messaging, the
+<em>host name</em> of the read parameter
+must be available on the client machine and the client machine must be able to
+connect to the host with its name. If the database is on the same machine as the
+messaging, the <em>host name</em> of the write connection typically remains <em>localhost</em>.</p>
+<p>Example for connecting clients on computerB to the messaging on computerA (compare
+with the <a class="reference internal" href="../base/concepts/messaging.html#messaging-distribution"><span class="std std-ref">concepts section</span></a>).</p>
+<ul>
+<li><p>Configuration of scmaster on computerA:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>queues.production.processors.messages.dbstore.read = sysop:sysop@computerA/seiscomp
+queues.production.processors.messages.dbstore.write = sysop:sysop@localhost/seiscomp
+</pre></div>
+</div>
+</li>
+<li><p>Global configuration of client on computerB:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>connection.server = computerA/production
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="module-configuration">
+<span id="scmaster-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/scmaster.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/scmaster.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/scmaster.cfg</span></code></div>
+</div>
+<p>scmaster inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-defaultGroups">
+<span class="sig-name descname"><span class="pre">defaultGroups</span></span><a class="headerlink" href="#confval-defaultGroups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">AMPLITUDE,</span> <span class="pre">PICK,</span> <span class="pre">LOCATION,</span> <span class="pre">MAGNITUDE,</span> <span class="pre">FOCMECH,</span> <span class="pre">EVENT,</span> <span class="pre">QC,</span> <span class="pre">PUBLICATION,</span> <span class="pre">GUI,</span> <span class="pre">INVENTORY,</span> <span class="pre">CONFIG,</span> <span class="pre">LOGGING,</span> <span class="pre">SERVICE_REQUEST,</span> <span class="pre">SERVICE_PROVIDE,</span> <span class="pre">STATUS_GROUP</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>The default set of message groups for each queue. Only used
+if a queues group list is unset (note: empty is not unset).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues">
+<span class="sig-name descname"><span class="pre">queues</span></span><a class="headerlink" href="#confval-queues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">production,</span> <span class="pre">playback</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Enable messaging queues defined as profile in queues. The profile
+names are the final queue names.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>interface.*</strong>
+<em>Control the messaging interface. The default protocol is</em>
+<em>“scmp” but “scmps” (secure protocol) is</em>
+<em>used when valid SSL certificate and key are configured.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.bind">
+<span class="sig-name descname"><span class="pre">interface.bind</span></span><a class="headerlink" href="#confval-interface.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0:18180</span></code></p>
+<p>Type: <em>ipbind</em></p>
+<p>Local bind address and port of the messaging system.
+0.0.0.0:18180 accepts connections from all clients,
+127.0.0.1:18180 only from localhost.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.acl">
+<span class="sig-name descname"><span class="pre">interface.acl</span></span><a class="headerlink" href="#confval-interface.acl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:ipmask</em></p>
+<p>The IP access control list for clients which are allowed
+to connect to the interface. Separate each IP with a space
+and put the entire list in double quotes, e.g.
+&quot;127.0.0.1 192.168.1.2 192.168.0.0/16&quot;.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.socketPortReuse">
+<span class="sig-name descname"><span class="pre">interface.socketPortReuse</span></span><a class="headerlink" href="#confval-interface.socketPortReuse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>SO_REUSEADDR socket option for the TCP listening socket.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>interface.ssl.*</strong>
+<em>SSL encryption is used if key and certificate are configured.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.ssl.bind">
+<span class="sig-name descname"><span class="pre">interface.ssl.bind</span></span><a class="headerlink" href="#confval-interface.ssl.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0:-1</span></code></p>
+<p>Type: <em>ipbind</em></p>
+<p>Additional local bind address and port of the messaging
+system in case SSL encryption is active.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.ssl.acl">
+<span class="sig-name descname"><span class="pre">interface.ssl.acl</span></span><a class="headerlink" href="#confval-interface.ssl.acl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:ipmask</em></p>
+<p>The IP access control list for clients which are allowed
+to connect to the interface. See interface.acl for
+further details.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.ssl.socketPortReuse">
+<span class="sig-name descname"><span class="pre">interface.ssl.socketPortReuse</span></span><a class="headerlink" href="#confval-interface.ssl.socketPortReuse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>SO_REUSEADDR socket option for the TCP listening socket.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.ssl.key">
+<span class="sig-name descname"><span class="pre">interface.ssl.key</span></span><a class="headerlink" href="#confval-interface.ssl.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-interface.ssl.certificate">
+<span class="sig-name descname"><span class="pre">interface.ssl.certificate</span></span><a class="headerlink" href="#confval-interface.ssl.certificate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>path</em></p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>queues.*</strong>
+<em>Set the parameters for each messaging queue. The queues are used</em>
+<em>when listed in the “queues” parameter. Several queues</em>
+<em>can be used in parallel. For queues with without databases leave</em>
+<em>the processor parameters empty.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>queues.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <a class="reference internal" href="#confval-queues"><code class="xref std std-confval docutils literal notranslate"><span class="pre">queues</span></code></a> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">queues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+queues.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+queues.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of queues</span>
+queues.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.groups">
+<span class="sig-name descname"><span class="pre">queues.$name.groups</span></span><a class="headerlink" href="#confval-queues.-name.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Define the list of message groups added to the queue.
+If unset, then the defaultGroups will be used.
+A queue will always add the default group &quot;STATUS_GROUP&quot;.
+This parameter overrides defaultGroups.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.acl">
+<span class="sig-name descname"><span class="pre">queues.$name.acl</span></span><a class="headerlink" href="#confval-queues.-name.acl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0/0</span></code></p>
+<p>Type: <em>list:ipmask</em></p>
+<p>The IP access control list for clients which are allowed
+to join the queue. See interface.acl for further details.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.maximumPayloadSize">
+<span class="sig-name descname"><span class="pre">queues.$name.maximumPayloadSize</span></span><a class="headerlink" href="#confval-queues.-name.maximumPayloadSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1048576</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Unit: <em>B</em></p>
+<p>The maximum size in bytes of a message to be accepted.
+Clients which send larger messages will be disconnected.
+The default is 1MB.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.plugins">
+<span class="sig-name descname"><span class="pre">queues.$name.plugins</span></span><a class="headerlink" href="#confval-queues.-name.plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>List of plugins required by this queue. This is just a
+convenience parameter to improve configurations
+readability. The plugins can also be added to the
+global list of module plugins.</p>
+<p>Example: dbstore</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.processors.messages">
+<span class="sig-name descname"><span class="pre">queues.$name.processors.messages</span></span><a class="headerlink" href="#confval-queues.-name.processors.messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Interface name. For now, use &quot;dbstore&quot;to
+use a database.</p>
+<p>Use empty for testing or playbacks without a database.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>queues.$name.processors.messages.dbstore.*</strong>
+<em>Define the database connection parameters.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.processors.messages.dbstore.driver">
+<span class="sig-name descname"><span class="pre">queues.$name.processors.messages.dbstore.driver</span></span><a class="headerlink" href="#confval-queues.-name.processors.messages.dbstore.driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Selected the database driver to use.
+Database drivers are available through plugins.
+The default plugin is dbmysql which supports
+the MYSQL database server. It is activated
+with the core.plugins parameter.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.processors.messages.dbstore.read">
+<span class="sig-name descname"><span class="pre">queues.$name.processors.messages.dbstore.read</span></span><a class="headerlink" href="#confval-queues.-name.processors.messages.dbstore.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Set the database read connection which is
+reported to clients that connect to this server.
+If a remote setup should be implemented,
+ensure that the hostname is reachable from
+the remote computer.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.processors.messages.dbstore.write">
+<span class="sig-name descname"><span class="pre">queues.$name.processors.messages.dbstore.write</span></span><a class="headerlink" href="#confval-queues.-name.processors.messages.dbstore.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Set the database write connection which is
+private to scmaster.
+A separate write connection enables different
+permissions on the database level for scmaster
+and clients.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-queues.-name.processors.messages.dbstore.strictVersionMatch">
+<span class="sig-name descname"><span class="pre">queues.$name.processors.messages.dbstore.strictVersionMatch</span></span><a class="headerlink" href="#confval-queues.-name.processors.messages.dbstore.strictVersionMatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the plugin will check the database
+schema version and refuse to start if the
+version doesn’t match the latest version.
+If disabled and the an object needs to be
+stored, which is incompatible with the
+database schema, this object is lost.
+Leave this option enabled unless you know
+exactly what are you doing and what the
+consequences are.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-http.filebase">
+<span class="sig-name descname"><span class="pre">http.filebase</span></span><a class="headerlink" href="#confval-http.filebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/scmaster/http/</span></code></p>
+<p>Type: <em>path</em></p>
+<p>The directory served by the http server at staticPath.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-http.staticPath">
+<span class="sig-name descname"><span class="pre">http.staticPath</span></span><a class="headerlink" href="#confval-http.staticPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The URL path at which html files and assets are available.
+All files under filebase will be served at this URL path.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-http.brokerPath">
+<span class="sig-name descname"><span class="pre">http.brokerPath</span></span><a class="headerlink" href="#confval-http.brokerPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">/</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The URL path at which the broker websocket is available.</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">scmaster [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-h">
+<span id="cmdoption-scmaster-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-V">
+<span id="cmdoption-scmaster-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-D">
+<span id="cmdoption-scmaster-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-v">
+<span id="cmdoption-scmaster-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-q">
+<span id="cmdoption-scmaster-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-s">
+<span id="cmdoption-scmaster-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-l">
+<span id="cmdoption-scmaster-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-scmaster-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+</section>
+<section id="wired">
+<h3>Wired<a class="headerlink" href="#wired" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-bind">
+<span class="sig-name descname"><span class="pre">--bind</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>The non-encrypted bind address. Format [ip:]port</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-scmaster-sbind">
+<span class="sig-name descname"><span class="pre">--sbind</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-scmaster-sbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>The encrypted bind address. Format: [ip:]port</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">scmaster</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#message-groups">Message Groups</a></li>
+<li><a class="reference internal" href="#queues">Queues</a></li>
+<li><a class="reference internal" href="#scheme">Scheme</a></li>
+<li><a class="reference internal" href="#database-access">Database Access</a><ul>
+<li><a class="reference internal" href="#single-machine">Single machine</a></li>
+<li><a class="reference internal" href="#multiple-machines">Multiple machines</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#wired">Wired</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../toc/messaging.html"
+                          title="previous chapter">Messaging</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../toc/processing.html"
+                          title="next chapter">Processing</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/scmaster.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

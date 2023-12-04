@@ -1,0 +1,564 @@
+<!doctype html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ql2ql &#8212; QuakeLink: Earthquake Distribution Server  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gempa.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/gempa.css?v=c960eebf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/gempa.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qlplayback" href="qlplayback.html" />
+    <link rel="prev" title="fdsnws2ql" href="fdsnws2ql.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <img class="background" src="../_static/icon.png"/>
+        <div class="content">
+           <span class="title">QuakeLink: Earthquake Distribution Server </span>
+           <span class="version">2023.324#17393ecf5</span></h1>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="qlplayback.html" title="qlplayback"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="fdsnws2ql.html" title="fdsnws2ql"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../base/plugins.html" accesskey="U">Server</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="ql2ql">
+<span id="id1"></span><h1>ql2ql<a class="headerlink" href="#ql2ql" title="Permalink to this heading">¶</a></h1>
+<p><strong>QuakeLink (gempa GmbH) to QuakeLink event parameter exchange</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>ql2ql manages the import of SeisComP objects from one or several QuakeLink
+servers into a <cite>SeisComP</cite> system in real time. Like <span id="id2"><em>scimex</em> [<a class="reference internal" href="../base/references.html#id217" title="scimex. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scimex.html.">5</a>]</span> but contrary
+to <span id="id3"><em>scimport</em> [<a class="reference internal" href="../base/references.html#id218" title="scimport. SeisComP module. URL: https://docs.gempa.de/seiscomp/current/apps/scimport.html.">6</a>]</span> the exchange of the SeisComP objects is event based. This
+means no messages will be exchanged until the exporting system has produced an
+event.</p>
+<p>ql2ql is part of the QuakeLink suite.</p>
+<p>Please read the command-line help for more options:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ql2ql<span class="w"> </span>-h
+</pre></div>
+</div>
+</section>
+<section id="server-side-event-filter">
+<span id="event-filter"></span><h2>Server-side event filter<a class="headerlink" href="#server-side-event-filter" title="Permalink to this heading">¶</a></h2>
+<p>QuakeLink provides a filter syntax similar to SQL-WHERE clauses which may be
+used to filter interesting events on the server side:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>clause    := condition[ AND|OR [(]clause[)]]
+condition := MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED [op float|time]|[IS [NOT] NULL]
+op        := =|&amp;gt;|&amp;gt;=|&amp;lt;|&amp;lt;=|eq|gt|ge|lt|ge
+time      := %Y,%m,%d[,%H,%M,%S,%f]
+</pre></div>
+</div>
+<p>E.g. the following filter string would select only those events with a minimum
+magnitude of 6, detected by at least 10 stations and which are shallower than
+100km:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="n">MAG</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">PHASES</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">DEPTH</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">100</span>
+</pre></div>
+</div>
+</section>
+<section id="server-side-object-filter">
+<span id="object-filter"></span><h2>Server-side object filter<a class="headerlink" href="#server-side-object-filter" title="Permalink to this heading">¶</a></h2>
+<p>QuakeLink provides a coarse object filter for the most relevant SeisComP
+objects:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Impact</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>picks</p></td>
+<td><p>include picks</p></td>
+</tr>
+<tr class="row-odd"><td><p>amplitudes</p></td>
+<td><p>include amplitudes</p></td>
+</tr>
+<tr class="row-even"><td><p>arrivals</p></td>
+<td><p>include origin arrivals</p></td>
+</tr>
+<tr class="row-odd"><td><p>staMags</p></td>
+<td><p>include origin station magnitudes</p></td>
+</tr>
+<tr class="row-even"><td><p>staMts</p></td>
+<td><p>include moment tensor station contributions and phase settings</p></td>
+</tr>
+<tr class="row-odd"><td><p>preferred</p></td>
+<td><p>include only preferred origin and magnitude information</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-configuration">
+<h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/ql2ql.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/ql2ql.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/ql2ql.cfg</span></code></div>
+</div>
+<p>ql2ql inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modules/plugins may require a license file. The default path to license
+files is <code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/licenses/</span></code> which can be overridden by global
+configuration of the parameter <code class="xref std std-confval docutils literal notranslate"><span class="pre">gempa.licensePath</span></code>. Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>gempa.licensePath = @CONFIGDIR@/licenses
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-server">
+<span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#confval-server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">localhost:18011</span></code></p>
+<p>Type: <em>string</em></p>
+<p>QuakeLink server to push data to</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-gzip">
+<span class="sig-name descname"><span class="pre">gzip</span></span><a class="headerlink" href="#confval-gzip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Compress messages pushed to QuakeLink with gzip</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-bufferSize">
+<span class="sig-name descname"><span class="pre">bufferSize</span></span><a class="headerlink" href="#confval-bufferSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">50</span></code></p>
+<p>Unit: <em>MiB</em></p>
+<p>Type: <em>int</em></p>
+<p>Buffer size in megabytes (1024*1024 bytes). If the QuakeLink server is not
+reachable messages up to X MiB are buffered in a ring buffer.
+If the server is reachable again all buffered messages
+will be sent first.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-backLog">
+<span class="sig-name descname"><span class="pre">backLog</span></span><a class="headerlink" href="#confval-backLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">1800</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>int</em></p>
+<p>Number of seconds to fetch missed updates on start up.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-hosts">
+<span class="sig-name descname"><span class="pre">hosts</span></span><a class="headerlink" href="#confval-hosts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Registration of QuakeLink hosts.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>host.$name.*</strong>
+<em>For each host profile a connection to a QuakeLink</em>
+<em>server is established.</em>
+$name is a placeholder for the name to be used and needs to be added to <a class="reference internal" href="#confval-hosts"><code class="xref std std-confval docutils literal notranslate"><span class="pre">hosts</span></code></a> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">hosts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+host.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+host.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of hosts</span>
+host.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.url">
+<span class="sig-name descname"><span class="pre">host.$name.url</span></span><a class="headerlink" href="#confval-host.-name.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">ql://localhost:18010</span></code></p>
+<p>Type: <em>string</em></p>
+<p>URL of the QuakeLink service, the scheme ‘qls’ enables SSL.</p>
+<p>Format: [ql[s]://][user:pwd&#64;][host][:port].</p>
+<p>If set to an empty string the application will run without any QuakeLink connection attempt.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.gzip">
+<span class="sig-name descname"><span class="pre">host.$name.gzip</span></span><a class="headerlink" href="#confval-host.-name.gzip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Enables/disables GZip (GNU zip) compression.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.native">
+<span class="sig-name descname"><span class="pre">host.$name.native</span></span><a class="headerlink" href="#confval-host.-name.native" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Request native data instead of XML format. Native data export may be disabled on some hosts.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.keepAlive">
+<span class="sig-name descname"><span class="pre">host.$name.keepAlive</span></span><a class="headerlink" href="#confval-host.-name.keepAlive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Request server to send keep alive message every 30s to
+prevent connection reset by firewalls on long idle
+periods. If activated the client will reset the
+connection if no alive message is received within 60s.
+The default timeout maybe overridden with the
+‘keepAliveTimeout’ parameter.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.keepAliveTimeout">
+<span class="sig-name descname"><span class="pre">host.$name.keepAliveTimeout</span></span><a class="headerlink" href="#confval-host.-name.keepAliveTimeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">60</span></code></p>
+<p>Unit: <em>s</em></p>
+<p>Type: <em>int</em></p>
+<p>Timeout in seconds to wait for a server response
+when listening for updates with active keep alive
+messages (see parameter ‘keepAlive’). The response
+might be a alive message or a message containing
+actual data. The value defined here should be larger
+than the value configured in the QuakeLink server’s
+‘keepAliveInterval’ parameter. If undefined a server
+interval of 30 is assumed and a timeout value of 60s
+is used. Set the value to 0 to deactivate the
+timeout entirely.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.filter">
+<span class="sig-name descname"><span class="pre">host.$name.filter</span></span><a class="headerlink" href="#confval-host.-name.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>SQL like WHERE clause to filter the result set.</p>
+<p>clause    := condition[ AND|OR [(]clause[)]] __
+condition := MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED [op float|time]|[IS [NOT] NULL] __
+op        := =|&gt;|&gt;=|&lt;|&lt;=|eq|gt|ge|lt|ge __
+time      := %Y,%m,%d[,%H,%M,%S,%f]</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.domain">
+<span class="sig-name descname"><span class="pre">host.$name.domain</span></span><a class="headerlink" href="#confval-host.-name.domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">event</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Select the object domain that will be requested.
+Either &quot;event&quot; or &quot;dyfi&quot;.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>host.$name.data.*</strong>
+<em>QuakeLink options specifying which XML components to fetch.</em>
+<em>Note: These options are not used if ‘native’ data is requested.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.picks">
+<span class="sig-name descname"><span class="pre">host.$name.data.picks</span></span><a class="headerlink" href="#confval-host.-name.data.picks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include picks</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.amplitudes">
+<span class="sig-name descname"><span class="pre">host.$name.data.amplitudes</span></span><a class="headerlink" href="#confval-host.-name.data.amplitudes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include amplitudes</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.arrivals">
+<span class="sig-name descname"><span class="pre">host.$name.data.arrivals</span></span><a class="headerlink" href="#confval-host.-name.data.arrivals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include origin arrivals</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.staMags">
+<span class="sig-name descname"><span class="pre">host.$name.data.staMags</span></span><a class="headerlink" href="#confval-host.-name.data.staMags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include origin station magnitudes</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.staMts">
+<span class="sig-name descname"><span class="pre">host.$name.data.staMts</span></span><a class="headerlink" href="#confval-host.-name.data.staMts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include moment tensor station contributions and phase settings</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-host.-name.data.preferred">
+<span class="sig-name descname"><span class="pre">host.$name.data.preferred</span></span><a class="headerlink" href="#confval-host.-name.data.preferred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Include only preferred origin and magnitude information</p>
+</dd></dl>
+
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-h">
+<span id="cmdoption-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-V">
+<span id="cmdoption-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-D">
+<span id="cmdoption-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-v">
+<span id="cmdoption-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-q">
+<span id="cmdoption-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-print-component">
+<span class="sig-name descname"><span class="pre">--print-component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-print-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-s">
+<span id="cmdoption-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-l">
+<span id="cmdoption-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-trace">
+<span class="sig-name descname"><span class="pre">--trace</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in trace mode.
+Equivalent to --verbosity=4 --console=1 --print-component=1
+--print-context=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="sink">
+<h3>Sink<a class="headerlink" href="#sink" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-server">
+<span class="sig-name descname"><span class="pre">--server</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-z">
+<span id="cmdoption-gzip"></span><span class="sig-name descname"><span class="pre">-z</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--gzip</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-gzip"><code class="xref std std-confval docutils literal notranslate"><span class="pre">gzip</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-event-buffer">
+<span class="sig-name descname"><span class="pre">--event-buffer</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-event-buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-bufferSize"><code class="xref std std-confval docutils literal notranslate"><span class="pre">bufferSize</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-back-log">
+<span class="sig-name descname"><span class="pre">--back-log</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-back-log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="#confval-backLog"><code class="xref std std-confval docutils literal notranslate"><span class="pre">backLog</span></code></a>.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">ql2ql</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#server-side-event-filter">Server-side event filter</a></li>
+<li><a class="reference internal" href="#server-side-object-filter">Server-side object filter</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#sink">Sink</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="fdsnws2ql.html"
+                          title="previous chapter">fdsnws2ql</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="qlplayback.html"
+                          title="next chapter">qlplayback</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/ql2ql.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="content">
+        Release <b></b> version <b>2023.324#17393ecf5</b>
+          <div class="copyright">
+            &copy; Copyright <a href="https://www.gempa.de">2013, gempa GmbH.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

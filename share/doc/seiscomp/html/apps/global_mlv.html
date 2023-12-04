@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>MLv &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ML" href="global_ml.html" />
+    <link rel="prev" title="MLc" href="global_mlc.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_ml.html" title="ML"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_mlc.html" title="MLc"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="mlv">
+<span id="global-mlv"></span><h1>MLv<a class="headerlink" href="#mlv" title="Permalink to this heading">¶</a></h1>
+<p>Local (Richter) magnitude measured on the vertical component</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>MLv is the local (Richter) magnitude (<span id="id1">Richter [<a class="reference internal" href="../base/references.html#id61" title="C.F. Richter. An instrumental earthquake magnitude scale. Bull. Seismol. Soc. Am., 1:1 - 32, 1935. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140804-143558638, doi:10.1785/BSSA0250010001.">53</a>]</span>) computed from amplitudes measured on the
+vertical component.</p>
+<p>General (default) conditions apply:</p>
+<ul class="simple">
+<li><p>Amplitude unit in SeisComP: <strong>millimeter</strong> (mm) by Wood-Anderson simulation.</p></li>
+<li><p>Time window: 150 s by <a class="reference internal" href="scautopick.html#scautopick"><span class="std std-ref">scautopick</span></a> or distance dependent, configurable.</p></li>
+<li><p>Default distance range: 0 - 8 deg,  maximum is configurable
+<a class="reference internal" href="global.html#confval-magnitudes.MLv.maxDistanceKm"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLv.maxDistanceKm</span></code></a>, measurements beyond 8 deg will be
+strictly ignored.</p></li>
+<li><p>Depth range: no limitation.</p></li>
+</ul>
+<section id="amplitudes">
+<h3>Amplitudes<a class="headerlink" href="#amplitudes" title="Permalink to this heading">¶</a></h3>
+<p>The MLv amplitude calculation is very similar to the original <a class="reference internal" href="global_ml.html#global-ml"><span class="std std-ref">ML</span></a>,
+except that the amplitude is measured on the vertical component. The methods
+for measuring amplitudes are configurable in the global bindings.</p>
+</section>
+<section id="station-magnitudes">
+<h3>Station Magnitudes<a class="headerlink" href="#station-magnitudes" title="Permalink to this heading">¶</a></h3>
+<p>The individual station MLv is calculated up to the epicentral distance
+<a class="reference internal" href="global.html#confval-magnitudes.MLv.maxDistanceKm"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLv.maxDistanceKm</span></code></a> using the following formula:</p>
+<div class="math">
+<p><img src="../_images/math/f73f0c80f57e4c0aa9f75af47267f7aa55522b40.png" alt="MLv = \log10(A) - \log10(A0)"/></p>
+</div><p>A is the MLv Wood-Anderson amplitude in millimeters. The second term
+is the empirical calibration function, which in turn is a function
+of the epicentral distance (see <span id="id2">Richter [<a class="reference internal" href="../base/references.html#id61" title="C.F. Richter. An instrumental earthquake magnitude scale. Bull. Seismol. Soc. Am., 1:1 - 32, 1935. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140804-143558638, doi:10.1785/BSSA0250010001.">53</a>]</span>). This calibration
+function can be configured globally or per station using global
+bindings or the global module configuration variable
+module.trunk.global.magnitudes.MLv.logA0 in <code class="file docutils literal notranslate"><span class="pre">global.cfg</span></code>, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">trunk</span><span class="o">.</span><span class="k">global</span><span class="o">.</span><span class="n">magnitudes</span><span class="o">.</span><span class="n">MLv</span><span class="o">.</span><span class="n">logA0</span> <span class="o">=</span> <span class="s2">&quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;</span>
+<span class="n">module</span><span class="o">.</span><span class="n">trunk</span><span class="o">.</span><span class="k">global</span><span class="o">.</span><span class="n">magnitudes</span><span class="o">.</span><span class="n">MLv</span><span class="o">.</span><span class="n">maxDistanceKm</span> <span class="o">=</span> <span class="s2">&quot;-1&quot;</span>
+</pre></div>
+</div>
+<p>The logA0 configuration string consists of an arbitrary number of
+distance-value pairs separated by semicolons. The distance is in km
+and the value corresponds to the <em>log10(A0)</em> term above.</p>
+<p>Within each interval the values are computed by linear
+interpolation. E.g. for the above default specification, at a
+distance of 80 km the <em>log10(A0)</em> value would be</p>
+<div class="math">
+<p><img src="../_images/math/6e45a883605015d556a6b6fe63821c64d8263242.png" alt="\log10(A0) &amp;= ((-3.0)-(-2.8))*(80-60)/(100-60)-2.8 \\
+           &amp;= -2.9"/></p>
+</div><p>In other words, at 80 km distance the magnitude would be</p>
+<div class="math">
+<p><img src="../_images/math/e43775c444e67a786957a45f52e1b6a4b4d757a8.png" alt="MLv &amp;= \log10(A) - (-2.9) \\
+    &amp;= \log10(A) + 2.9"/></p>
+</div><p>which is according to the original Richter formula <span id="id3">[<a class="reference internal" href="../base/references.html#id61" title="C.F. Richter. An instrumental earthquake magnitude scale. Bull. Seismol. Soc. Am., 1:1 - 32, 1935. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140804-143558638, doi:10.1785/BSSA0250010001.">53</a>]</span> if the
+amplitude is measured in millimeters.</p>
+</section>
+<section id="network-magnitude">
+<h3>Network magnitude<a class="headerlink" href="#network-magnitude" title="Permalink to this heading">¶</a></h3>
+<p>By default, the trimmed mean is calculated from the station magnitudes to form
+the <a class="reference internal" href="../base/glossary.html#term-network-magnitude"><span class="xref std std-term">network magnitude</span></a>. Outliers beyond the outer 12.5% percentiles are
+removed before forming the mean.</p>
+</section>
+<section id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h3>
+<p>Several distance-value pairs can be configured for different ranges of
+epicentral distance.
+The calibration function and maximum distance can be configured globally,
+per network or per station using the configuration variables. Instead configuring
+lots of global bindings profiles or station bindings one line per parameter can be
+added to the global module configuration (<code class="file docutils literal notranslate"><span class="pre">global.cfg</span></code>), e.g.</p>
+<p>global:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>module.trunk.global.magnitudes.MLv.logA0<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;</span>
+module.trunk.global.magnitudes.MLv.maxDistanceKm<span class="w"> </span><span class="o">=</span><span class="w"> </span>-1
+</pre></div>
+</div>
+<p>or per network:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>module.trunk.GR.magnitudes.MLv.logA0<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;</span>
+module.trunk.GR.magnitudes.MLv.maxDistanceKm<span class="w"> </span><span class="o">=</span><span class="w"> </span>-1
+</pre></div>
+</div>
+<p>or per station:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>module.trunk.GR.MOX.magnitudes.MLv.logA0<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;</span>
+module.trunk.GR.MOX.magnitudes.MLv.maxDistanceKm<span class="w"> </span><span class="o">=</span><span class="w"> </span>-1
+</pre></div>
+</div>
+<p>Set the configuration and calibration parameters in the global bindings. By
+default MLv is computed by <a class="reference internal" href="scautopick.html#scautopick"><span class="std std-ref">scautopick</span></a> and is visible in GUIs.</p>
+</section>
+</section>
+<section id="module-configuration">
+<span id="global-mlv-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLv.*</strong>
+<em>Regional calibration parameters for MLv. The region itself is defined</em>
+<em>by another magnitude-type MLv profile.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLv.region.*</strong>
+<em>Add one profile for every region. The profile name</em>
+<em>equals the name of a polygon configured in the BNA file</em>
+<em>of the Magnitude-type profile. The Magnitude-type profile</em>
+<em>and the polygon must exist.</em>
+<em>The special name “world” corresponds to the</em>
+<em>region of the entire planet as a fallback.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLv.region.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLv.region.-name.logA0">
+<span class="sig-name descname"><span class="pre">magnitudes.MLv.region.$name.logA0</span></span><a class="headerlink" href="#confval-magnitudes.MLv.region.-name.logA0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Overrides the calibration function log10(A0)
+for computing MLv per region. See logA0
+description in the bindings.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">MLv</a><ul>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#amplitudes">Amplitudes</a></li>
+<li><a class="reference internal" href="#station-magnitudes">Station Magnitudes</a></li>
+<li><a class="reference internal" href="#network-magnitude">Network magnitude</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_mlc.html"
+                          title="previous chapter">MLc</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_ml.html"
+                          title="next chapter">ML</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_mlv.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

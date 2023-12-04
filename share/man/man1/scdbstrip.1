@@ -1,0 +1,418 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "SCDBSTRIP" "1" "Dec 04, 2023" "5.5.14" "SeisComP"
+.SH NAME
+scdbstrip \- SeisComP Documentation
+.sp
+\fBClean up a database from event and waveform quality parameters.\fP
+.SH DESCRIPTION
+.sp
+\fISeisComP\fP\(aqs \fI\%scmaster\fP is continuously writing to the database. This causes
+the database to grow and to occupy much space on the harddisc. scdbstrip taggles
+this problem and removes processed objects from the database older than a
+configurable time span. The time comparison considers the object time, not the
+time of their creation.
+.sp
+This clean\-up procedure is based on
+.INDENT 0.0
+.IP \(bu 2
+Events, event parameters,
+.IP \(bu 2
+waveform quality control, QC, parameters.
+.UNINDENT
+.sp
+scdbstrip will remove all events with an origin time and QC parameters older or
+younger than specified. Default is \(aqolder\(aq. It will also remove all associated
+objects such as picks, origins, arrivals, amplitudes and so on.
+.sp
+scdbstrip does not run as a daemon. To remove old objects continuously scdbstrip
+should be added to the list of cronjobs running every e.g. 30 minutes. The more
+often it runs the less objects it has to remove and the faster it will unlock
+the database again. The timing and the parameters to be removed is controlled
+by module configuration or command\-line options.
+.sp
+\fBHINT:\fP
+.INDENT 0.0
+.INDENT 3.5
+For removing specific parameters and not all in a time range, use
+\fI\%scdispatch\fP along with XML files created by \fI\%scxmldump\fP and
+\fI\%scqueryqc\fP for event parameters and waveform QC parameters,
+respectively.
+.UNINDENT
+.UNINDENT
+.SH KNOWN ISSUES
+.sp
+When running scdbstrip for the first time on a large database it can happen
+that it aborts in case of MYSQL with the following error message:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+[  3%] Delete origin references of old events...08:48:22 [error]
+execute(\(dqdelete Object from Object, OriginReference, old_events where
+Object._oid=OriginReference._oid and
+OriginReference._parent_oid=old_events._oid\(dq) = 1206 (The total number
+of locks exceeds the lock table size)
+
+Exception: ERROR: command \(aqdelete Object from Object, OriginReference,
+old_events where Object._oid=OriginReference._oid and
+OriginReference._parent_oid=old_events._oid\(aq failed
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+That means your MYSQL server cannot hold enough data required for deletion.
+There are two solutions to this:
+.INDENT 0.0
+.IP 1. 3
+Increase the memory pool used by MYSQL by changing the configuration. The
+minimum is 64 MBytes but modern system typically have a larger default:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+innodb_buffer_pool_size = 64M
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The size of the new buffer depends on the size of the database that should
+be cleaned up. Read also the section \fI\%Database Server Configuration\fP\&. It
+provides more options for optimizing your database server.
+.IP 2. 3
+Run scdbstrip on smaller batches for the first time:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ scdbstrip \-d seis:mypass@localhost/seiscomp \-\-days 1000
+$ scdbstrip \-d seis:mypass@localhost/seiscomp \-\-days 900
+\&...
+$ scdbstrip \-d seis:mypass@localhost/seiscomp \-\-days 100
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH EXAMPLES
+.INDENT 0.0
+.IP \(bu 2
+Remove event and waveform quality parameters older than 30 days
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scdbstrip \-d mysql://sysop:sysop@localhost/seiscomp \-\-days 30
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Only remove waveform QC parameters older than 30 days but no others
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scdbstrip \-d mysql://sysop:sysop@localhost/seiscomp \-\-days 30 \-\-qc\-only
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH MODULE CONFIGURATION
+.nf
+\fBetc/defaults/global.cfg\fP
+\fBetc/defaults/scdbstrip.cfg\fP
+\fBetc/global.cfg\fP
+\fBetc/scdbstrip.cfg\fP
+\fB~/.seiscomp/global.cfg\fP
+\fB~/.seiscomp/scdbstrip.cfg\fP
+.fi
+.sp
+.sp
+scdbstrip inherits \fI\%global options\fP\&.
+.INDENT 0.0
+.TP
+.B database.cleanup.invertMode
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Delete all parameters after the specified time period,
+not before.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B database.cleanup.eventParameters
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Strip all event parameters including events, origins,
+magnitudes, amplitudes, arrivals, picks, focal mechanisms.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B database.cleanup.qualityControl
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Strip waveform quality control (QC) parameters.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBdatabase.cleanup.keep.*\fP
+\fIParameters controlling the time to keep objects in the database.\fP
+\fIThe time comparison considers the object time, not the time of\fP
+\fItheir creation.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B database.cleanup.keep.days
+Default: \fB30\fP
+.sp
+Type: \fIint\fP
+.sp
+The number of days to preserve in the database. This
+value is added to the whole timespan. Hours
+and minutes are configured separately.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B database.cleanup.keep.hours
+Default: \fB0\fP
+.sp
+Type: \fIint\fP
+.sp
+The number of hours to preserve in the database. This
+value is added to the whole timespan. Days
+and minutes are configured separately.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B database.cleanup.keep.minutes
+Default: \fB0\fP
+.sp
+Type: \fIint\fP
+.sp
+The number of minutes to preserve in the database. This
+value is added to the whole timespan. Days
+and hours are configured separately.
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBscdbstrip [options]\fP
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-file arg
+Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick \-> scautopick2.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-plugins arg
+Load given plugins.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-first\-new
+Overrides configuration parameter \fI\%firstNew\fP\&.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-\-verbosity arg
+Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Quiet mode: no logging output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-component arg
+Limit the logging to a certain component. This option can
+be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-syslog
+Use syslog logging backend. The output usually goes to
+/var/lib/messages.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-l, \-\-lockfile arg
+Path to lock file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-console arg
+Send log output to stdout.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-log\-file arg
+Use alternative log file.
+.UNINDENT
+.SS Database
+.INDENT 0.0
+.TP
+.B \-\-db\-driver\-list
+List all supported database drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-d, \-\-database arg
+The database connection string, format:
+\fI\%service://user:pwd@host/database\fP\&.
+\(dqservice\(dq is the name of the database driver which
+can be queried with \(dq\-\-db\-driver\-list\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-module arg
+The config module to use.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-inventory\-db arg
+Load the inventory from the given database or file, format:
+[\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-db\-disable
+Do not use the database at all
+.UNINDENT
+.SS Mode
+.INDENT 0.0
+.TP
+.B \-\-check
+Checks if unreachable objects exist.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-clean\-unused
+Remove all unreachable objects when in checkmode. Default:
+off.
+.UNINDENT
+.SS Objects
+.INDENT 0.0
+.TP
+.B \-E, \-\-ep\-only
+Strip only event parameters. Other parameters, like QC, are
+are ignored.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-Q, \-\-qc\-only
+Strip only waveform quality control (QC) parameters. Other
+parameters, like event parameters, are are ignored.
+Overrides \(aqeq\-only\(aq.
+.UNINDENT
+.SS Timespan
+.INDENT 0.0
+.TP
+.B \-\-days arg
+Overrides configuration parameter \fI\%database.cleanup.keep.days\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-hours arg
+Overrides configuration parameter \fI\%database.cleanup.keep.hours\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-minutes arg
+Overrides configuration parameter \fI\%database.cleanup.keep.minutes\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-datetime arg
+Replaces the days:hours:minutes timespan definition by an
+aribtrary absolute timestamp in UTC. The format is
+%Y\-%m\-%d %H:%M:%S.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-i, \-\-invert
+Overrides configuration parameter \fI\%database.cleanup.invertMode\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-keep\-events
+IDs of events to keep in the database separated with comma.
+.UNINDENT
+.SH AUTHOR
+gempa GmbH, GFZ Potsdam
+.SH COPYRIGHT
+gempa GmbH, GFZ Potsdam
+.\" Generated by docutils manpage writer.
+.

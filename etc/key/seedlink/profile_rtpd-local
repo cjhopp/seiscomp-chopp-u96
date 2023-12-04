@@ -1,0 +1,8 @@
+# Activated plugins for category sources
+sources = slsvr-local:chain
+
+# Hostname or IP of the Seedlink server.
+sources.slsvr-local.address = 127.0.0.1
+
+# Port of the Seedlink server
+sources.slsvr-local.port = 18002

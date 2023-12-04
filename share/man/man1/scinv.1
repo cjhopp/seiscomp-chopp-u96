@@ -1,0 +1,1111 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "SCINV" "1" "Dec 04, 2023" "5.5.14" "SeisComP"
+.SH NAME
+scinv \- SeisComP Documentation
+.sp
+\fBInventory database synchronisation.\fP
+.SH DESCRIPTION
+.sp
+scinv merges and tests inventory XML files to a single inventory, synchronises
+an inventory with another (most common use is with database), creates initial
+key files and much more ...
+.sp
+scinv is used by \fB$SEISCOMP_ROOT/etc/init/scinv.py\fP to synchronise the
+inventory from \fB$SEISCOMP_ROOT/etc/inventory\fP with the database.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+seiscomp update\-config inventory
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBHINT:\fP
+.INDENT 0.0
+.INDENT 3.5
+Inventory files in \fI\%SCML\fP format may be generated or modified by
+\fISMP\fP [\fI\%21\fP] or \fI\%invextr\fP\&. For conversion from FDSN station XML and
+dataless SEED volume to \fI\%SCML\fP use \fI\%fdsnxml2inv\fP and
+\fI\%dlsv2inv\fP, respectively.
+.UNINDENT
+.UNINDENT
+.SH COMMANDS
+.sp
+scinv works with different commands:
+.INDENT 0.0
+.IP \(bu 2
+\fI\%ls\fP: List the content of inventories in XML files,
+.IP \(bu 2
+\fI\%check\fP: Merge and test inventories, check the completeness and
+consistency of parameters, report any issue,
+.IP \(bu 2
+\fI\%merge\fP: Merge and test inventory files,
+.IP \(bu 2
+\fI\%keys\fP: Merge and test inventories, generate key files or
+remove key files without coorresponding inventory,
+.IP \(bu 2
+\fI\%sync\fP: Merge and test inventory files, generate or remove key
+files, synchronise the inventory with the database and send updates by
+notifiers to the messaging for saving to the database,
+.IP \(bu 2
+\fI\%apply\fP: Read and apply notifiers.
+.UNINDENT
+.sp
+The command \fBmust\fP be given as \fB1st\fP
+parameter to the application. All others parameters must follow.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scinv $command [options] [files]
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS sync
+.sp
+Synchronises an applications inventory with a given source given as file(s).
+It checks the consistency of the inventory using \fI\%check\fP before
+synchronization.
+The applications inventory is either read from the database or given with
+\fB\-\-inventory\-db\fP\&. As a result all information in the source is written
+to target and target does not contain any additional information. The source
+must hold all information. This works different to merge. If an output file is
+specified with \fB\-o\fP no notifiers are generated and sent via messaging.
+.sp
+This command is used by \fBetc/init/scinv.py\fP as follows:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scinv sync \-\-console=1 \-H localhost:$p \-\-filebase \(dq$fb\(dq \e
+           \-\-rc\-dir \(dq$rc\(dq \-\-key\-dir \(dq$kd\(dq
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$p = configured messaging port
+$fb = $SEISCOMP_ROOT/etc/inventory
+$rc = $SEISCOMP_ROOT/var/lib/rc
+$kd = $SEISCOMP_ROOT/etc/key
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS merge
+.sp
+Merges two or more inventories into one inventory checking the consistency
+of the inventory by using \fI\%check\fP\&. This command is useful to merge
+existing subtrees into a final inventory before synchronization.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scinv merge net1.xml net2.xml \-o inv.xml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+Merging inventory XML files is also supported by \fI\%scxmlmerge\fP but
+without the full \fI\%consistency checks\fP\&.
+.UNINDENT
+.UNINDENT
+.SS apply
+.sp
+Applies stored notifiers created with \fBsync\fP and option \fB\-\-create\-notifier\fP
+which is saved in a file (\fB\-o\fP). Source is the applications inventory read
+from the database or given with \fB\-\-inventory\-db\fP\&.
+If \fB\-o\fP is passed, no messages are sent but the result is stored in a file.
+Useful to test/debug or prepare an inventory for offline processing.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# Synchronise inventory and save the notifiers locally. No messages are sent.
+scinv sync \-d mysql://sysop:sysop@localhost/seiscomp \e
+      \-\-create\-notifier \-o sync_patch.xml
+
+# Sent the notifiers to the target system
+scinv apply \-H localhost sync_patch.xml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This operation can be useful to save differences in synchronization for
+validation or debugging problems.
+.SS keys
+.sp
+Synchronise station key files with current inventory pool. This command merges
+all XML files in the inventory pool (or the given files) and checks if a
+corresponding station key file in \fB$SEISCOMP_ROOT/etc/key\fP exists. If not,
+an empty station key file is created. If a station key file without a
+corresponding station in the merged inventory is found, it is deleted.
+.SS ls
+.sp
+List contained items up to response level. This command is useful to inspect
+an XML file or the complete inventory pool.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ scinv ls SK.KOLS.xml
+
+  network SK       Slovak National Network of Seismic Stations
+    epoch 1980\-01\-01
+    station KOLS   Kolonicke sedlo, Slovakia
+      epoch 2004\-09\-01
+      location __
+        epoch 2004\-09\-01
+        channel BHE
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel BHN
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel BHZ
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel EHE
+          epoch 2004\-09\-01 \- 2006\-04\-25 10:00:00
+        channel EHN
+          epoch 2004\-09\-01 \- 2006\-04\-25 10:00:00
+        channel EHZ
+          epoch 2004\-09\-01 \- 2006\-04\-25 10:00:00
+        channel HHE
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel HHE
+          epoch 2010\-03\-25
+        channel HHN
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel HHN
+          epoch 2010\-03\-25
+        channel HHZ
+          epoch 2006\-04\-25 12:00:00 \- 2010\-03\-24
+        channel HHZ
+          epoch 2010\-03\-25
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The default level of information printed is \fIchan\fP\&. Available levels are \fInet\fP,
+\fIsta\fP, \fIchan\fP and \fIresp\fP\&. The output level is controlled by \fB\-\-level\(ga\fP\&.
+.sp
+For checking the available networks and stations in the inventory pool, calling
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scinv ls \-\-level sta
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+is enough.
+.sp
+\fBHINT:\fP
+.INDENT 0.0
+.INDENT 3.5
+Stream lists in NSLC format (NET.STA.LOC.CHA) may be generated when combining
+with \fB\-\-nslc\fP\&. Such lists can be used as input for filtering
+waveforms, e.g., to \fI\%scmssort\fP or \fI\%scart\fP\&.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ scinv ls \-\-nslc inventory.xml
+
+  IU.WVT.00.BHZ 2017\-11\-16
+  IU.XMAS.00.BH1 2018\-07\-06 20:00:00
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS check
+.sp
+Checks consistency of passed inventory files or a complete filebase. In the
+first step the inventory is merged from all files. In the second step several
+consistency checks are applied such as:
+.INDENT 0.0
+.IP \(bu 2
+Overlapping epochs on each level (network, station, ...),
+.IP \(bu 2
+Valid epochs (start < end),
+.IP \(bu 2
+Defined gain in a stream,
+.IP \(bu 2
+Set gain unit,
+.IP \(bu 2
+Distance of the sensor location to the station location,
+.IP \(bu 2
+\(dqInvalid\(dq location 0/0.
+.UNINDENT
+.sp
+When inconsistencies or other relevant information are found, alerts are printed:
+.INDENT 0.0
+.IP \(bu 2
+\fB!\fP: Error, user must take an action,
+.IP \(bu 2
+\fBC\fP: Conflict, user should take an action,
+.IP \(bu 2
+\fBW\fP: Warning, user should check if an action is required,
+.IP \(bu 2
+\fBI\fP: Information,
+.IP \(bu 2
+\fBD\fP: Debug,
+.IP \(bu 2
+\fBR\fP: Unresolvable, user should check if an action is required,
+.IP \(bu 2
+\fB?\fP: Question.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+Default test tolerances are adopted from typical values for global
+networks. Consider adjusting \fI\%check.maxDistance\fP,
+\fI\%check.maxElevationDifference\fP and \fI\%check.maxSensorDepth\fP
+by configuration or command\-line options.
+.IP \(bu 2
+Errors must but conflicts and warnings should be resolved for maintaining a
+correct inventory.
+.IP \(bu 2
+\fI\%Merging\fP and \fI\%sychronization\fP stop
+when finding errors.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The following table lists checks of objects for deficiencies and the test
+results.
+.INDENT 0.0
+.IP \(bu 2
+This test matrix may be incomplete. Consider adding more tests and results.
+.IP \(bu 2
+Please report inventory issues not caught by tests to the SeisComP
+development team, e.g. on \fISeisComP on GitHub\fP [\fI\%1\fP]\&.
+.UNINDENT
+.TS
+center;
+|l|l|l|l|.
+_
+T{
+Object
+T}	T{
+Check description
+T}	T{
+Alert
+T}	T{
+Comments
+T}
+_
+T{
+network
+T}	T{
+start time after end time
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+network without station
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty start time
+T}	T{
+T}	T{
+handled by SeisComP inventory reader: network is ignored
+T}
+_
+T{
+T}	T{
+empty station
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty code
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+T}	T{
+T}	T{
+T}
+_
+T{
+station
+T}	T{
+start time after end time
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+empty or no start time
+T}	T{
+W
+T}	T{
+station is ignored
+T}
+_
+T{
+T}	T{
+start time after end time
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+empty code
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty latitude
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty longitude
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty elevation
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+elevation >   8900
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+elevation < \-12000
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+has no sensor location
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+T}	T{
+T}	T{
+T}
+_
+T{
+sensorLocation
+T}	T{
+coordinates far away from station
+T}	T{
+W
+T}	T{
+\fB\-\-distance\fP overrides default threshold (10 km)
+T}
+_
+T{
+T}	T{
+elevation far away from station
+T}	T{
+W
+T}	T{
+\fB\-\-max\-elevation\-difference\fP overrides default threshold (500 m)
+T}
+_
+T{
+T}	T{
+epoch outside network epochs
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+epoch outside station epochs
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+empty or no start time
+T}	T{
+W
+T}	T{
+sensorLocation is ignored
+T}
+_
+T{
+T}	T{
+empty latitude
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+empty longitude
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+elevation >   8900
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+elevation < \-12000
+T}	T{
+!
+T}	T{
+T}
+_
+T{
+T}	T{
+empty or no elevation
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+has no channel/stream
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+T}	T{
+T}	T{
+T}
+_
+T{
+stream
+T}	T{
+empty or no start time
+T}	T{
+T}	T{
+handled by SeisComP inventory reader: stream is ignored
+T}
+_
+T{
+T}	T{
+empty azimuth
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+epoch outside sensorLocation
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+epoch outside station
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+epoch outside network
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+start time after end time
+T}	T{
+C
+T}	T{
+T}
+_
+T{
+T}	T{
+missing gain value
+T}	T{
+W
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+gain value = 0
+T}	T{
+W
+T}	T{
+T}
+_
+T{
+T}	T{
+missing gain unit
+T}	T{
+W
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+missing gain frequency
+T}	T{
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+missing sampling rate
+T}	T{
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+missing depth
+T}	T{
+W
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+missing azimuth
+T}	T{
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+missing dip
+T}	T{
+T}	T{
+empty value is handled by SeisComP inventory reader
+T}
+_
+T{
+T}	T{
+empty sensor ID
+T}	T{
+I
+T}	T{
+T}
+_
+T{
+T}	T{
+large depth
+T}	T{
+W
+T}	T{
+\fB\-\-max\-sensor\-depth\fP overrides default threshold (500 m)
+T}
+_
+T{
+T}	T{
+T}	T{
+T}	T{
+T}
+_
+T{
+sensor
+T}	T{
+referenced sensor not available
+T}	T{
+R
+T}	T{
+T}
+_
+.TE
+.SH MODULE CONFIGURATION
+.nf
+\fBetc/defaults/global.cfg\fP
+\fBetc/defaults/scinv.cfg\fP
+\fBetc/global.cfg\fP
+\fBetc/scinv.cfg\fP
+\fB~/.seiscomp/global.cfg\fP
+\fB~/.seiscomp/scinv.cfg\fP
+.fi
+.sp
+.sp
+scinv inherits \fI\%global options\fP\&.
+.INDENT 0.0
+.TP
+.B syncKeys
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Synchronise key files.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B purgeKeys
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Delete key files if a station does not exist in inventory.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBcheck.*\fP
+\fIQuantities probed when using the check command.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B check.maxDistance
+Default: \fB10\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIkm\fP
+.sp
+Maximum allowed distance between station and sensor location
+coordinates.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B check.maxElevationDifference
+Default: \fB500\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIm\fP
+.sp
+Maximum allowed differences between elevation of station and
+sensor location.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B check.maxSensorDepth
+Default: \fB500\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIm\fP
+.sp
+Maximum allowed depth of channel (sensor). This is the depth
+of the sensor below the surface.
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBscinv command [options] [files]\fP
+.sp
+Command is one of: sync, merge, apply, keys, ls and check.
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-file arg
+Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick \-> scautopick2.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-plugins arg
+Load given plugins.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D, \-\-daemon
+Run as daemon. This means the application will fork itself
+and doesn\(aqt need to be started with &.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-auto\-shutdown arg
+Enable/disable self\-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with \-\-start\-stop\-msg
+for the master module).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-module arg
+Set the name of the master\-module used for auto\-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-username arg
+Set the name of the master\-username of the messaging
+used for auto\-shutdown. If \(dqshutdown\-master\-module\(dq is
+given as well, this parameter is ignored.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-\-verbosity arg
+Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Quiet mode: no logging output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-component arg
+Limit the logging to a certain component. This option can
+be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-syslog
+Use syslog logging backend. The output usually goes to
+/var/lib/messages.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-l, \-\-lockfile arg
+Path to lock file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-console arg
+Send log output to stdout.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-log\-file arg
+Use alternative log file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-print\-component arg
+For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-trace
+Execute in trace mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 \-\-print\-component=1
+\-\-print\-context=1 .
+.UNINDENT
+.SS Messaging
+.INDENT 0.0
+.TP
+.B \-u, \-\-user arg
+Overrides configuration parameter \fI\%connection.username\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-H, \-\-host arg
+Overrides configuration parameter \fI\%connection.server\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-t, \-\-timeout arg
+Overrides configuration parameter \fI\%connection.timeout\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-g, \-\-primary\-group arg
+Overrides configuration parameter \fI\%connection.primaryGroup\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-S, \-\-subscribe\-group arg
+A group to subscribe to.
+This option can be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-content\-type arg
+Overrides configuration parameter \fI\%connection.contentType\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-start\-stop\-msg arg
+Set sending of a start and a stop message.
+.UNINDENT
+.SS Database
+.INDENT 0.0
+.TP
+.B \-\-db\-driver\-list
+List all supported database drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-d, \-\-database arg
+The database connection string, format:
+\fI\%service://user:pwd@host/database\fP\&.
+\(dqservice\(dq is the name of the database driver which
+can be queried with \(dq\-\-db\-driver\-list\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-module arg
+The config module to use.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-inventory\-db arg
+Load the inventory from the given database or file, format:
+[\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-db\-disable
+Do not use the database at all
+.UNINDENT
+.SS Manager
+.INDENT 0.0
+.TP
+.B \-\-filebase dir
+Directory to check for inventory XML files. If not given,
+all XML files passed are checked.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-rc\-dir dir
+If given, rc (resource) files will be created in this
+directory for each station. The station descriptions will be
+from the last available epoch.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-key\-dir dir
+The directory to synchronise key files to. If not given,
+@SYSTEMCONFIGDIR@/key is assumed.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-o, \-\-output file
+Output file for writing inventory XML after merging.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-purge\-keys
+(default) Delete key files if a station does not exist in
+inventory.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-no\-purge\-keys
+Do not delete key files if a station does not exist in
+inventory.
+.UNINDENT
+.SS Check
+.INDENT 0.0
+.TP
+.B \-\-distance
+Maximum allowed distance between station and location
+coordinates when using the check command.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-max\-elevation\-difference
+Maximum allowed difference in elevation
+between station and sensorlocation in m. Larger differences
+will be reported.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-max\-sensor\-depth
+Maximum allowed depth of channel (sensor). This is the depth
+of the sensor below the surface in m. Larger depths will be
+reported.
+.UNINDENT
+.SS List
+.INDENT 0.0
+.TP
+.B \-\-compact
+Enable compact output for ls: each object one line.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-level int
+Information level reported by ls. One of \(dqnet\(dq, \(dqsta\(dq,
+\(dqcha\(dq or \(dqresp\(dq. Default is \(dqcha\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-nslc
+Enable NSLC output for ls as  NET.STA.LOC.CHA. The option
+implies level = cha.
+.UNINDENT
+.SS Merge
+.INDENT 0.0
+.TP
+.B \-\-strip
+Remove unreferenced objects (data loggers, sensors, ...).
+.UNINDENT
+.SS Sync
+.INDENT 0.0
+.TP
+.B \-\-create\-notifier
+If an output file is given, then all notifiers will be saved
+and not the result set itself.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-no\-keys
+Do not synchronise key files.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-no\-rc
+Do not synchronise rc files.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-test
+Do not send any notifiers and just output resulting
+operations and conflicts.
+.UNINDENT
+.SH AUTHOR
+gempa GmbH, GFZ Potsdam
+.SH COPYRIGHT
+gempa GmbH, GFZ Potsdam
+.\" Generated by docutils manpage writer.
+.

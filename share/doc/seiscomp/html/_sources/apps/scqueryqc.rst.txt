@@ -1,0 +1,242 @@
+.. highlight:: rst
+
+.. _scqueryqc:
+
+#########
+scqueryqc
+#########
+
+**Query waveform quality control (QC) parameters from database.**
+
+
+Description
+===========
+
+scqueryqc queries a database for waveform quality control (QC) parameters. The
+QC parameters must be provided, e.g. by :ref:`scqc`.
+
+.. warning ::
+
+   Writing QC parameters to the database by :ref:`scqc` will result in a rapidly
+   growing database and is therefore not recommended in permanent application!
+
+The database query is done for
+
+* One or multiple streams,
+* One or multiple QC parameters. All QC parameters can be requested. Defaults
+  apply. For reading the defaults use ::
+
+     scqueryqc -h
+
+* A single time window where the begin time must be provided. Current time is
+  considered if the end is not give.
+
+
+Workflow
+--------
+
+You should minimize the impact of stored waveform QC parameters on the size of the
+database.
+
+#. Compute the QC parameters in real time using :ref:`scqc` and save them in the
+   |scname| database. Saving the QC parameters in the database requires to
+   adjust the scqc module configuration parameters
+   ``plugins.*.archive.interval`` for each plugin.
+#. Regularly use scqueryqc for some time span to read the QC parameters from the
+   database. Save them in a XML files.
+
+   Example for all QC parameters found for all streams in the inventory before
+   end time:
+
+   .. code-block:: sh
+
+      scqueryqc -d [host] -e '[end time]' --streams-from-inventory -o [XML file]
+
+
+#. Clean the database from QC parameters.
+
+   * Either use :ref:`scdispatch` with the parameters saved in XML. You may need
+     to set the routing table for sending the QualityControl parameters to the
+     right message group, e.g., QC:
+
+     .. code-block:: sh
+
+        scdispatch -H [host] -O remove --routingtable QualityControl:QC -i [XML file]
+
+   * Alternatively, use :ref:`scdbstrip` with the command-line option ``-Q`` and
+     remove **all** QC parameters in the time span. Use the same period for
+     which the QC parameters were retrieved:
+
+     .. code-block:: sh
+
+        scdbstrip -d [database] -Q --date-time '[end time]'
+
+     .. note ::
+
+        Considering an end time by ``--date-time`` has the advantage that no QC
+        parameters are removed which were measured after scqueryqc was applied.
+
+Examples
+--------
+
+* Query rms and delay values for the stream AU.AS18..SHZ,AU.AS19..SHZ before
+  '2021-11-20 00:00:00'. Write the XML to stdout
+
+  .. code-block:: sh
+
+     scqueryqc -d localhost -e '2021-11-20 00:00:00' -p rms,delay -i AU.AS18..SHZ,AU.AS19..SHZ
+
+* Query all default QC parameter values for all streams found in the inventory
+  from '2021-11-20 00:00:00' until current. Write the formatted XML output to
+  :file:`/tmp/query.xml`
+
+  .. code-block:: sh
+
+     scqueryqc -d localhost -b '2021-11-20 00:00:00' --streams-from-inventory -f -o /tmp/query.xml
+
+
+.. _scqueryqc_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/scqueryqc.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/scqueryqc.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/scqueryqc.cfg`
+
+scqueryqc inherits :ref:`global options<global-configuration>`.
+
+
+
+
+Command-Line Options
+====================
+
+.. program:: scqueryqc
+
+:program:`scqueryqc [options]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+
+Database
+--------
+
+.. option:: --db-driver-list
+
+   List all supported database drivers.
+
+.. option:: -d, --database arg
+
+   The database connection string, format:
+   service:\/\/user:pwd\@host\/database.
+   \"service\" is the name of the database driver which
+   can be queried with \"\-\-db\-driver\-list\".
+
+.. option:: --inventory-db arg
+
+   Load the inventory from the given database or file, format:
+   [service:\/\/]location .
+
+
+Output
+------
+
+.. option:: -o, --output filename
+
+   Name of output XML file. Objects are sent to stderr if none
+   is given.
+
+.. option:: -f, --formatted
+
+   Write formatted XML.
+
+
+Query
+-----
+
+.. option:: -b, --begin time
+
+   Begin time of query. Format: 'YYYY\-MM\-DD hh:mm:ss'.
+   '1900\-01\-01T00:00:00Z' is considered if undefined.
+
+.. option:: -e, --end time
+
+   End time of query. Format: 'YYYY\-MM\-DD hh:mm:ss'.
+   Current time is considered if undefined.
+
+.. option:: -i, --stream-id string
+
+   Waveform stream ID to search for QC parameters: net.sta.loc.cha \-
+   [networkCode].[stationCode].[sensorLocationCode].[channelCode].
+   Provide a single ID or a comma\-separated list. Overrides
+   '\-\-streams\-from\-inventory'.
+
+.. option:: -p, --parameter string
+
+   QC parameter to output: \(e.g. delay,rms,'gaps count' ...\).
+   Use quotes if QC parameter has more than 1 word.
+   Provide a single parameter or a comma\-separated list.
+   Defaults are used if parameter is undefined.
+
+.. option:: --streams-from-inventory
+
+   Read streams from inventory. Superseded by '\-\-stream\-id'.
+

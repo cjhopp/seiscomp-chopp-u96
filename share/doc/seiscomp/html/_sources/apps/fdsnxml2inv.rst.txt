@@ -1,0 +1,170 @@
+.. highlight:: rst
+
+.. _fdsnxml2inv:
+
+###########
+fdsnxml2inv
+###########
+
+**Convert station inventory between FDSN StationXML format and
+SeisComP inventory XML.**
+
+
+Description
+===========
+
+fdsnws2inv is an inventory converter. It converts station meta data from
+FDSN StationXML format to SeisComP XML (:term:`SCML`) and back. Write the output to the command line.
+
+Examples
+========
+
+#. Convert an inventory file in FDSN StationXML format to SCML with formatted XML.
+   Redirect the output to a new file:
+
+   .. code-block:: sh
+
+      fdsnxml2inv -f inventory_fdsn.xml > inventory_sc.xml
+
+#. Convert an inventory file in SCML format to FDSN StationXML with formatted XML.
+   Redirect the output to a new file:
+
+   .. code-block:: sh
+
+      fdsnxml2inv --to-staxml -f inventory_sc.xml > inventory_fdns.xml
+
+
+.. _fdsnxml2inv_configuration:
+
+Module Configuration
+====================
+
+| :file:`etc/defaults/global.cfg`
+| :file:`etc/defaults/fdsnxml2inv.cfg`
+| :file:`etc/global.cfg`
+| :file:`etc/fdsnxml2inv.cfg`
+| :file:`~/.seiscomp/global.cfg`
+| :file:`~/.seiscomp/fdsnxml2inv.cfg`
+
+fdsnxml2inv inherits :ref:`global options<global-configuration>`.
+
+
+
+
+Command-Line Options
+====================
+
+.. program:: fdsnxml2inv
+
+:program:`fdsnxml2inv [OPTIONS] input [output]`
+
+
+Generic
+-------
+
+.. option:: -h, --help
+
+   Show help message.
+
+.. option:: -V, --version
+
+   Show version information.
+
+.. option:: --config-file arg
+
+   Use alternative configuration file. When this option is
+   used the loading of all stages is disabled. Only the
+   given configuration file is parsed and used. To use
+   another name for the configuration create a symbolic
+   link of the application or copy it. Example:
+   scautopick \-> scautopick2.
+
+.. option:: --plugins arg
+
+   Load given plugins.
+
+.. option:: -D, --daemon
+
+   Run as daemon. This means the application will fork itself
+   and doesn't need to be started with \&.
+
+
+Verbosity
+---------
+
+.. option:: --verbosity arg
+
+   Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+   4:debug.
+
+.. option:: -v, --v
+
+   Increase verbosity level \(may be repeated, eg. \-vv\).
+
+.. option:: -q, --quiet
+
+   Quiet mode: no logging output.
+
+.. option:: --component arg
+
+   Limit the logging to a certain component. This option can
+   be given more than once.
+
+.. option:: -s, --syslog
+
+   Use syslog logging backend. The output usually goes to
+   \/var\/lib\/messages.
+
+.. option:: -l, --lockfile arg
+
+   Path to lock file.
+
+.. option:: --console arg
+
+   Send log output to stdout.
+
+.. option:: --debug
+
+   Execute in debug mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 .
+
+.. option:: --log-file arg
+
+   Use alternative log file.
+
+.. option:: --print-component arg
+
+   For each log entry print the component right after the
+   log level. By default the component output is enabled
+   for file output but disabled for console output.
+
+.. option:: --trace
+
+   Execute in trace mode.
+   Equivalent to \-\-verbosity\=4 \-\-console\=1 \-\-print\-component\=1
+   \-\-print\-context\=1 .
+
+
+Convert
+-------
+
+.. option:: -f, --formatted
+
+   Generate formatted SCML. Otherwise, output XML to a single line.
+
+.. option:: --to-staxml
+
+   Convert from SCML to StationXML and expects SCML as input.
+   If not given, input is SCML and output is StationXML.
+
+.. option:: --relaxed-ns-check
+
+   Enable relaxed XML namespace checks. This will also accept
+   tags within a different namespace than defined in the
+   supported schema.
+
+.. option:: --log-stages
+
+   Add more output to stderr for all channel response stages
+   when converting from StationXML.
+

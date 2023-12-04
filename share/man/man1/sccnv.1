@@ -1,0 +1,336 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "SCCNV" "1" "Dec 04, 2023" "5.5.14" "SeisComP"
+.SH NAME
+sccnv \- SeisComP Documentation
+.sp
+\fBConverts data in different formats.\fP
+.SH DESCRIPTION
+.sp
+sccnv reads input given in a supported format, converts the content to another
+format and writes the output. Use the command\-line option \fBformat\-list\fP
+for a list of supported formats.
+.SH FORMATS
+.sp
+Different formats are supported for input and output files.
+.TS
+center;
+|l|l|l|l|.
+_
+T{
+Name
+T}	T{
+Description
+T}	T{
+Input
+T}	T{
+Output
+T}
+_
+T{
+arclink
+T}	T{
+\fI\%Arclink XML\fP
+T}	T{
+X
+T}	T{
+X
+T}
+_
+T{
+bson
+T}	T{
+T}	T{
+X
+T}	T{
+X
+T}
+_
+T{
+bson\-json
+T}	T{
+T}	T{
+T}	T{
+X
+T}
+_
+T{
+csv
+T}	T{
+comma\-separated values
+T}	T{
+T}	T{
+X
+T}
+_
+T{
+hyp71sum2k
+T}	T{
+Hypo71 format
+T}	T{
+T}	T{
+X
+T}
+_
+T{
+ims10
+T}	T{
+T}	T{
+T}	T{
+X
+T}
+_
+T{
+json
+T}	T{
+\fI\%JSON\fP format
+T}	T{
+X
+T}	T{
+X
+T}
+_
+T{
+qml1.2
+T}	T{
+\fI\%QuakeML\fP format
+T}	T{
+*
+T}	T{
+X
+T}
+_
+T{
+qml1.2rt
+T}	T{
+\fI\%QuakeML\fP real time (RT) format
+T}	T{
+*
+T}	T{
+X
+T}
+_
+T{
+scdm0.51
+T}	T{
+T}	T{
+X
+T}	T{
+X
+T}
+_
+T{
+trunk
+T}	T{
+SeisComP XML (\fI\%SCML\fP) \- \fI\%SCML API\fP
+T}	T{
+X
+T}	T{
+X
+T}
+_
+.TE
+.sp
+\fB*\fP: The conversion from files in QuakeML format is not supported by sccnv
+but can be realized by system tools. Read section \fI\%QuakeML\fP for
+details and instructions.
+.SS QuakeML
+.sp
+\fI\%QuakeML\fP is used in a variety of flavors involving, e.g.,
+.INDENT 0.0
+.IP \(bu 2
+Using non\-standard objects,
+.IP \(bu 2
+PublicID references which are not globally unique,
+.IP \(bu 2
+Missing references to parent objects,
+.IP \(bu 2
+Missing creationInfo parameters.
+.UNINDENT
+.sp
+The ability to convert from QuakeML to \fI\%SCML\fP is thus limited and it
+depends on the parameters provided with the input QuakeML file.
+.sp
+However, XSLT stylesheets are provided for mapping the parameters. The files
+are located in \fB@DATADIR@/xml/[version]/\fP for different \fISeisComP\fP data schema
+versions. The stylesheet files provide information on the mapping and on
+limitations as well as examples on their application.
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+You may find out about the \fISeisComP\fP data schema version using modules along
+with the command\-line option \fI\-V\fP, e.g.,
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ sccnv \-V
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+The style sheets can be used along with other stylesheet converter tools provided
+by your system, e.g., \fBxalan\fP or \fBxsltproc\fP\&. Examples are given
+in section \fI\%Examples\fP\&.
+.SH EXAMPLES
+.INDENT 0.0
+.IP \(bu 2
+Print the list of supported formats:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ sccnv \-\-format\-list
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Convert an  event parameter file in \fI\%SCML\fP format to \fI\%QuakeML\fP and
+store the content in a file:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ sccnv \-i seiscomp.xml \-o qml1.2:quakeml.xml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Convert an inventory file in Arclink XML format to \fI\%SCML\fP and store the
+content in a file:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ sccnv \-i arclink:Package_inventory.xml \-o inventory.sc.xml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Convert an event parameter file in \fI\%SCML\fP format to ims1.0 and store the
+content in a file:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ sccnv \-i trunk:event.xml \-o ims10:event.ims
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Convert QuakeML in version 1.2 to SCML in data schema version 0.12:
+.INDENT 2.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+$ xsltproc $SEISCOMP_ROOT/share/xml/0.12/quakeml_1.2__sc3ml_0.12.xsl file.quakeml > file_sc.xml
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBsccnv \-i format:file \-o format:file\fP
+.sp
+sccnv reads the input given in a supported format, converts the content
+and writes the output in another format. Use the option \fIformat\-list\fP
+for a list of supported formats.
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.SS Formats
+.INDENT 0.0
+.TP
+.B \-\-format\-list
+List all supported formats
+.UNINDENT
+.SS Input
+.INDENT 0.0
+.TP
+.B \-i, \-\-input arg
+Input stream [format:][file], default: trunk:\-
+.UNINDENT
+.SS Output
+.INDENT 0.0
+.TP
+.B \-o, \-\-output arg
+Output stream [format:][file], default trunk:\-
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-f, \-\-formatted
+Use formatted output
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-indent arg
+Formatted line indent. Default: 2
+.UNINDENT
+.SH AUTHOR
+gempa GmbH, GFZ Potsdam
+.SH COPYRIGHT
+gempa GmbH, GFZ Potsdam
+.\" Generated by docutils manpage writer.
+.

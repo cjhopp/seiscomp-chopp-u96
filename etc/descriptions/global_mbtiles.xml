@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="mbtiles">
+		<extends>global</extends>
+		<configuration>
+			<group name="map">
+				<group name="osm">
+					<description>
+					Configuration parameters specific to the OpenStreetMap (OSM)
+					tile store. Also add 'mbtiles' to 'plugins', the store URL
+					to 'map.location' and 'osm' to 'map.type' for using OSM tile
+					stores.
+					</description>
+					<parameter name="tileSize" type="int" default="256" unit="px">
+						<description>
+						Edge length of the square tiles received from the server.
+						</description>
+					</parameter>
+					<parameter name="maxLevel" type="int" default="10">
+						<description>
+						Maximum available/allowed tile level. The OSM servers
+						typically serve map tiles up to level 19.
+						</description>
+					</parameter>
+					<parameter name="cacheDir" type="string">
+						<description>
+						Path of an optional cache directory. If specified
+						downloaded tiles will we cached to speed up requests and
+						to save network bandwidth.
+						</description>
+					</parameter>
+					<parameter name="cacheDuration" type="int" unit="s" default="86400">
+						<description>
+						Number of seconds a cached tile is valid. Cache files
+						older than the specified number of seconds are reloaded
+						from the tile server upon request. Use a negative value
+						to indicated an unlimited cache duration.
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>

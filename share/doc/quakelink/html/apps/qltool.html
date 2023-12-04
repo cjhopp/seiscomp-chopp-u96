@@ -1,0 +1,407 @@
+<!doctype html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>qltool &#8212; QuakeLink: Earthquake Distribution Server  documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gempa.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/gempa.css?v=c960eebf" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/gempa.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="sc2ql" href="sc2ql.html" />
+    <link rel="prev" title="qlpush" href="qlpush.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <img class="background" src="../_static/icon.png"/>
+        <div class="content">
+           <span class="title">QuakeLink: Earthquake Distribution Server </span>
+           <span class="version">2023.324#17393ecf5</span></h1>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="sc2ql.html" title="sc2ql"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="qlpush.html" title="qlpush"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../base/plugins.html" accesskey="U">Server</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="qltool">
+<span id="id1"></span><h1>qltool<a class="headerlink" href="#qltool" title="Permalink to this heading">¶</a></h1>
+<p><strong>Module to retrieve data from QuakeLink servers.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>qltool is an application to retrieve event data from a <a class="reference internal" href="quakelink.html#quakelink"><span class="std std-ref">quakelink</span></a> server.
+It is part of the QuakeLink suite/software package.</p>
+<p>By command-line options qltool can filter event objects and use logical object
+criteria. Please read the command-line help for the options:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>qltool<span class="w"> </span>-h
+</pre></div>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>Query a specifc event, output: XML, stdout</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>qltool<span class="w"> </span>-E<span class="w"> </span>gempa2018abcd
+</pre></div>
+</div>
+</li>
+<li><p>Query all events, output: line based file</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>qltool<span class="w"> </span>-Sy<span class="w"> </span>/tmp/events.txt
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="module-configuration">
+<h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/qltool.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/qltool.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/qltool.cfg</span></code></div>
+</div>
+<p>qltool inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Modules/plugins may require a license file. The default path to license
+files is <code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/licenses/</span></code> which can be overridden by global
+configuration of the parameter <code class="xref std std-confval docutils literal notranslate"><span class="pre">gempa.licensePath</span></code>. Example:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span>gempa.licensePath = @CONFIGDIR@/licenses
+</pre></div>
+</div>
+</div>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">qltool [options]</strong></p>
+<section id="connection-settings">
+<h3>Connection settings<a class="headerlink" href="#connection-settings" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-H">
+<span id="cmdoption-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Host (QuakeLink server) to connect to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-h">
+<span id="cmdoption-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-s">
+<span id="cmdoption-ssl"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ssl</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use secure socket layer (SSL).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ssl-no-hostname">
+<span class="sig-name descname"><span class="pre">--ssl-no-hostname</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ssl-no-hostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not verify the server’s hostname.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ssl-no-cert">
+<span class="sig-name descname"><span class="pre">--ssl-no-cert</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ssl-no-cert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not verify the server certificate chain. Implicitly
+disables the hostname check.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-c">
+<span id="cmdoption-credentials"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--credentials</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Username:password for authentication separated by colon. If
+password is not given, it is asked for on tty.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ping">
+<span class="sig-name descname"><span class="pre">--ping</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request and validate server identifier.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-alive">
+<span class="sig-name descname"><span class="pre">--alive</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-alive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request sever to send alive message every 30s, useful for
+long running select updated queries to prevent connection
+termination by routers.</p>
+</dd></dl>
+
+</section>
+<section id="single-event-query">
+<h3>Single-event query<a class="headerlink" href="#single-event-query" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-E">
+<span id="cmdoption-event"></span><span class="sig-name descname"><span class="pre">-E</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--event</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-E" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event ID to download.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-r">
+<span id="cmdoption-rev"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rev</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Revision of event.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-R">
+<span id="cmdoption-all-rev"></span><span class="sig-name descname"><span class="pre">-R</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--all-rev</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-R" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request all revisions of event. The output
+format is fixed to summary.</p>
+</dd></dl>
+
+</section>
+<section id="multi-event-query">
+<h3>Multi-event query<a class="headerlink" href="#multi-event-query" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-S">
+<span id="cmdoption-select"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--select</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search events by key event parameters.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-updated">
+<span class="sig-name descname"><span class="pre">--updated</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep connection open and wait for event updates.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-archvied">
+<span class="sig-name descname"><span class="pre">--archvied</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-archvied" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request archived events, only required in combination with
+--updated.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-from">
+<span class="sig-name descname"><span class="pre">--from</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin time. Format: %Y,%m,%d[,%H,%M,%S,%f]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-to">
+<span class="sig-name descname"><span class="pre">--to</span></span><span class="sig-prename descclassname"> <span class="pre">time</span></span><a class="headerlink" href="#cmdoption-to" title="Permalink to this definition">¶</a></dt>
+<dd><p>End time. Format: %Y,%m,%d[,%H,%M,%S,%f]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-filter">
+<span class="sig-name descname"><span class="pre">--filter</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>SQL like where, order, limit and offset filter:</p>
+<p>[WHERE clause] [ORDER BY OTIME ASC|DESC] [LIMIT %n [OFFSET %n]]</p>
+<p>clause    := condition[ AND|OR [(]clause[)]]</p>
+<p>condition := MAG|DEPTH|LAT|LON|PHASES op {float} |</p>
+<p>UPDATED|OTIME op time |</p>
+<p>AGENCY|STATUS|TYPE|REGION|MAG_T op ‘string’ |</p>
+<p>MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] NULL</p>
+<p>op        :==|!=|&gt;|&gt;=|&lt;|&lt;=|eq|gt|ge|lt|ge</p>
+<p>time      := %Y,%m,%d[,%H,%M,%S,%f]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-processor">
+<span class="sig-name descname"><span class="pre">--processor</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event processor script called with file path after XML
+output file was created.</p>
+</dd></dl>
+
+</section>
+<section id="event-content">
+<h3>Event content<a class="headerlink" href="#event-content" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-P">
+<span id="cmdoption-with-picks"></span><span class="sig-name descname"><span class="pre">-P</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--with-picks</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export all associated picks.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-A">
+<span id="cmdoption-with-amplitudes"></span><span class="sig-name descname"><span class="pre">-A</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--with-amplitudes</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export all associated amplitudes.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-M">
+<span id="cmdoption-with-magnitudes"></span><span class="sig-name descname"><span class="pre">-M</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--with-magnitudes</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-M" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export all station magnitudes.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-F">
+<span id="cmdoption-with-stamts"></span><span class="sig-name descname"><span class="pre">-F</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--with-stamts</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export moment tensor station contributions and phase
+settings.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-a">
+<span id="cmdoption-ignore-arrivals"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ignore-arrivals</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not export origin arrivals.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-p">
+<span id="cmdoption-preferred-only"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--preferred-only</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
+<dd><p>When exporting events only the preferred origin
+and the preferred magnitude will be dumped.</p>
+</dd></dl>
+
+</section>
+<section id="event-format">
+<h3>Event format<a class="headerlink" href="#event-format" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-f">
+<span id="cmdoption-formatted"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--formatted</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output formatted XML.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-n">
+<span id="cmdoption-native"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--native</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request native format which is the unmodified data pushed
+to the QuakeLink server. The parameters P, A, M, F, a, p, f
+are ignored in this mode.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-z">
+<span id="cmdoption-gzip"></span><span class="sig-name descname"><span class="pre">-z</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--gzip</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request for gzip compressed data, not supported in summary
+format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y">
+<span id="cmdoption-summary"></span><span class="sig-name descname"><span class="pre">-y</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--summary</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request summary format which is a line based and semicolon
+separated representation of the key event parameters.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-v">
+<span id="cmdoption-version"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>The specific format version to request, currently only
+supported by summary format.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">qltool</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#connection-settings">Connection settings</a></li>
+<li><a class="reference internal" href="#single-event-query">Single-event query</a></li>
+<li><a class="reference internal" href="#multi-event-query">Multi-event query</a></li>
+<li><a class="reference internal" href="#event-content">Event content</a></li>
+<li><a class="reference internal" href="#event-format">Event format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="qlpush.html"
+                          title="previous chapter">qlpush</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="sc2ql.html"
+                          title="next chapter">sc2ql</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/qltool.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="content">
+        Release <b></b> version <b>2023.324#17393ecf5</b>
+          <div class="copyright">
+            &copy; Copyright <a href="https://www.gempa.de">2013, gempa GmbH.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

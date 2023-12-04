@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>sh2proc &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="slmon" href="slmon.html" />
+    <link rel="prev" title="sczip" href="sczip.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="slmon.html" title="slmon"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="sczip.html" title="sczip"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../modules.html" >Modules</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/utilities.html" accesskey="U">Utilities</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="sh2proc">
+<span id="id1"></span><h1>sh2proc<a class="headerlink" href="#sh2proc" title="Permalink to this heading">¶</a></h1>
+<p><strong>Convert SeismicHandler event files to SCML.</strong></p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>sh2proc converts <a class="reference external" href="http://www.seismic-handler.org/">Seismic Handler</a> event data to
+SeisComP XML format. Data is read from input file or <cite>stdin</cite> if no input file is
+specified.  The result is available on <cite>stdout</cite>.</p>
+</section>
+<section id="code-mapping">
+<h2>Code mapping<a class="headerlink" href="#code-mapping" title="Permalink to this heading">¶</a></h2>
+<p>Since Seismic Handler only specifies station and component codes, a mapping to
+SeisComP network, location and channel codes is necessary. The script assumes
+that the same station code is not used in different networks. In case an
+ambiguous id is found a warning is printed and the first network code is used.
+The channel and stream code is extracted from the dectecStream and detecLocid
+configured in the global bindings. In case no configuration module is available
+the first location and stream is used.</p>
+</section>
+<section id="event-parameters">
+<h2>Event parameters<a class="headerlink" href="#event-parameters" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>Event types given in Seismic Handler files are mapped to SeisComP event types:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Seismic Handler</p></th>
+<th class="head"><p>SeisComP</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>teleseismic quake</p></td>
+<td><p>earthquake</p></td>
+</tr>
+<tr class="row-odd"><td><p>regional quake</p></td>
+<td><p>earthquake</p></td>
+</tr>
+<tr class="row-even"><td><p>local quake</p></td>
+<td><p>earthquake</p></td>
+</tr>
+<tr class="row-odd"><td><p>quarry blast</p></td>
+<td><p>quarry blast</p></td>
+</tr>
+<tr class="row-even"><td><p>nuclear explosion</p></td>
+<td><p>nuclear explosion</p></td>
+</tr>
+<tr class="row-odd"><td><p>mining event</p></td>
+<td><p>mining explosion</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>The EventID given in Seismic Handler files is mapped as a comment to the event.</p></li>
+</ul>
+</section>
+<section id="magnitudes">
+<h2>Magnitudes<a class="headerlink" href="#magnitudes" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p>Magnitude types given in Seismic Handler files are mapped to SeisComP magnitudes:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Seismic Handler</p></th>
+<th class="head"><p>SeisComP</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>m</p></td>
+<td><p>M</p></td>
+</tr>
+<tr class="row-odd"><td><p>ml</p></td>
+<td><p>ML</p></td>
+</tr>
+<tr class="row-even"><td><p>mb</p></td>
+<td><p>mb</p></td>
+</tr>
+<tr class="row-odd"><td><p>ms</p></td>
+<td><p>Ms(BB)</p></td>
+</tr>
+<tr class="row-even"><td><p>mw</p></td>
+<td><p>Mw</p></td>
+</tr>
+<tr class="row-odd"><td><p>bb</p></td>
+<td><p>mB</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>ML magnitudes in Seismic Handler files have no corresponding measured amplitudes.
+Therefore the ML station magnitudes are converted without referencing the amplitude.</p></li>
+<li><p>Seismic Handler uses the phase name “L” for referring to surface waves without
+further specification. The phase name is kept unchanged.</p></li>
+</ul>
+</section>
+<section id="distance-calculations">
+<h2>Distance calculations<a class="headerlink" href="#distance-calculations" title="Permalink to this heading">¶</a></h2>
+<p>In Seismic Handler files distances can be given in units of km or degree but in
+SeisComP only degree is used. Both representations are considered for conversion.
+In case of double posting preference is given to the Seismic Handler values given in km
+due to their higher precision.</p>
+</section>
+<section id="beam-parameters">
+<h2>Beam parameters<a class="headerlink" href="#beam-parameters" title="Permalink to this heading">¶</a></h2>
+<p>Seismic Handler files provide the phase picks with theoretical, measured and corrected
+slowness and (back) azimuth but the pick in SeisComP knows only one value.
+During conversion highest preference is given to corrected values.
+The theoretical values are ignored.</p>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
+<p>The following parameters from Seismic Handler files are not considered:</p>
+<ul class="simple">
+<li><p>Phase Flag</p></li>
+<li><p>Location Input Params</p></li>
+<li><p>Reference Location Name</p></li>
+<li><p>Quality Number</p></li>
+<li><p>Ampl&amp;Period Source</p></li>
+<li><p>Location Quality</p></li>
+<li><p>Reference Latitude</p></li>
+<li><p>Reference Longitude</p></li>
+<li><p>Amplitude Time</p></li>
+</ul>
+</section>
+<section id="further-processing-in-seiscomp">
+<h2>Further processing in SeisComP<a class="headerlink" href="#further-processing-in-seiscomp" title="Permalink to this heading">¶</a></h2>
+<p>The created XML files can be used in multiple ways, e.g.:</p>
+<ol class="arabic simple">
+<li><p>By other modules in an XML-base playback</p></li>
+<li><p>Inject into the messaging system by <a class="reference internal" href="scdispatch.html#scdispatch"><span class="std std-ref">scdispatch</span></a></p></li>
+<li><p>Integrate into the database by <a class="reference internal" href="scdb.html#scdb"><span class="std std-ref">scdb</span></a></p></li>
+</ol>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Convert the Seismic Handler file <cite>shm.evt</cite> and writes SC3ML into the file
+<cite>sc3.xml</cite>. The database connection to read inventory and configuration
+information is fetched from the default messaging connection.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sh2proc<span class="w"> </span>shm.evt<span class="w"> </span>&gt;<span class="w"> </span>sc3.xml
+</pre></div>
+</div>
+</li>
+<li><p>Read Seismic Handler data from <cite>stdin</cite>. Inventory and configuration information
+is provided through files.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>shm.evt<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh2proc<span class="w"> </span>--inventory-db<span class="o">=</span>inventory.xml<span class="w"> </span>--config-db<span class="o">=</span>config.xml<span class="w"> </span>&gt;<span class="w"> </span>sc3.xml
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="shm-evt-file-format">
+<h2>shm.evt file format<a class="headerlink" href="#shm-evt-file-format" title="Permalink to this heading">¶</a></h2>
+<p>The list of parameters supported by sh2proc may be incomplete.
+Read the original <a class="reference external" href="http://www.seismic-handler.org/wiki/ShmDocFileEvt">format and parameter description</a>
+of the SeismicHandler .evt files for providing correct input files.</p>
+<p>Example of a SeismicHandler <cite>shm.evt</cite> file with supported parameters:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>Event<span class="w"> </span>ID<span class="w">               </span>:<span class="w"> </span><span class="m">1170102002</span>
+Station<span class="w"> </span>code<span class="w">           </span>:<span class="w"> </span>VITZ
+Onset<span class="w"> </span><span class="nb">time</span><span class="w">             </span>:<span class="w"> </span><span class="m">2</span>-JAN-2017_12:25:40.415
+Onset<span class="w"> </span><span class="nb">type</span><span class="w">             </span>:<span class="w"> </span>emergent
+Phase<span class="w"> </span>name<span class="w">             </span>:<span class="w"> </span>Pg
+Event<span class="w"> </span>Type<span class="w">             </span>:<span class="w"> </span>mining<span class="w"> </span>event
+Applied<span class="w"> </span>filter<span class="w">         </span>:<span class="w"> </span>SHM_BP_1HZ_25HZ_3
+Component<span class="w">              </span>:<span class="w"> </span>Z
+Quality<span class="w"> </span>number<span class="w">         </span>:<span class="w"> </span><span class="m">2</span>
+Pick<span class="w"> </span>Type<span class="w">              </span>:<span class="w"> </span>manual
+Weight<span class="w">                 </span>:<span class="w"> </span><span class="m">4</span>
+Theo.<span class="w"> </span>Azimuth<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span><span class="w">    </span>:<span class="w">   </span><span class="m">27</span>.29
+Theo.<span class="w"> </span>Backazimuth<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span>:<span class="w">  </span><span class="m">207</span>.36
+Distance<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span><span class="w">         </span>:<span class="w">  </span><span class="m">0</span>.122
+Distance<span class="w"> </span><span class="o">(</span>km<span class="o">)</span><span class="w">          </span>:<span class="w"> </span><span class="m">13</span>.572
+Magnitude<span class="w"> </span>ml<span class="w">           </span>:<span class="w"> </span><span class="m">1</span>.0
+Phase<span class="w"> </span>Flags<span class="w">            </span>:<span class="w"> </span>L
+---<span class="w"> </span>End<span class="w"> </span>of<span class="w"> </span>Phase<span class="w"> </span>---
+
+
+Event<span class="w"> </span>ID<span class="w">               </span>:<span class="w"> </span><span class="m">1170102002</span>
+Station<span class="w"> </span>code<span class="w">           </span>:<span class="w"> </span>WESF
+Onset<span class="w"> </span><span class="nb">time</span><span class="w">             </span>:<span class="w"> </span><span class="m">2</span>-JAN-2017_12:25:53.714
+Onset<span class="w"> </span><span class="nb">type</span><span class="w">             </span>:<span class="w"> </span>emergent
+Phase<span class="w"> </span>name<span class="w">             </span>:<span class="w"> </span>Pg
+Event<span class="w"> </span>Type<span class="w">             </span>:<span class="w"> </span>mining<span class="w"> </span>event
+Applied<span class="w"> </span>filter<span class="w">         </span>:<span class="w"> </span>SHM_BP_1HZ_25HZ_3
+Component<span class="w">              </span>:<span class="w"> </span>Z
+Quality<span class="w"> </span>number<span class="w">         </span>:<span class="w"> </span><span class="m">2</span>
+Pick<span class="w"> </span>Type<span class="w">              </span>:<span class="w"> </span>manual
+Weight<span class="w">                 </span>:<span class="w"> </span><span class="m">4</span>
+Theo.<span class="w"> </span>Azimuth<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span><span class="w">    </span>:<span class="w">  </span><span class="m">106</span>.98
+Theo.<span class="w"> </span>Backazimuth<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span>:<span class="w">  </span><span class="m">287</span>.91
+Distance<span class="w"> </span><span class="o">(</span>deg<span class="o">)</span><span class="w">         </span>:<span class="w">  </span><span class="m">0</span>.807
+Distance<span class="w"> </span><span class="o">(</span>km<span class="o">)</span><span class="w">          </span>:<span class="w"> </span><span class="m">89</span>.708
+Magnitude<span class="w"> </span>ml<span class="w">           </span>:<span class="w"> </span><span class="m">1</span>.8
+Mean<span class="w"> </span>Magnitude<span class="w"> </span>ml<span class="w">      </span>:<span class="w"> </span><span class="m">1</span>.1
+Latitude<span class="w">               </span>:<span class="w"> </span>+50.779
+Longitude<span class="w">              </span>:<span class="w">  </span>+10.003
+Depth<span class="w"> </span><span class="o">(</span>km<span class="o">)</span><span class="w">             </span>:<span class="w">   </span><span class="m">0</span>.0
+Depth<span class="w"> </span><span class="nb">type</span><span class="w">             </span>:<span class="w"> </span><span class="o">(</span>g<span class="o">)</span><span class="w"> </span>estimated
+Origin<span class="w"> </span><span class="nb">time</span><span class="w">            </span>:<span class="w">  </span><span class="m">2</span>-JAN-2017_12:25:38.273
+Region<span class="w"> </span>Table<span class="w">           </span>:<span class="w"> </span>GEO_REG
+Region<span class="w"> </span>ID<span class="w">              </span>:<span class="w"> </span><span class="m">5326</span>
+Source<span class="w"> </span>region<span class="w">          </span>:<span class="w"> </span>Tann,<span class="w"> </span>E<span class="w"> </span>of<span class="w"> </span>Fulda
+Velocity<span class="w"> </span>Model<span class="w">         </span>:<span class="w"> </span>deu
+Location<span class="w"> </span>Input<span class="w"> </span>Params<span class="w">  </span>:<span class="w"> </span><span class="m">20</span>
+Reference<span class="w"> </span>Location<span class="w"> </span>Name:<span class="w"> </span>CENTRE
+---<span class="w"> </span>End<span class="w"> </span>of<span class="w"> </span>Phase<span class="w"> </span>---
+</pre></div>
+</div>
+</section>
+<section id="module-configuration">
+<span id="sh2proc-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/defaults/sh2proc.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">etc/sh2proc.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/global.cfg</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">~/.seiscomp/sh2proc.cfg</span></code></div>
+</div>
+<p>sh2proc inherits <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global options</span></a>.</p>
+</section>
+<section id="command-line-options">
+<h2>Command-Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading">¶</a></h2>
+<p><strong class="program">sh2proc [options]</strong></p>
+<section id="generic">
+<h3>Generic<a class="headerlink" href="#generic" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-h">
+<span id="cmdoption-sh2proc-help"></span><span class="sig-name descname"><span class="pre">-h</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--help</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help message.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-V">
+<span id="cmdoption-sh2proc-version"></span><span class="sig-name descname"><span class="pre">-V</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-V" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show version information.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-config-file">
+<span class="sig-name descname"><span class="pre">--config-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-config-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick -&gt; scautopick2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-plugins">
+<span class="sig-name descname"><span class="pre">--plugins</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load given plugins.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-D">
+<span id="cmdoption-sh2proc-daemon"></span><span class="sig-name descname"><span class="pre">-D</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--daemon</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run as daemon. This means the application will fork itself
+and doesn’t need to be started with &amp;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-auto-shutdown">
+<span class="sig-name descname"><span class="pre">--auto-shutdown</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-auto-shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable self-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with --start-stop-msg
+for the master module).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-shutdown-master-module">
+<span class="sig-name descname"><span class="pre">--shutdown-master-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-shutdown-master-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-module used for auto-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-shutdown-master-username">
+<span class="sig-name descname"><span class="pre">--shutdown-master-username</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-shutdown-master-username" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the master-username of the messaging
+used for auto-shutdown. If &quot;shutdown-master-module&quot; is
+given as well, this parameter is ignored.</p>
+</dd></dl>
+
+</section>
+<section id="verbosity">
+<h3>Verbosity<a class="headerlink" href="#verbosity" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-v">
+<span id="cmdoption-sh2proc-v"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--v</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase verbosity level (may be repeated, eg. -vv).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-q">
+<span id="cmdoption-sh2proc-quiet"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quiet</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quiet mode: no logging output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-component">
+<span class="sig-name descname"><span class="pre">--component</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the logging to a certain component. This option can
+be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-s">
+<span id="cmdoption-sh2proc-syslog"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--syslog</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use syslog logging backend. The output usually goes to
+/var/lib/messages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-l">
+<span id="cmdoption-sh2proc-lockfile"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--lockfile</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to lock file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-console">
+<span class="sig-name descname"><span class="pre">--console</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-console" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send log output to stdout.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute in debug mode.
+Equivalent to --verbosity=4 --console=1 .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-log-file">
+<span class="sig-name descname"><span class="pre">--log-file</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-log-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use alternative log file.</p>
+</dd></dl>
+
+</section>
+<section id="messaging">
+<h3>Messaging<a class="headerlink" href="#messaging" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-u">
+<span id="cmdoption-sh2proc-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.username"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.username</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-H">
+<span id="cmdoption-sh2proc-host"></span><span class="sig-name descname"><span class="pre">-H</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.server"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.server</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-t">
+<span id="cmdoption-sh2proc-timeout"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--timeout</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.timeout"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.timeout</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-g">
+<span id="cmdoption-sh2proc-primary-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--primary-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.primaryGroup"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.primaryGroup</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-S">
+<span id="cmdoption-sh2proc-subscribe-group"></span><span class="sig-name descname"><span class="pre">-S</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--subscribe-group</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-S" title="Permalink to this definition">¶</a></dt>
+<dd><p>A group to subscribe to.
+This option can be given more than once.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-content-type">
+<span class="sig-name descname"><span class="pre">--content-type</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-content-type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides configuration parameter <a class="reference internal" href="global.html#confval-connection.contentType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">connection.contentType</span></code></a>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-start-stop-msg">
+<span class="sig-name descname"><span class="pre">--start-stop-msg</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-start-stop-msg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sending of a start and a stop message.</p>
+</dd></dl>
+
+</section>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading">¶</a></h3>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-db-driver-list">
+<span class="sig-name descname"><span class="pre">--db-driver-list</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-db-driver-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all supported database drivers.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-d">
+<span id="cmdoption-sh2proc-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database connection string, format:
+<a class="reference external" href="service://user:pwd&#64;host/database">service://user:pwd&#64;host/database</a>.
+&quot;service&quot; is the name of the database driver which
+can be queried with &quot;--db-driver-list&quot;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-config-module">
+<span class="sig-name descname"><span class="pre">--config-module</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-config-module" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config module to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-inventory-db">
+<span class="sig-name descname"><span class="pre">--inventory-db</span></span><span class="sig-prename descclassname"> <span class="pre">arg</span></span><a class="headerlink" href="#cmdoption-sh2proc-inventory-db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the inventory from the given database or file, format:
+[<a class="reference external" href="service://]location">service://]location</a> .</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-sh2proc-db-disable">
+<span class="sig-name descname"><span class="pre">--db-disable</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-sh2proc-db-disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not use the database at all</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">sh2proc</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#code-mapping">Code mapping</a></li>
+<li><a class="reference internal" href="#event-parameters">Event parameters</a></li>
+<li><a class="reference internal" href="#magnitudes">Magnitudes</a></li>
+<li><a class="reference internal" href="#distance-calculations">Distance calculations</a></li>
+<li><a class="reference internal" href="#beam-parameters">Beam parameters</a></li>
+<li><a class="reference internal" href="#limitations">Limitations</a></li>
+<li><a class="reference internal" href="#further-processing-in-seiscomp">Further processing in SeisComP</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#shm-evt-file-format">shm.evt file format</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+<li><a class="reference internal" href="#command-line-options">Command-Line Options</a><ul>
+<li><a class="reference internal" href="#generic">Generic</a></li>
+<li><a class="reference internal" href="#verbosity">Verbosity</a></li>
+<li><a class="reference internal" href="#messaging">Messaging</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="sczip.html"
+                          title="previous chapter">sczip</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="slmon.html"
+                          title="next chapter">slmon</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/sh2proc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

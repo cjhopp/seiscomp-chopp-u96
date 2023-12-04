@@ -1,0 +1,761 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "SCHELI" "1" "Dec 04, 2023" "5.5.14" "SeisComP"
+.SH NAME
+scheli \- SeisComP Documentation
+.sp
+\fBReal\-time helicorder view for one stream.\fP
+.SH DESCRIPTION
+.sp
+\fBscheli\fP visualizes waveforms from a single stream or multiple stations
+mimicking a drum\-recorder plot (see \fI\%scheli in GUI mode\fP):
+.INDENT 0.0
+.IP \(bu 2
+\fBscheli\fP plots one configurable trace in helicorder style in the
+\fI\%GUI\fP (\fI\%GUI mode\fP).
+.IP \(bu 2
+Configurable GUI: trace colors, visualized time spans, number of rows, data filtering,
+amplitude ranges and much more.
+.IP \(bu 2
+Automatic image capturing: Capture helicorder images at configurable time intervals
+of one trace in \fI\%GUI mode\fP or a set of multiple channels in
+\fI\%capture mode\fP\&.
+The images can be used, e.g. for showing data images on web sites.
+.UNINDENT
+.INDENT 0.0
+.INDENT 2.5
+[image]
+scheli in GUI mode.UNINDENT
+.UNINDENT
+.SH EXAMPLES
+.INDENT 0.0
+.IP 1. 3
+\fBGUI mode \- Simple helicorder window:\fP
+.INDENT 3.0
+.IP \(bu 2
+Learn about the plenty command\-line options for \fBscheli\fP:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scheli \-h
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Start \fBscheli\fP with the configured values and informative debug output:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scheli \-\-debug
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Let \fBscheli\fP show data from the CX station PB01 for the previous 5 hours
+overriding configuration by command\-line paramaters:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scheli \-\-stream CX.PB01..HHZ \-\-rows 10
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.IP \(bu 2
+Define the data request window by end time and duration; scale traces to the
+maximum amplitude per row:
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scheli \-\-stream IU.TSUM.00.BHZ \-\-end\-time \(dq2021\-04\-22 14:00:00\(dq \-\-time\-span 600 \-\-amp\-scaling row
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.IP 2. 3
+\fBCapture mode \- Image capturing:\fP
+.sp
+Capture the helicorder plot for 3 stations in intervals of 10 seconds.
+The data is retrieved using seedlink and the plots are stored as PNG images.
+The image files are named according to network, station, stream and location codes
+of the requested stations. Command\-line parameters override the module configuration.
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+scheli capture \-\-stream CX.PB01..HHZ \-\-stream CX.PB02..HHZ \-\-stream CX.PB04..HHZ \-\-interval 10 \-o \(dq/tmp/heli_%N_%S_%L_%C.png\(dq \-H localhost \-I slink://localhost
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The output file names will be generated based on network code (%N), station code (%S),
+location code (%L) and stream code (%C):
+.INDENT 3.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+/tmp/CX.PB01..HHZ.png
+/tmp/CX.PB02..HHZ.png
+/tmp/CX.PB04..HHZ.png
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH SETUP
+.sp
+Specifc \fBscheli\fP parameters are adjusted in the \fI\%module configuration\fP\&.
+Colors of traces etc. can be adjusted by setting the \fIscheme\fP parameters in
+the global configuration of scheli. For alternating colors between the traces
+set the parameters scheme.colors.records.foreground and
+scheme.colors.records.alternateForeground in \fBscheli.cfg\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# The general color of records/traces.
+scheme.colors.records.foreground = 4286F4
+
+# A general trace color of the alternate trace (eg scheli).
+scheme.colors.records.alternateForeground = B72D0E
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH MODULE CONFIGURATION
+.nf
+\fBetc/defaults/global.cfg\fP
+\fBetc/defaults/scheli.cfg\fP
+\fBetc/global.cfg\fP
+\fBetc/scheli.cfg\fP
+\fB~/.seiscomp/global.cfg\fP
+\fB~/.seiscomp/scheli.cfg\fP
+.fi
+.sp
+.sp
+scheli inherits \fI\%global options\fP\&.
+.INDENT 0.0
+.TP
+.B heli.streams
+Type: \fIlist:string\fP
+.sp
+List of stream codes to be plotted (net.sta.loc.cha).
+If not in capture mode only the first stream is shown.
+When using a list, the first entry is considered.
+Use commas for separating streams.
+.sp
+Example: GR.MOX..BHZ
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.filter
+Type: \fIstring\fP
+.sp
+Filter to be applied on the data.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.numberOfRows
+Default: \fB48\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Filter to be applied on the data.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.rowTimeSpan
+Default: \fB1800\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIs\fP
+.sp
+Length of data per trace.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.timeFormat
+Default: \fB%F\fP
+.sp
+Type: \fIstring\fP
+.sp
+The time format used to print the start and end time of the
+whole plot (upper right corner). The format specification is
+the one used in the strftime function (man strftime).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.recordTime
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Set current time to last data sample.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.lineWidth
+Default: \fB1\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Unit: \fIpx\fP
+.sp
+Line width of traces.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.colors
+Default: \fBFF0000, 0000FF\fP
+.sp
+Type: \fIlist:string\fP
+.sp
+A list of alternating row colors cycled through for painting
+traces.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.antialiasing
+Default: \fBfalse\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Use anti aliasing to plot the traces. The default uses the
+settings from scheme.records.antiAliasing
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.stream.description
+Default: \fBtrue\fP
+.sp
+Type: \fIboolean\fP
+.sp
+Add stream description to traces.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBheli.amplitudeRange.*\fP
+\fIGain\-corrected amplitudes given in units of the sensor.\fP
+\fIFor example: m/s.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.amplitudeRange.scaling
+Default: \fBminmax\fP
+.sp
+Type: \fIstring\fP
+.sp
+Define the method to scale traces within rows. Possible
+values are:
+.sp
+minmax: Scale all rows to configured minimum and maximum
+amplitudes configured by amplitudeRange.min and
+amplitudeRange.max
+.sp
+row: Scale each row to the maximum within this row.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.amplitudeRange.min
+Default: \fB\-0.00001\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIunit of input data\fP
+.sp
+Minimum amplitude to show in trace. Requires
+amplitudeRange.scale = \(dqminmax\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.amplitudeRange.max
+Default: \fB0.00001\fP
+.sp
+Type: \fIdouble\fP
+.sp
+Unit: \fIunit of input data\fP
+.sp
+Minimum amplitude to show in trace. Requires
+amplitudeRange.scale = \(dqminmax\(dq.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+\fBheli.dump.*\fP
+\fIControl dumping of PNG images.\fP
+\fIExecute \(dqscheli capture\(dq for image generation in\fP
+\fIthe background without the graphics.\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.dump.interval
+Default: \fB\-1\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Unit: \fIs\fP
+.sp
+Image creation interval. Negative values disable image
+dumping.
+If enabled, images are generated at the configured
+interval.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.dump.outputFile
+Default: \fB/tmp/heli_%N_%S_%L_%C.png\fP
+.sp
+Type: \fIstring\fP
+.sp
+Name of output file.
+The filename can contain placeholders
+that are replaced by the corresponding streamID parts:
+.sp
+%N : network code
+.sp
+%S : station code
+.sp
+%L : location code
+.sp
+%C : channel code
+.sp
+Placeholders are important if more than one stream
+is given and capture mode is active.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.dump.dpi
+Default: \fB300\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Unit: \fIdpi\fP
+.sp
+Image resolution.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.dump.xres
+Default: \fB1024\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Unit: \fIpx\fP
+.sp
+Number of pixels horizontally.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B heli.dump.yres
+Default: \fB768\fP
+.sp
+Type: \fIinteger\fP
+.sp
+Unit: \fIpx\fP
+.sp
+Number of pixels vertically.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B scripts.postprocessing
+Type: \fIpath\fP
+.sp
+Define the path to a script that is called whenever an image
+has been captured and written to disc. The only parameter is
+the path to the generated image.
+.UNINDENT
+.SH COMMAND-LINE OPTIONS
+.sp
+\fBscheli [options]\fP
+.SS Generic
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-V, \-\-version
+Show version information.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-file arg
+Use alternative configuration file. When this option is
+used the loading of all stages is disabled. Only the
+given configuration file is parsed and used. To use
+another name for the configuration create a symbolic
+link of the application or copy it. Example:
+scautopick \-> scautopick2.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-plugins arg
+Load given plugins.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D, \-\-daemon
+Run as daemon. This means the application will fork itself
+and doesn\(aqt need to be started with &.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-auto\-shutdown arg
+Enable/disable self\-shutdown because a master module shutdown.
+This only works when messaging is enabled and the master
+module sends a shutdown message (enabled with \-\-start\-stop\-msg
+for the master module).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-module arg
+Set the name of the master\-module used for auto\-shutdown.
+This is the application name of the module actually
+started. If symlinks are used, then it is the name of
+the symlinked application.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shutdown\-master\-username arg
+Set the name of the master\-username of the messaging
+used for auto\-shutdown. If \(dqshutdown\-master\-module\(dq is
+given as well, this parameter is ignored.
+.UNINDENT
+.SS Verbosity
+.INDENT 0.0
+.TP
+.B \-\-verbosity arg
+Verbosity level [0..4]. 0:quiet, 1:error, 2:warning, 3:info,
+4:debug.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-v
+Increase verbosity level (may be repeated, eg. \-vv).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Quiet mode: no logging output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-component arg
+Limit the logging to a certain component. This option can
+be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-syslog
+Use syslog logging backend. The output usually goes to
+/var/lib/messages.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-l, \-\-lockfile arg
+Path to lock file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-console arg
+Send log output to stdout.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-debug
+Execute in debug mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-log\-file arg
+Use alternative log file.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-print\-component arg
+For each log entry print the component right after the
+log level. By default the component output is enabled
+for file output but disabled for console output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-trace
+Execute in trace mode.
+Equivalent to \-\-verbosity=4 \-\-console=1 \-\-print\-component=1
+\-\-print\-context=1 .
+.UNINDENT
+.SS Messaging
+.INDENT 0.0
+.TP
+.B \-u, \-\-user arg
+Overrides configuration parameter \fI\%connection.username\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-H, \-\-host arg
+Overrides configuration parameter \fI\%connection.server\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-t, \-\-timeout arg
+Overrides configuration parameter \fI\%connection.timeout\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-g, \-\-primary\-group arg
+Overrides configuration parameter \fI\%connection.primaryGroup\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-S, \-\-subscribe\-group arg
+A group to subscribe to.
+This option can be given more than once.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-content\-type arg
+Overrides configuration parameter \fI\%connection.contentType\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-start\-stop\-msg arg
+Set sending of a start and a stop message.
+.UNINDENT
+.SS Database
+.INDENT 0.0
+.TP
+.B \-\-db\-driver\-list
+List all supported database drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-d, \-\-database arg
+The database connection string, format:
+\fI\%service://user:pwd@host/database\fP\&.
+\(dqservice\(dq is the name of the database driver which
+can be queried with \(dq\-\-db\-driver\-list\(dq.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-module arg
+The config module to use.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-inventory\-db arg
+Load the inventory from the given database or file, format:
+[\fI\%service://]location\fP .
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-db arg
+Load the configuration from the given database or file,
+format: [\fI\%service://]location\fP .
+.UNINDENT
+.SS Records
+.INDENT 0.0
+.TP
+.B \-\-record\-driver\-list
+List all supported record stream drivers.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-I, \-\-record\-url arg
+The recordstream source URL, format:
+[\fI\%service://\fP]location[#type].
+\(dqservice\(dq is the name of the recordstream driver
+which can be queried with \(dq\-\-record\-driver\-list\(dq.
+If \(dqservice\(dq is not given, \(dq\fI\%file://\fP\(dq is
+used.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-record\-file arg
+Specify a file as record source.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-record\-type arg
+Specify a type for the records being read.
+.UNINDENT
+.SS User interface
+.INDENT 0.0
+.TP
+.B \-F, \-\-full\-screen
+Start the application filling the entire screen.
+This only works with GUI applications.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-N, \-\-non\-interactive
+Use non\-interactive presentation mode. This only works with
+GUI applications.
+.UNINDENT
+.SS Mode
+.INDENT 0.0
+.TP
+.B \-\-offline
+Do not connect to a messaging server and do not use the
+database.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-end\-time arg
+Set the acquisition end time, e.g. \(aq2017\-09\-08 13:30:00\(aq,
+default: \(aqgmt\(aq
+.UNINDENT
+.SS Data
+.INDENT 0.0
+.TP
+.B \-\-stream arg
+The record stream that should be displayed. Can be used
+multiple times for multiple streams.
+.sp
+Example: GR.MOX..BHZ (net.sta.loc.cha)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-filter arg
+The filter to apply
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-gain arg
+Gain applied to the data before plotting
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-amp\-scaling arg
+Lower bound of amplitude range per row. Possible values:
+.sp
+minmax: Scale all rows to configured minimum and maximum
+amplitudes.
+.sp
+row: Scale each row to the maximum within this row.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-amp\-range\-min arg
+Lower bound of amplitude range per row
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-amp\-range\-max arg
+Upper bound of amplitude range per row
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-amp\-range arg
+Arround zero bound of amplitude range per row
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-record\-time arg
+Do the last row always contain the last record received
+.UNINDENT
+.SS Output
+.INDENT 0.0
+.TP
+.B \-\-desc arg
+Enable/disable the display of a station description
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-rows arg
+Configure the number of rows to display
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-time\-span arg
+Configure the time\-span (in secs) per row. Unit: seconds.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-aa arg
+Set antialiasing for rendering the traces
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-xres arg
+Output x resolution when generating images. Unit: dpi.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-yres arg
+Output y resolution when generating images. Unit: dpi.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-dpi arg
+Output dpi when generating postscript. Unit:dpi.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-o arg
+Output filename. Placeholders are %N,%S,%L,%C for network
+code, station code, location code, channel code.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-interval arg
+Snapshot interval (less than 0 disables timed snapshots).
+Unit: seconds.
+.UNINDENT
+.SH AUTHOR
+gempa GmbH, GFZ Potsdam
+.SH COPYRIGHT
+gempa GmbH, GFZ Potsdam
+.\" Generated by docutils manpage writer.
+.

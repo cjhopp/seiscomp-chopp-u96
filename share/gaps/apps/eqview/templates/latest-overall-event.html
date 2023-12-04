@@ -1,0 +1,12 @@
+<nav class="gcontent gnav">
+	<div class="gheader">
+		<span>Latest overall event</span>
+	</div>
+	<div class="footer zoom-link" ng-click="eventClicked({ev: event})">
+		<div class="mag">{{event.mag|mag}}</div>
+		<div class="text">
+			<span>{{event.region}}</span>
+			<span>{{event.otime|ago}}</span>
+		</div>
+	</div>
+</nav>

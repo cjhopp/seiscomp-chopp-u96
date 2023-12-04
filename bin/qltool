@@ -1,0 +1,808 @@
+#!/usr/bin/env seiscomp-python
+
+###############################################################################
+# Copyright (C) 2012 by gempa GmbH                                            #
+#                                                                             #
+# All Rights Reserved.                                                        #
+#                                                                             #
+# NOTICE: All information contained herein is, and remains                    #
+# the property of gempa GmbH and its suppliers, if any. The intellectual      #
+# and technical concepts contained herein are proprietary to gempa GmbH       #
+# and its suppliers.                                                          #
+# Dissemination of this information or reproduction of this material          #
+# is strictly forbidden unless prior written permission is obtained           #
+# from gempa GmbH.                                                            #
+#                                                                             #
+# Author: Jan Becker, Stephan Herrnkind                                       #
+# Email: jabe@gempa.de, herrnkind@gempa.de                                    #
+###############################################################################
+
+import contextlib
+import errno
+import getopt
+import getpass
+import os
+import subprocess
+import socket
+import ssl
+import sys
+
+usage_info = """
+Usage:
+  qltool [options] [output file]
+
+Retrieve event parameters from QuakeLink server.
+
+Connection settings:
+  -H, --host                    Host to connect to.
+  -h, --help                    Display this help message.
+  -s, --ssl                     Use secure socket layer (SSL).
+      --ssl-no-cert             Do not verify the server certificate chain.
+                                Implicitly disables the hostname check.
+      --ssl-no-hostname         Do not verify the server's hostname.
+  -c, --credentials             Username:password for authentication separated
+                                by colon. If password is not given, it is asked
+                                for on tty.
+      --ping                    Request and validate server identifier.
+      --alive                   Request sever to send alive message every 30s,
+                                useful for long running select updated queries
+                                to prevent connection termination by routers.
+
+Single-event query:
+  -E, --event                   Event id to download.
+  -r, --rev                     Revision of event.
+  -R, --all-revs                Request all revisions of event. The output
+                                format is fixed to summary.
+
+Multi-event query:
+  -S, --select                  Search events by key event parameters.
+      --updated                 Keep connection open and wait for event updates.
+      --archived                Request archived events, only required in
+                                combination with --updated.
+      --from                    Begin time. Format: %Y,%m,%d[,%H,%M,%S,%f]
+      --to                      End time. Format: %Y,%m,%d[,%H,%M,%S,%f]
+      --filter                  SQL like where, order, limit and offset filter:
+
+  [WHERE clause] [ORDER BY OTIME ASC|DESC] [LIMIT %n [OFFSET %n]]
+  clause    := condition[ AND|OR [(]clause[)]]
+  condition := MAG|DEPTH|LAT|LON|PHASES op {{float}} |
+                       UPDATED|OTIME op time |
+                       AGENCY|STATUS|TYPE|REGION|MAG_T op 'string' |
+                       MAG|DEPTH|LAT|LON|PHASES|OTIME|UPDATED IS [NOT] NULL
+  op        := =|!=|>|>=|<|<=|eq|gt|ge|lt|ge
+  time      := %Y,%m,%d[,%H,%M,%S,%f]
+
+      --processor               Event processor script called with file path
+                                after XML output file was created.
+
+Event content:
+  -P, --with-picks              Export all associated picks.
+  -A, --with-amplitudes         Export all associated amplitudes.
+  -M, --with-magnitudes         Export all station magnitudes.
+  -F, --with-stamts             Export moment tensor station contributions and
+                                phase settings.
+  -a, --ignore-arrivals         Do not export origin arrivals.
+  -p, --preferred-only          When exporting events only the preferred
+                                origin and the preferred magnitude will be
+                                dumped.
+
+Event format:
+  -f, --formatted               Use formatted output.
+  -n, --native                  Request native format which is the unmodified
+                                data pushed to the QuakeLink server. The
+                                parameters PAMFapf are ignored in this mode.
+  -z, --gzip                    Request for gzip compressed data, not supported
+                                in summary format.
+  -y, --summary                 Request summary format which is a line based
+                                and semicolon separated representation of the
+                                key event parameters.
+  -v, --version                 The specific format version to request, currently
+                                only supported by summary format.
+
+Examples:
+Query a specifc event, output: XML, stdout
+  {name} -E gempa2018abcd
+
+Query all revisions of event, output: line based file
+  {name} -E gempa2018abcd -R /tmp/event_revisions.txt
+
+Query all events, output: line based file
+  {name} -Sy /tmp/events.txt
+
+Query latest 10 events having a minimum magnitude of 5, output: line based, stdout
+  {name} -Sy --filter "WHERE mag >= 5 ORDER BY otime DESC LIMIT 10"
+
+Same as above but query XML and write results to individual files prefixed by
+event counter
+  {name} -S --filter "WHERE mag >= 5 ORDER BY otime DESC LIMIT 10" /tmp/event
+"""
+
+
+# ------------------------------------------------------------------------------
+def log(level, msg):
+    print(f"[{level}] {msg}", file=sys.stderr)
+
+
+# ------------------------------------------------------------------------------
+def info(msg):
+    log("info", msg)
+
+
+# ------------------------------------------------------------------------------
+def warning(msg):
+    log("warning", msg)
+
+
+# ------------------------------------------------------------------------------
+def error(msg):
+    log("error", msg)
+
+
+# ------------------------------------------------------------------------------
+def usage(exitcode=0):
+    print(usage_info.format(name=os.path.basename(sys.argv[0])), file=sys.stderr)
+    return exitcode
+
+
+# ------------------------------------------------------------------------------
+def is_stdout(path):
+    return path == "-"
+
+
+# ------------------------------------------------------------------------------
+@contextlib.contextmanager
+def open_file(path, binary=False):
+    if is_stdout(path):
+        f = sys.stdout.buffer if binary else sys.stdout
+    else:
+        # create directory if it does not exist yet
+        dirname = os.path.dirname(path)
+        if not os.path.exists(dirname):
+            try:
+                os.makedirs(dirname)
+            except OSError as exc:
+                if exc.errno != errno.EEXIST:
+                    raise
+
+        f = open(path, "wb") if binary else open(path, "w", encoding="utf-8")
+
+    try:
+        yield f
+    finally:
+        if is_stdout(path):
+            f.flush()
+        else:
+            f.close()
+
+
+# ------------------------------------------------------------------------------
+@contextlib.contextmanager
+def connect(host, port, ssl_context=None):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        ssl_info = ""
+        try:
+            if ssl_context:
+                ssl_info = " (SSL)"
+                sock = ssl_context.wrap_socket(sock, server_hostname=host)
+
+            sock.connect((host, port))
+        except Exception as e:
+            raise Exception(
+                f"Could not establish connection to {host}:{port}{ssl_info}\n  {e}"
+            ) from e
+
+        info(f"Connected to {host}:{port}{ssl_info}")
+
+        try:
+            yield sock
+
+        finally:
+            try:
+                info("Sending BYE")
+                send(sock, "BYE")
+            except BrokenPipeError:
+                pass
+
+    info("Connection closed")
+
+
+# ------------------------------------------------------------------------------
+def send(sock, data):
+    data += "\n"
+    sock.sendall(data.encode("utf-8"))
+
+
+# ------------------------------------------------------------------------------
+def read_line(sock):
+    data = bytearray()
+
+    while True:
+        buf = sock.recv(1)
+        if not buf:
+            raise Exception("Connection closed by peer")
+        if buf == b"\r":
+            continue
+        if buf == b"\n":
+            break
+        data += buf
+
+    return data.decode("utf-8", "replace")
+
+
+# ------------------------------------------------------------------------------
+def read_buffer(sock, bufsize, binary=False):
+    if bufsize == 0:
+        return ""
+
+    data = bytearray()
+
+    while bufsize > 0:
+        req = min(1024, bufsize)
+        buf = sock.recv(req)
+        if len(buf) == 0:
+            break
+        data += buf
+        bufsize -= len(buf)
+
+    return data if binary else data.decode("utf-8", "replace")
+
+
+# ------------------------------------------------------------------------------
+# Sends HELLO command to server
+# Expected response:
+#   QuakeLink (gempa GmbH) v2023.055#2bb549471
+#   API=3
+#   WELCOME
+def ping(sock):
+    info("Sending HELLO command")
+    send(sock, "HELLO")
+
+    lines = 0
+    ql = False
+    welcome = False
+
+    while lines < 3:
+        line = read_line(sock)
+        if not line:
+            break
+
+        print(line)
+
+        lines += 1
+        if not ql:
+            ql = line.startswith("QuakeLink")
+            continue
+
+        if not welcome:
+            welcome = line.startswith("WELCOME")
+
+    if not lines:
+        raise Exception("Received no lines in response to HELLO command")
+    if not welcome:
+        raise Exception(
+            "Received invalid server identification in response to HELLO command"
+        )
+
+
+# ------------------------------------------------------------------------------
+def authenticate(sock, params):
+    if params.username:
+        send(sock, "AUTH " + params.username + " " + params.password)
+
+
+# ------------------------------------------------------------------------------
+def set_parameter(sock, params):
+    if params.native or params.summary:
+        return
+
+    if params.formatted:
+        send(sock, "SET XML.INDENT ON")
+    if params.with_picks:
+        send(sock, "SET DATA.PICKS ON")
+    if params.with_amplitudes:
+        send(sock, "SET DATA.AMPLITUDES ON")
+    if params.with_magnitudes:
+        send(sock, "SET DATA.STAMAGS ON")
+    if params.with_stamts:
+        send(sock, "SET DATA.STAMTS ON")
+    if not params.ignore_arrivals:
+        send(sock, "SET DATA.ARRIVALS ON")
+    if not params.preferred_only:
+        send(sock, "SET DATA.PREFERRED OFF")
+
+
+# ------------------------------------------------------------------------------
+def response_format(params):
+    fmt = None
+    if params.native:
+        fmt = "GZNATIVE" if params.gzip else "NATIVE"
+    elif params.summary:
+        fmt = "SUMMARY"
+    else:
+        fmt = "GZXML" if params.gzip else "XML"
+
+    if params.formatVersion is not None:
+        fmt += f"/{params.formatVersion}"
+
+    return fmt
+
+
+# ------------------------------------------------------------------------------
+def read_data_line(line, suffix):
+    toks = line.split(" ", 3)
+    if len(toks) < 3 or not toks[0].startswith(f"DATA/{suffix}"):
+        if toks[0] == "ERROR:":
+            raise Exception(f"Server replied: {line}")
+
+        raise Exception("Reply not compliant to protocol")
+
+    return int(toks[1])
+
+
+# ------------------------------------------------------------------------------
+def read_data_header(sock):
+    class Header:
+        def __init__(self):
+            self.length = None
+            self.type = None
+            self.format = None
+            self.timestamp = None
+            self.revision = None
+
+    h = Header()
+
+    # Header starts now
+    while True:
+        line = read_line(sock)
+        if not line:
+            break
+        toks = line.split(" ", 1)
+        if len(toks) != 2:
+            raise Exception(f"Invalid header line: {line}")
+
+        toks[1] = toks[1].strip()
+
+        if toks[0] == "Content-Type:":
+            h.type = toks[1]
+        elif toks[0] == "Content-Length:":
+            try:
+                h.length = int(toks[1])
+            except Exception as e:
+                raise Exception(
+                    f"Expected content length as integer, got '{toks[1]}'"
+                ) from e
+        elif toks[0] == "Content-Format:":
+            h.format = toks[1]
+        elif toks[0] == "Content-Timestamp:":
+            h.timestamp = toks[1]
+        elif toks[0] == "Content-Revision:":
+            h.revision = toks[1]
+
+    if h.length is None:
+        raise Exception("Content length header paramter not found")
+
+    ctype = "unknown" if h.type is None else h.type
+    info(f"Read header of content type: {ctype} ({h.length} bytes)")
+
+    return h
+
+
+# ------------------------------------------------------------------------------
+def download_event(sock, params):
+    authenticate(sock, params)
+    set_parameter(sock, params)
+
+    q = "GET"
+    if params.event_rev is not None:
+        q += f" UPDATE {params.event_rev} OF"
+    elif params.all_revs:
+        q += " UPDATES OF"
+    q += f" EVENT {params.event_id} AS {response_format(params)}"
+
+    info(f"Sending query: {q}")
+    send(sock, q)
+
+    line = read_line(sock)
+    stat = read_data_line(line, "GET")
+    if stat != 200:
+        raise Exception(f"Code {stat} received which is not OK")
+
+    header = read_data_header(sock)
+    data = read_buffer(sock, header.length, params.gzip)
+    with open_file(params.output, params.gzip) as f:
+        f.write(data)
+
+    info(f"Wrote event to {params.output}")
+
+
+# ------------------------------------------------------------------------------
+def read_select_header(sock, archive_mode):
+    while True:
+        line = read_line(sock)
+        if line == "ALIVE":
+            info("Received ALIVE message")
+            continue
+        if archive_mode and line == "EOD/SELECT/ARCHIVED":
+            archive_mode = False
+            continue
+        if line == "EOD/SELECT":
+            return None, archive_mode
+        break
+
+    stat = read_data_line(line, "SELECT/")
+    if stat != 200:
+        raise Exception(f"Code {stat} received which is not OK")
+
+    return read_data_header(sock), archive_mode
+
+
+# ------------------------------------------------------------------------------
+def process_select_summary(sock, params):
+    event_count = 0
+    archive_mode = params.select_archived
+
+    with open_file(params.output) as f:
+        while True:
+            header, archive_mode = read_select_header(sock, archive_mode)
+            if header is None:
+                break
+
+            data = read_buffer(sock, header.length)
+            if not data:
+                continue
+
+            # read trailing new line
+            read_line(sock)
+            data += "\n"
+            event_count += data.count("\n")
+            f.write(data)
+            f.flush()
+
+    info(f"Wrote {event_count} events to {params.output}")
+
+
+# ------------------------------------------------------------------------------
+def process_select_xml(sock, params):
+    event_count = 0
+    archive_mode = params.select_archived
+
+    file_name = params.output
+    stdout = None
+    if is_stdout(params.output):
+        stdout = sys.stdout.buffer if params.gzip else sys.stdout
+
+    while True:
+        header, archive_mode = read_select_header(sock, archive_mode)
+        if header is None:
+            break
+
+        data = read_buffer(sock, header.length, params.gzip)
+        if not data:
+            continue
+
+        read_line(sock)  # read trailing new line
+        event_count += 1
+
+        if stdout:
+            stdout.write(data)
+            stdout.flush()
+        else:
+            file_name = f"{params.output}.{event_count}"
+            if params.gzip:
+                file_name += ".gz"
+            with open_file(file_name, params.gzip) as f:
+                f.write(data)
+
+            if params.select_proc:
+                cmd = [params.select_proc, file_name]
+                info(f"Running processor script: {' '.join(cmd)}")
+                try:
+                    res = subprocess.call(cmd)
+                except OSError as e:
+                    raise Exception(f"Could not execute processor script: {e}") from e
+                if res:
+                    raise Exception(
+                        f"Event processor script exited with error code {res}"
+                    )
+
+        info(f"Wrote event to {file_name}")
+
+
+# ------------------------------------------------------------------------------
+def select_events(sock, params):
+    authenticate(sock, params)
+    set_parameter(sock, params)
+    if params.alive:
+        send(sock, "SET KEEPALIVE ON")
+
+    q = "SELECT"
+    if params.select_archived and not params.select_updated:
+        q += " ARCHIVED"
+    elif not params.select_archived and params.select_updated:
+        q += " UPDATED"
+    q += " EVENTS"
+    if params.select_from is not None:
+        q += f" FROM {params.select_from}"
+    if params.select_to is not None:
+        q += f" TO {params.select_to}"
+
+    q += f" AS {response_format(params)}"
+
+    if params.select_filter is not None:
+        q += f" {params.select_filter}"
+    info(f"Sending query: {q}")
+
+    send(sock, q)
+
+    if params.summary:
+        process_select_summary(sock, params)
+    else:
+        process_select_xml(sock, params)
+
+
+# ------------------------------------------------------------------------------
+class Params:
+    def __init__(self):
+        self.alive = False
+        self.output = "-"
+        self.event_id = None
+        self.event_rev = None
+        self.all_revs = False
+        self.select_archived = True
+        self.select_updated = False
+        self.select_from = None
+        self.select_to = None
+        self.select_filter = None
+        self.select_proc = None
+        self.select_proc = None
+        self.with_picks = False
+        self.with_amplitudes = False
+        self.with_magnitudes = False
+        self.with_stamts = False
+        self.ignore_arrivals = False
+        self.preferred_only = False
+        self.formatted = False
+        self.native = False
+        self.summary = False
+        self.gzip = False
+        self.username = None
+        self.password = None
+        self.formatVersion = None
+
+
+# ------------------------------------------------------------------------------
+def main():
+    try:
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "hH:sE:r:RSPAMFpamfnyv:zc:",
+            [
+                "help",
+                "ping",
+                "host=",
+                "ssl",
+                "ssl-no-cert",
+                "ssl-no-hostname",
+                "alive",
+                "event=",
+                "rev=",
+                "all-revs",
+                "select",
+                "updated",
+                "archived",
+                "from=",
+                "to=",
+                "filter=",
+                "processor=",
+                "with-picks",
+                "with-amplitudes",
+                "with-magnitudes",
+                "with-stamts",
+                "ignore-arrivals",
+                "preferred-only",
+                "all-magnitudes",
+                "formatted",
+                "native",
+                "summary",
+                "version",
+                "gzip",
+                "credentials",
+            ],
+        )
+    except getopt.GetoptError as err:
+        error(f"Invalid parameter: {err}")
+        return usage(2)
+
+    do_ping = False
+    do_event = False
+    do_event_select = False
+
+    params = Params()
+
+    addr = None
+    cred = None
+    ssl_context = None
+    ssl_check_hostname = True
+    ssl_verify_mode = ssl.CERT_REQUIRED
+    select_updated = False
+    select_archived = False
+
+    for o, a in opts:
+        if o in ["-h", "--help"]:
+            return usage()
+        if o in ["--ping"]:
+            do_ping = True
+        elif o in ["-H", "--host"]:
+            addr = a
+        elif o in ["-s", "--ssl"]:
+            ssl_context = ssl.create_default_context()
+        elif o in ["--ssl-no-cert"]:
+            ssl_verify_mode = ssl.CERT_NONE
+            ssl_check_hostname = False
+        elif o in ["--ssl-no-hostname"]:
+            ssl_check_hostname = False
+        elif o in ["--alive"]:
+            params.alive = True
+        elif o in ["-E", "--event"]:
+            params.event_id = a
+            do_event = True
+        elif o in ["-r", "--rev"]:
+            params.event_rev = int(a)
+        elif o in ["-R", "--all-revs"]:
+            params.all_revs = True
+        elif o in ["-S", "--select"]:
+            do_event_select = True
+        elif o in ["--updated"]:
+            select_updated = True
+        elif o in ["--archived"]:
+            select_archived = True
+        elif o in ["--from"]:
+            params.select_from = a
+        elif o in ["--to"]:
+            params.select_to = a
+        elif o in ["--filter"]:
+            params.select_filter = a
+        elif o in ["--processor"]:
+            params.select_proc = a
+        elif o in ["-f", "--processor"]:
+            params.formatted = True
+        elif o in ["-n", "--native"]:
+            params.native = True
+        elif o in ["-y", "--summary"]:
+            params.summary = True
+        elif o in ["-v", "--version"]:
+            params.formatVersion = a
+        elif o in ["-z", "--gzip"]:
+            params.gzip = True
+        elif o in ["-P", "--with-picks"]:
+            params.with_picks = True
+        elif o in ["-A", "--with-amplitudes"]:
+            params.with_amplitudes = True
+        elif o in ["-M", "--with-magnitudes"]:
+            params.with_magnitudes = True
+        elif o in ["-F", "--with-stamts"]:
+            params.with_stamts = True
+        elif o in ["-a", "--ignore-arrivals"]:
+            params.ignore_arrivals = True
+        elif o in ["-p", "--preferred-only"]:
+            params.preferred_only = True
+        elif o in ["-c", "--credentials"]:
+            cred = a
+        else:
+            error(f"Unknown option: {o}")
+            return 2
+
+    if len(args) > 1:
+        error("Too many output files given")
+        return 1
+
+    if len(args) > 0:
+        params.output = args[0]
+
+    if params.event_rev is not None and params.summary:
+        error("Summary format not supported in request for particular event revision")
+        return 1
+
+    if params.all_revs:
+        if params.event_rev is not None:
+            error(
+                "Invalid request for particular and all event revisision at the same "
+                "time"
+            )
+            return 1
+
+        if params.native:
+            error(
+                "Only summary response format is required in request for all "
+                "revisions."
+            )
+            return 1
+
+        params.summary = True
+
+    # default is set to archived events only, if updated events are requested
+    # archived events are disabled by default
+    if select_updated:
+        params.select_updated = True
+        params.select_archived = select_archived
+
+    if params.select_proc:
+        if not do_event_select:
+            error("Processor script only supported in event selection mode")
+            return 1
+
+        if params.summary:
+            error("Processor script not supported in combination with summary format")
+            return 1
+
+        if is_stdout(params.output):
+            error("Processor script not supported when writing to stdout")
+            return 1
+
+    if params.native and params.summary:
+        error("Invalid request for native and summary format")
+        return 1
+
+    if params.summary and params.gzip:
+        error("Gzip compressed data not supported in summary format")
+        return 1
+
+    host = "localhost"
+    port = 18010
+
+    if addr:
+        a = addr.split(":")
+        if len(a[0]) > 0:
+            host = a[0]
+
+        if len(a) == 2 and len(a[1]) > 0:
+            try:
+                port = int(a[1])
+            except ValueError:
+                error(f"Invalid port given: {a[1]}")
+                return 1
+        elif len(a) > 2:
+            error(f"Invalid host address given: {addr}")
+            return 1
+
+    if cred:
+        toks = cred.split(":", 1)
+        if len(toks) > 1:
+            params.username = toks[0]
+            params.password = toks[1]
+        else:
+            params.username = toks[0]
+            # ask for password
+            params.password = getpass.getpass()
+
+    try:
+        if ssl_context:
+            ssl_context.check_hostname = ssl_check_hostname
+            ssl_context.verify_mode = ssl_verify_mode
+
+        with connect(host, port, ssl_context) as sock:
+            try:
+                if do_ping:
+                    ping(sock)
+
+                elif do_event:
+                    download_event(sock, params)
+
+                elif do_event_select:
+                    select_events(sock, params)
+
+                return 0
+
+            except KeyboardInterrupt:
+                warning("Interrupt received, stopping...")
+                if do_event_select:
+                    send(sock, "ABORT")
+    except Exception as e:
+        error(e)
+
+    return 1
+
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
+    sys.exit(main())

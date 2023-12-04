@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mb_IDC &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Ms_20" href="global_ms_20.html" />
+    <link rel="prev" title="mb" href="global_mb.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_ms_20.html" title="Ms_20"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_mb.html" title="mb"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="mb-idc">
+<span id="global-mb-idc"></span><h1>mb_IDC<a class="headerlink" href="#mb-idc" title="Permalink to this heading">¶</a></h1>
+<p>Body wave magnitude computed at CTBTO/IDC (mb) is calculated for seismic
+events from the time-defining primary body waves recorded at seismic
+stations at an epicentral distance between 20 and 105 degrees
+from the event.</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<section id="amplitude">
+<h3>Amplitude<a class="headerlink" href="#amplitude" title="Permalink to this heading">¶</a></h3>
+<p>The A5/2 amplitudes are calculated on the vertical component seismograms filtered
+between 0.8 and 4.5 Hz and converted to displacement.</p>
+</section>
+<section id="station-magnitude">
+<h3>Station Magnitude<a class="headerlink" href="#station-magnitude" title="Permalink to this heading">¶</a></h3>
+<div class="math">
+<p><img src="../_images/math/be87b4ff8e5530b3bf22b3e2f2d2f23b57c93bf4.png" alt="mag = \log10(\frac{A}{T}) + Q(\Delta,h)"/></p>
+</div><p>with</p>
+<p>A: amplitude of type A5/2</p>
+<p>T: period of the signal in seconds</p>
+<p>Q: attenuation correction function of event distance and event depth</p>
+<p>h: event depth in km</p>
+<p>The attenuation corrections as a function of distance and depth are based on
+(Veith, K. F., and Clawson, G. E., 1972). The corrections are tabulated every
+degree for distances out to 180 degrees and for depths 0, 15, 40 km, and
+100-800 km in steps of 100 km. Bi-cubic splines were used for interpolating the
+tables. The tabulated values were adjusted for the fact that the original
+(Veith, K. F., and Clawson, G. E., 1972) tables relate to peak-to-peak
+amplitudes, whereas the measured amplitudes for mb calculations are half
+peak-to-peak. The default corrections are read from a file installed at
+<code class="file docutils literal notranslate"><span class="pre">&#64;DATADIR&#64;/magnitudes/IDC/qfvc.mb</span></code>.If that file is not present no magnitude
+will be calculated.</p>
+</section>
+<section id="station-corrections">
+<h3>Station corrections<a class="headerlink" href="#station-corrections" title="Permalink to this heading">¶</a></h3>
+<p>Station magnitudes can be computed with a station specific correction table
+which is configured in the global bindings. The parameter <a class="reference internal" href="global.html#confval-magnitudes.mb-IDC-.Q"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.mb(IDC).Q</span></code></a>
+takes a path and allows to use placeholders for network code (<code class="code docutils literal notranslate"><span class="pre">{net}</span></code>),
+station code (<code class="code docutils literal notranslate"><span class="pre">{sta}</span></code>) and location code (<code class="code docutils literal notranslate"><span class="pre">{loc}</span></code>).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">magnitudes</span><span class="o">.</span><span class="n">mb</span><span class="p">(</span><span class="n">IDC</span><span class="p">)</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="nd">@DATADIR</span><span class="o">@/</span><span class="n">magnitudes</span><span class="o">/</span><span class="n">IDC</span><span class="o">/</span><span class="p">{</span><span class="n">net</span><span class="p">}</span><span class="o">.</span><span class="p">{</span><span class="n">sta</span><span class="p">}</span><span class="o">.</span><span class="n">mb</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Amplitude unit in SeisComP: <strong>nanometer</strong> (nm)</p></li>
+<li><p>Time window: 5.5 s</p></li>
+<li><p>Default distance range: 20 - 105 deg</p></li>
+<li><p>Depth range: 0 - 800 km</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">mb_IDC</a><ul>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#amplitude">Amplitude</a></li>
+<li><a class="reference internal" href="#station-magnitude">Station Magnitude</a></li>
+<li><a class="reference internal" href="#station-corrections">Station corrections</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_mb.html"
+                          title="previous chapter">mb</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_ms_20.html"
+                          title="next chapter">Ms_20</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_mb_idc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

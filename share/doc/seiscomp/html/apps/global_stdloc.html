@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>StdLoc &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="LocExt" href="global_locext.html" />
+    <link rel="prev" title="MN" href="global_mn.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_locext.html" title="LocExt"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_mn.html" title="MN"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="stdloc">
+<span id="global-stdloc"></span><h1>StdLoc<a class="headerlink" href="#stdloc" title="Permalink to this heading">¶</a></h1>
+<p>Generic locator plugin for SeisComP.</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>StdLoc is a SeisComP locator plugin that combines standard location methods
+and was developed with the focus on local seismicity, although the methods
+are generic enough to work at different scales.</p>
+</section>
+<section id="plugin">
+<h2>Plugin<a class="headerlink" href="#plugin" title="Permalink to this heading">¶</a></h2>
+<p>To enable StdLoc the plugin <code class="docutils literal notranslate"><span class="pre">stdloc</span></code> must be loaded.</p>
+</section>
+<section id="how-does-it-work">
+<h2>How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h2>
+<p>The locator can apply a multitude of location methods and it is particularly useful to
+combine them to achieve better solutions.
+The methods available are: LeastSquares, GridSearch, OctTree and, more interestingly,
+two mixed methods: GridSearch+LeastSquares and OctTree+LeastSquares:</p>
+<ul class="simple">
+<li><p>LeastSquares: this is the classic algorithm that solve the linearized problem via
+iterative Least Square. However an initial location estimate is required and that
+makes its solutions dependent on a good initial location. For this reason this
+method should be combined with GridSearch or OctTree, unless it is intended to be
+used only as a re-locator of an existing solution e.g. in scolv or screloc</p></li>
+<li><p>GridSearch: finds the source location by evaluating the hypocenter probability
+of each grid cell and returning the maximum likelihood hypocenter.
+The source time is derived from the weighted average of arrival travel times.
+The downside of this method is that the resolution of the hypocenters depends on
+the grid size, but dense grids can be very slow to compute,</p></li>
+<li><p>GridSearch+LeastSquares: this method works similarly to GridSearch but it performs
+an additional LeastSquares for each grid cell, using the cell centroid as initial
+location estimate. This solves the major issues of both LeastSquares and
+GridSearch: by trying multiple initial location estimates allow LeastSquares to
+not be dependent on a bad initial location estimate and the grid doesn’t need to
+be dense, which makes the method faster than GridSearch and with higher resolution.
+For very local seisicity monitoring it could be used with a single cell only,
+which corresponds to starting LeastSquares from the same location with every
+event.</p></li>
+<li><p>OctTree: this method follows the NonLinLoc approach. The OctTree search starts
+similarly to GridSearch by evaluating the hypocenter probability of each grid cell,
+computed as the probability density at the cell center coordinates times the cell
+volume. The search then continues by repeatedly fetching the cell with high
+probability and dividing it in 8 sub-cells. These 8 cells are then inserted in the
+pool of cells to fetch from at next iteration.
+The search terminates after either a maximum number of iterations or after
+reaching a minimum cell size. At that point the maximum likelihood hypocenter
+is selected.</p></li>
+<li><p>OctTree+LeastSquares: the solution can be further improved combining OctTree with
+the Least Squares algorithm, which can use the OctTree solution as initial
+location estimate. This allows OctTree to stop after reaching a big cell size
+(i.e. it is fast) and letting LeastSquares to refine the solution. Knowing that
+the initial location estimate for LeastSquares is the maximum probability cell of
+OctTree the solution should not get stuck in a local minima. For example it is
+possible to define a grid size that covers a whole network and set the OctTree
+cell minimum size to a couple of kilometers. LeastSquares will then improve the
+location resolution of that coarse grid.</p></li>
+</ul>
+<p>The algorithms implemented in StdLoc are standard methods described in “Routine Data
+Processing in Earthquake Seismology” by Jens Havskov and Lars Ottemoller. The OctTree
+search algorithm is based on NonLibLoc by Antony Lomax.</p>
+</section>
+<section id="why-is-stdloc-suitable-for-local-seismicity">
+<h2>Why is stdloc suitable for local seismicity?<a class="headerlink" href="#why-is-stdloc-suitable-for-local-seismicity" title="Permalink to this heading">¶</a></h2>
+<p>When dealing with very local seismicity (few kilometers or hundreds of meters)
+simplifications that are common for regional seismicity have to be removed.
+In particular the locator should take into consideration:</p>
+<ul class="simple">
+<li><p>station elevation and even negative elevation (e.g. borehole sensors)</p></li>
+<li><p>earthquake location can be above a seismic sensor (e.g. borehole sensors)</p></li>
+<li><p>possible negative earthquake depth (above surface)</p></li>
+</ul>
+<p>More importantly the travel time tables used by the locator must be able to take
+into consideration all the above too.</p>
+<p>StdLoc is simple, but can deal with all this requirements.</p>
+</section>
+<section id="travel-time-table">
+<h2>Travel Time Table<a class="headerlink" href="#travel-time-table" title="Permalink to this heading">¶</a></h2>
+<p>StdLoc can be configured with any Travel Time Table type available in SeisComP,
+however only the <cite>homogeneous</cite> type is able to take into consideration station
+elevation, negative source depth and sources happening above stations. For this
+reason <cite>homogeneous</cite> should be the preferred choice when working on very local
+seismicity and especially with borehole sensors.</p>
+</section>
+<section id="module-configuration">
+<span id="global-stdloc-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profiles">
+<span class="sig-name descname"><span class="pre">StdLoc.profiles</span></span><a class="headerlink" href="#confval-StdLoc.profiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>list:string</em></p>
+<p>Defines a list of profiles to make available to the plugin.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>StdLoc.profile.$name.*</strong>
+$name is a placeholder for the name to be used and needs to be added to <a class="reference internal" href="#confval-StdLoc.profiles"><code class="xref std std-confval docutils literal notranslate"><span class="pre">StdLoc.profiles</span></code></a> to become active.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>StdLoc.profiles<span class="w"> </span><span class="o">=</span><span class="w"> </span>a,b
+StdLoc.profile.a.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+StdLoc.profile.b.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+<span class="c1"># c is not active because it has not been added</span>
+<span class="c1"># to the list of StdLoc.profiles</span>
+StdLoc.profile.c.value1<span class="w"> </span><span class="o">=</span><span class="w"> </span>...
+</pre></div>
+</div>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.method">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.method</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">GridSearch+LeastSquares</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The location method to use: LeastSquares, GridSearch, OctTree,
+GridSearch+LeastSquares or OctTree+LeastSquares.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.tableType">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.tableType</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.tableType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">LOCSAT</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Travel time table format type.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.tableModel">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.tableModel</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.tableModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">iasp91</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The model to be used. The format depends on tableType.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.PSTableOnly">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.PSTableOnly</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.PSTableOnly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled the arrival travel time information are fetched
+using ‘P’ and ‘S’ tables only and the user selected phase type is not
+considered (e.g Pg, Sg, PmP, SmS, P1, S1, etc).</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.usePickUncertainties">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.usePickUncertainties</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.usePickUncertainties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Whether to use pick time uncertainties rather than a fixed
+time error. If true, then the uncertainties are retrieved from
+each individual picks and a weight associated accordingly to
+‘pickUncertaintyClasses’ parameter.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.pickUncertaintyClasses">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.pickUncertaintyClasses</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.pickUncertaintyClasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.000,0.025,0.050,0.100,0.200,0.400</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Unit: <em>s</em></p>
+<p>Define the pick time uncertainty classes from which the pick weight is computed.
+This parameter defines a list of uncertainty time intervals: the interval
+in which a pick time uncertainty falls defines the pick class e.g. a pick
+wich uncertainty of 0.150 falls in the 4th interval and the pick class
+is then 4. if pick uncertainties are absent, the lowest class will be used.
+The pick weight then is computed as: 1 / 2^(class-1)</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.confLevel">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.confLevel</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.confLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.9</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Confidence level, between 0.5 and 1.0, used in computing the confidence ellipsoid.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.enableConfidenceEllipsoid">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.enableConfidenceEllipsoid</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.enableConfidenceEllipsoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>Compute the confidence ellipsoid for the location. This is optional since
+if it is not required it can be disabled to save some computation.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>StdLoc.profile.$name.GridSearch.*</strong>
+<em>Find the source location by evaluating the hypocenter probability</em>
+<em>of each grid cell and returning the maximum likelihood hypocenter.</em>
+<em>The source time is derived from the weighted average of arrival</em>
+<em>travel times.</em>
+<em>The solution can be further improved combining it with the Least Squares</em>
+<em>algorithm, which will then be run for each grid cell, using the cell</em>
+<em>centroid as initial location estimate. In this case only few big cells</em>
+<em>are required.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.center">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.center</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">auto,auto,5</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Latitude,longitude,depth[km].</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.autoLatLon">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.autoLatLon</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.autoLatLon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<p>Type: <em>boolean</em></p>
+<p>If enabled, the grid center latitude and longitude
+are automatically computed as the average of the arrival station
+locations. The center depth should still be provided.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.size">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.size</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20,20,5</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Unit: <em>km</em></p>
+<p>Grid X, Y, Z size in km</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.cellSize">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.cellSize</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.cellSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">2.5,2.5,5</span></code></p>
+<p>Type: <em>list:string</em></p>
+<p>Unit: <em>km</em></p>
+<p>Cell X, Y, Z size in km</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.misfitType">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.misfitType</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.misfitType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">L1</span></code></p>
+<p>Type: <em>string</em></p>
+<p>The type of misfit to use, from which the likelyhood function is
+derived: L1 or L2 norm. L1 is less sensitive to outliers and so more
+suitable with automatic picks, L2 is the preferred choice for manual picks.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.GridSearch.travelTimeError">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.GridSearch.travelTimeError</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.GridSearch.travelTimeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.25</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>s</em></p>
+<p>Typical error in seconds for travel-time to one station. This
+value affects the uncertainty of the location. In OctTree it also
+influences the probability density computation: a too conservative value
+increases the number of iterations required by OctTree to converge to a
+high resolution solution.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>StdLoc.profile.$name.OctTree.*</strong>
+<em>Find the source location and time via OctTree search. This method uses the</em>
+<em>parameters defined in GridSearch, but applies the OctTree search algorithm.</em>
+<em>The solution can be further improved combining OctTree with the Least Squares</em>
+<em>algorithm, which can use the OctTree solution as initial location estimate.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.OctTree.maxIterations">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.OctTree.maxIterations</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.OctTree.maxIterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">50000</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of iterations after which the search stops. A zero or negative
+value disable this stopping mechanism.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.OctTree.minCellSize">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.OctTree.minCellSize</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.OctTree.minCellSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0.1</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Unit: <em>km</em></p>
+<p>Minimum cell size to be generate by the OctTree search to stop. A zero
+or negative value disable this stopping mechanism.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>StdLoc.profile.$name.LeastSquares.*</strong>
+<em>Find the source location and time via iterative Least Square.</em>
+<em>However an initial location estatimate is required. if that is not</em>
+<em>available then this method should be combined with GridSearch or</em>
+<em>OctTree.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.LeastSquares.iterations">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.LeastSquares.iterations</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.LeastSquares.iterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">20</span></code></p>
+<p>Type: <em>int</em></p>
+<p>Number of iterations. Each iteration will use the
+location and time from the previous Least
+Square solution.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.LeastSquares.dampingFactor">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.LeastSquares.dampingFactor</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.LeastSquares.dampingFactor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+<p>Type: <em>double</em></p>
+<p>Damping factor value to be used when solving the equation system.
+0 menas no damping factor.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-StdLoc.profile.-name.LeastSquares.solverType">
+<span class="sig-name descname"><span class="pre">StdLoc.profile.$name.LeastSquares.solverType</span></span><a class="headerlink" href="#confval-StdLoc.profile.-name.LeastSquares.solverType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: <code class="docutils literal notranslate"><span class="pre">LSMR</span></code></p>
+<p>Type: <em>string</em></p>
+<p>Algorithm to use: either LSMR or LSQR</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">StdLoc</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#plugin">Plugin</a></li>
+<li><a class="reference internal" href="#how-does-it-work">How does it work?</a></li>
+<li><a class="reference internal" href="#why-is-stdloc-suitable-for-local-seismicity">Why is stdloc suitable for local seismicity?</a></li>
+<li><a class="reference internal" href="#travel-time-table">Travel Time Table</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_mn.html"
+                          title="previous chapter">MN</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_locext.html"
+                          title="next chapter">LocExt</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_stdloc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

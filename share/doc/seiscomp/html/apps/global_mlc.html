@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>MLc &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MLv" href="global_mlv.html" />
+    <link rel="prev" title="Ms_20" href="global_ms_20.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_mlv.html" title="MLv"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_ms_20.html" title="Ms_20"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="mlc">
+<span id="global-mlc"></span><h1>MLc<a class="headerlink" href="#mlc" title="Permalink to this heading">¶</a></h1>
+<p>Custom magnitude for local events measured on horizontal components</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>MLc is the custom magnitude for local events provided by the mlc plugin.
+The implementation is based on specifications by Hessian Agency for Nature
+Conservation, Environment and Geology, Hessian Earthquake Service.</p>
+<p>The MLc magnitude is very similar to the original <a class="reference internal" href="global_ml.html#global-ml"><span class="std std-ref">ML</span></a>,
+except that by default</p>
+<ul class="simple">
+<li><p>Amplitude pre-filtering is applied.</p></li>
+<li><p>A parametric <a class="reference internal" href="#mlc-station-magnitude"><span class="std std-ref">magnitude calibration</span></a> function
+applies.</p></li>
+<li><p>Hypocentral distance is used.</p></li>
+</ul>
+<p>Regionalization of magnitude computation is provided through global module
+configuration.
+Configuration of global bindings provides additional flexibility:</p>
+<ul class="simple">
+<li><p>Amplitudes can be pre-filtered before applying Wood-Anderson simulation
+(<a class="reference internal" href="global.html#confval-amplitudes.MLc.preFilter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.preFilter</span></code></a>),</p></li>
+<li><p>Wood-Anderson simulation is optional:
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.applyWoodAnderson"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.applyWoodAnderson</span></code></a>,</p></li>
+<li><p>Measured amplitudes can be scaled accounting for expected unit
+(<a class="reference internal" href="global.html#confval-amplitudes.MLc.amplitudeScale"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.amplitudeScale</span></code></a>),</p></li>
+<li><p>A parametric or A0-based non-parametric
+<a class="reference internal" href="#mlc-station-magnitude"><span class="std std-ref">magnitude calibration</span></a>
+function can be applied as controlled by
+<a class="reference internal" href="global.html#confval-magnitudes.MLc.calibrationType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.calibrationType</span></code></a>.</p></li>
+<li><p>Consider either hypocentral or epicentral distance for computing magnitudes
+(<a class="reference internal" href="global.html#confval-magnitudes.MLc.distMode"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.distMode</span></code></a>).</p></li>
+</ul>
+<p>General (default) conditions apply:</p>
+<ul class="simple">
+<li><p>Amplitude pre-filtering, configurable: <a class="reference internal" href="../base/filter-grammar.html#filter-bw"><span class="std std-ref">BW(3,0.5,12)</span></a>.</p></li>
+<li><p>Amplitude unit in SeisComP: <strong>millimeter</strong> (mm) or as considered by the
+configured calibration parameters.</p></li>
+<li><p>Optional amplitude scaling and Wood-Anderson simulation.</p></li>
+<li><p>Time window, configurable: 150 s by <a class="reference internal" href="scautopick.html#scautopick"><span class="std std-ref">scautopick</span></a> or distance dependent
+with <img class="math" src="../_images/math/700d460c0599a637df70d1d3acfc20120173c832.png" alt="endTime = distance [km]/ 3 + 30"/>, e.g. by <a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a> or
+<a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>.</p></li>
+<li><p>Distance type, configurable: hypocentral or epicentral.</p></li>
+<li><p>Distance range, configurable: 0 - 8 deg, measurements beyond 8 deg will be
+strictly ignored.</p></li>
+<li><p>Depth range, configurable: &lt;= 80 km.</p></li>
+<li><p>Magnitude calibration, configurable: parametric or non-parametric.</p></li>
+</ul>
+<section id="amplitudes">
+<h3>Amplitudes<a class="headerlink" href="#amplitudes" title="Permalink to this heading">¶</a></h3>
+<p>MLc amplitudes can be measured automatically by <a class="reference internal" href="scautopick.html#scautopick"><span class="std std-ref">scautopick</span></a> or <a class="reference internal" href="scamp.html#scamp"><span class="std std-ref">scamp</span></a>
+or interactively by <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a> very similarly to the original <a class="reference internal" href="global_ml.html#global-ml"><span class="std std-ref">ML</span></a>,
+except that they can be pre-filtered and applying Wood-Anderson simulation is
+optional: <a class="reference internal" href="global.html#confval-amplitudes.MLc.preFilter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.preFilter</span></code></a>,
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.applyWoodAnderson"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.applyWoodAnderson</span></code></a>.
+By default amplitudes are measured on both horizontal components where the
+absolute maxima are taken. They are combined to a final measured amplitude by
+taking the mean. The methods for measuring and combining the amplitudes are
+configurable:
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.measureType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.measureType</span></code></a>, <a class="reference internal" href="global.html#confval-amplitudes.MLc.combiner"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.combiner</span></code></a>.</p>
+<p>The Wood-Anderson simulation will convert input velocity data to ground
+displacement in mm. The input data may be of a different unit after applying
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.preFilter"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.preFilter</span></code></a>, e.g. when integration is applied, and / or
+when Wood-Anderson simulation is disabled. Configure
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.amplitudeScale"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.amplitudeScale</span></code></a> for converting the unit of the
+processed data to the unit expected by the
+<a class="reference internal" href="#mlc-station-magnitude"><span class="std std-ref">station magnitude calibration</span></a> for the measured
+amplitude.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For comparing MLc amplitudes with <a class="reference internal" href="global_ml.html#global-ml"><span class="std std-ref">ML amplitudes</span></a> set the
+global bindings parameters</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amplitudes</span><span class="o">.</span><span class="n">MLc</span><span class="o">.</span><span class="n">preFilter</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">amplitudes</span><span class="o">.</span><span class="n">MLc</span><span class="o">.</span><span class="n">combiner</span> <span class="o">=</span> <span class="n">average</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="station-magnitudes">
+<span id="mlc-station-magnitude"></span><h3>Station Magnitudes<a class="headerlink" href="#station-magnitudes" title="Permalink to this heading">¶</a></h3>
+<p>Station magnitudes are computed from measured amplitudes automatically by
+<a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a>
+or interactively by <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>. By global bindings configuration MLc considers</p>
+<ul>
+<li><p>Hypocentral (default) or epicentral distance: <a class="reference internal" href="global.html#confval-magnitudes.MLc.distMode"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.distMode</span></code></a>.</p></li>
+<li><p>Distance range: <a class="reference internal" href="global.html#confval-magnitudes.MLc.minDist"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.minDist</span></code></a>, <a class="reference internal" href="global.html#confval-magnitudes.MLc.maxDist"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.maxDist</span></code></a>.</p></li>
+<li><p>Events with depth up to <a class="reference internal" href="global.html#confval-magnitudes.MLc.maxDepth"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.maxDepth</span></code></a>.</p></li>
+<li><p>Parametric or non-parametric calibration functions</p>
+<ul>
+<li><p>parametric when <a class="reference internal" href="global.html#confval-magnitudes.MLc.calibrationType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.calibrationType</span></code></a> = “parametric”<a href="#id1"><span class="problematic" id="id2">`</span></a>:</p>
+<div class="math">
+<p><img src="../_images/math/bfdf8455f23a75bf18652720e491939a20ac8fa6.png" alt="MLc = \log_{10}(A) + c_3 * \log_{10}(r/c_5) + c_2 * (r + c_4) + c_1 + c_0(station)"/></p>
+</div><p>where</p>
+<ul class="simple">
+<li><p><em>A</em>: displacement amplitude measured in unit of mm or as per configuration</p></li>
+<li><p><em>r</em>: hypocentral (default) or epicentral distance</p></li>
+<li><p><em>c1</em>, <em>c2</em>, <em>c3</em>, <em>c4</em>, <em>c5</em>: general calibration parameters</p></li>
+<li><p><em>c0</em>: station-specific correction</p></li>
+<li><p><em>r</em>: Hypocentral (default) or epicentral distance as configured by
+<a class="reference internal" href="global.html#confval-magnitudes.MLc.distMode"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.distMode</span></code></a>.</p></li>
+</ul>
+</li>
+<li><p>A0-based non-parametric when <a class="reference internal" href="global.html#confval-magnitudes.MLc.calibrationType"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.calibrationType</span></code></a> = “A0”<a href="#id3"><span class="problematic" id="id4">`</span></a>:</p>
+<div class="math">
+<p><img src="../_images/math/ccab4425809584f06dd1ddcaf88fa0b15cb94841.png" alt="MLc = \log_{10}(A) - \log_{10}(A_0)"/></p>
+</div><p>where</p>
+<ul class="simple">
+<li><p><img class="math" src="../_images/math/93675c26b872cb6c8401f3a9d037d0e7383ae06b.png" alt="log_{10}(A_0)"/>: distance-dependent correction value. Read
+<a class="reference internal" href="global_mlv.html#global-mlv"><span class="std std-ref">MLv</span></a> for the details.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The magnitude calibration function can regionalized by adjusting global module
+configuration parameters in MLc region profiles of
+<code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.MLc.region.*</span></code> and in a <em>MLc</em> Magnitude type profile e.g.
+in <code class="file docutils literal notranslate"><span class="pre">global.cfg</span></code>.</p>
+</div>
+</section>
+<section id="network-magnitude">
+<h3>Network Magnitude<a class="headerlink" href="#network-magnitude" title="Permalink to this heading">¶</a></h3>
+<p>The network magnitude is computed from station magnitudes automatically by
+<a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a> or interactively by <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>.
+Originally the median was computed from all station MLc to form the
+<a class="reference internal" href="../base/glossary.html#term-network-magnitude"><span class="xref std std-term">network magnitude</span></a> MLc. Here, the trimmed mean is applied. Outliers
+beyond the outer 12.5% percentiles are removed before forming the mean. The
+method can be adjusted in <a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a> by <a class="reference internal" href="scmag.html#confval-magnitudes.average"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.average</span></code></a>.</p>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h3>
+<p>The flexibility of the amplitude and magnitude processing allows to apply MLc
+in various use cases, e.g.</p>
+<ul>
+<li><p><strong>Default:</strong> Pre-filtered and gain-corrected amplitudes, Wood-Anderson
+corrected and measured in mm for Southwestern Germany, <span id="id5">Stange [<a class="reference internal" href="../base/references.html#id75" title="S. Stange. ML determination for local and regional events using a sparse network in Southwestern Germany. J. Seismol., 10:247 – 257, 2006. doi:10.1007/s10950-006-9010-6.">57</a>]</span>:</p>
+<div class="math">
+<p><img src="../_images/math/d949c4542df9586bfdd0006602e3f0b3a56fbc5b.png" alt="MLc = \log_{10}(A) + 1.11 * \log_{10}(r) + 0.00095 * r + 0.69 + c_0"/></p>
+</div></li>
+<li><p>Wood-Anderson-corrected displacement amplitudes measured in mm for
+Southern California, <span id="id6">Hutton and Boore [<a class="reference internal" href="../base/references.html#id39" title="L.K. Hutton and D.M. Boore. The ML scale in southern California. Bull. Seismol. Soc. Am,, 77(6):2074–2094, 1987. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140905-113510505.">42</a>]</span>:</p>
+<div class="math">
+<p><img src="../_images/math/fe3a90edfdebbbcc8730ea60fd0048e251cda93c.png" alt="MLc = \log_{10}(A) + 1.110 * \log_{10}(r / 100) + 0.00189 * (r - 100) + 3.0"/></p>
+</div></li>
+<li><p>Pre-filtered velocity amplitudes in units of mym/s (requiring to set
+<a class="reference internal" href="global.html#confval-amplitudes.MLc.amplitudeScale"><code class="xref std std-confval docutils literal notranslate"><span class="pre">amplitudes.MLc.amplitudeScale</span></code></a>), no Wood-Anderson correction,
+for West Bohemia, e.g. <span id="id7">Hiemer and Roessler [<a class="reference internal" href="../base/references.html#id38" title="S. Hiemer and D. Roessler. Monitoring the West Bohemian earthquake swarm in 2008/2009 by a temporary small-aperture seismic array. J. Seismol., 16:169-182, 2012. doi:10.1007/s10950-011-9256-5.">41</a>]</span>:</p>
+<div class="math">
+<p><img src="../_images/math/b21da4311b2f4882dbbadbcb617d04c5e5e35e7b.png" alt="MLc = \log_{10}(A) - log_{10}(2\Pi) + 2.1 * \log_{10}(r) - 1.7 + c_0"/></p>
+</div></li>
+</ul>
+<figure class="align-center" id="id10">
+<a class="reference internal image-reference" href="../_images/magnitude-calibrations_MLc_s_MLc_hb.png"><img alt="../_images/magnitude-calibrations_MLc_s_MLc_hb.png" src="../_images/magnitude-calibrations_MLc_s_MLc_hb.png" style="width: 18cm;" /></a>
+<figcaption>
+<p><span class="caption-text">MLc magnitudes for measured amplitude of 1 mm with default magnitude
+calibration (<em>MLc_s</em>, Stange, 2006) and calibration values for Southern
+California (<em>MLc_hb</em>, <span id="id8">Hutton and Boore [<a class="reference internal" href="../base/references.html#id39" title="L.K. Hutton and D.M. Boore. The ML scale in southern California. Bull. Seismol. Soc. Am,, 77(6):2074–2094, 1987. URL: https://resolver.caltech.edu/CaltechAUTHORS:20140905-113510505.">42</a>]</span>).</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p><strong>Set the configuration and calibration parameters</strong> in the global bindings
+similar
+to <a class="reference internal" href="global_ml.html#global-ml"><span class="std std-ref">ML</span></a>. Instead of configuring lots of global bindings profiles
+or station bindings one line per parameter can be added to the global module
+configuration (<code class="file docutils literal notranslate"><span class="pre">global.cfg</span></code>) which takes the form</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span><span class="o">.</span><span class="n">trunk</span><span class="o">.</span><span class="n">NET</span><span class="o">.</span><span class="n">STA</span><span class="o">.</span><span class="n">amplitude</span><span class="o">.</span><span class="n">MLc</span><span class="o">.</span><span class="n">preFilter</span> <span class="o">=</span> <span class="n">value</span>
+<span class="n">module</span><span class="o">.</span><span class="n">trunk</span><span class="o">.</span><span class="n">NET</span><span class="o">.</span><span class="n">STA</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">MLc</span><span class="o">.</span><span class="n">parametric</span><span class="o">.</span><span class="n">c0</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add MLc to the list of default amplitudes and magnitudes if MLc is to be
+computed by automatic modules, e.g. of <a class="reference internal" href="scamp.html#scamp"><span class="std std-ref">scamp</span></a>, <a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a>.</p></li>
+<li><p>Configure <a class="reference internal" href="scmag.html#scmag"><span class="std std-ref">scmag</span></a> (<a class="reference internal" href="scmag.html#confval-magnitudes.average"><code class="xref std std-confval docutils literal notranslate"><span class="pre">magnitudes.average</span></code></a> in <code class="file docutils literal notranslate"><span class="pre">scmag.cfg</span></code>)
+for choosing the method to form the
+network magnitude from station magnitudes, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">magnitudes</span><span class="o">.</span><span class="n">average</span> <span class="o">=</span> <span class="n">MLc</span><span class="p">:</span><span class="n">median</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add MLc to the list of magnitudes preferred by <a class="reference internal" href="scevent.html#scevent"><span class="std std-ref">scevent</span></a>
+(<a class="reference internal" href="scevent.html#confval-eventAssociation.magTypes"><code class="xref std std-confval docutils literal notranslate"><span class="pre">eventAssociation.magTypes</span></code></a> in <code class="file docutils literal notranslate"><span class="pre">scevent.cfg</span></code>) in order to let
+MLc become the preferred magnitude.</p></li>
+<li><p>Set defaults/visibility of MLc in <a class="reference internal" href="../base/glossary.html#term-GUI"><span class="xref std std-term">GUI</span></a> modules, e.g. <a class="reference internal" href="scolv.html#scolv"><span class="std std-ref">scolv</span></a>
+or <a class="reference internal" href="scesv.html#scesv"><span class="std std-ref">scesv</span></a>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All default values for bindings configuration parameters are from
+<span id="id9">Stange [<a class="reference internal" href="../base/references.html#id75" title="S. Stange. ML determination for local and regional events using a sparse network in Southwestern Germany. J. Seismol., 10:247 – 257, 2006. doi:10.1007/s10950-006-9010-6.">57</a>]</span>.</p>
+</div>
+</section>
+<section id="module-configuration">
+<span id="global-mlc-configuration"></span><h2>Module Configuration<a class="headerlink" href="#module-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLc.*</strong>
+<em>Regionalized calibration parameters for MLc. The region itself is defined</em>
+<em>by another magnitude-type MLc profile.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLc.region.*</strong>
+<em>Add one profile for every region. The profile name</em>
+<em>equals the name of a polygon configured in the BNA file</em>
+<em>of the Magnitude-type profile. The Magnitude-type profile</em>
+<em>and the polygon must exist.</em>
+<em>The special name “world” corresponds to the</em>
+<em>region of the entire planet as a fallback.</em></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLc.region.$name.*</strong>
+$name is a placeholder for the name to be used.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLc.region.$name.A0.*</strong>
+<em>Parameters for A0, non-parametric magnitude calibration.</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.A0.logA0">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.A0.logA0</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.A0.logA0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>string</em></p>
+<p>Overrides the calibration function log10(A0)
+for computing MLc per region. See logA0
+description in the bindings.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>magnitudes.MLc.region.$name.parametric.*</strong>
+<em>Parameters for parametric magnitude calibration:</em>
+<em>MLc = log10(A) + c3 * log10(r/c5) + c2 * (r + c4) + c1 + c0(station)</em></p>
+</div>
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c0">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c0</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c0
+for computing MLc per region. See c0
+description in the bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c1">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c1</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c1
+for computing MLc per region. See c1
+description in the bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c2">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c2</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c2
+for computing MLc per region. See c2
+description in the bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c3">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c3</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c3
+for computing MLc per region. See c3
+description in the bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c4">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c4</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c4
+for computing MLc per region. See c4
+description in the bindings.</p>
+</dd></dl>
+
+<dl class="std confval">
+<dt class="sig sig-object std" id="confval-magnitudes.MLc.region.-name.parametric.c5">
+<span class="sig-name descname"><span class="pre">magnitudes.MLc.region.$name.parametric.c5</span></span><a class="headerlink" href="#confval-magnitudes.MLc.region.-name.parametric.c5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type: <em>double</em></p>
+<p>Overrides the calibration parameter c5
+for computing MLc per region. See c5
+description in the bindings.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">MLc</a><ul>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#amplitudes">Amplitudes</a></li>
+<li><a class="reference internal" href="#station-magnitudes">Station Magnitudes</a></li>
+<li><a class="reference internal" href="#network-magnitude">Network Magnitude</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setup">Setup</a></li>
+<li><a class="reference internal" href="#module-configuration">Module Configuration</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_ms_20.html"
+                          title="previous chapter">Ms_20</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_mlv.html"
+                          title="next chapter">MLv</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_mlc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

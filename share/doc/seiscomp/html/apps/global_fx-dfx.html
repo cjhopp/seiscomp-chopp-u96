@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html  lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>FX-DFX &#8212; SeisComP Release documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/seiscomp.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=72bcf2f2" />
+    <link rel="stylesheet" type="text/css" href="../_static/seiscomp.css?v=c6da7ce6" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <script type="text/javascript" src="../_static/seiscomp.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=823bb831"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mB_BB" href="global_mb_bb.html" />
+    <link rel="prev" title="RecordStream" href="global_recordstream.html" /> 
+  </head>
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class="brand">
+          <img class="logo" src="../_static/brands/seiscomp/text/white.svg"/>
+           <!-- span class="title">SeisComP Release</span -->
+          <span class="version">5.5.14</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="container">
+        <div class="content"><a class="pull-right" id="sidebar-toggle">TOC</a>
+          
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">
+            index
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_mb_bb.html" title="mB_BB"
+             accesskey="N">
+            next
+          </a>
+        </li>
+        <li class="right">
+          <a href="global_recordstream.html" title="RecordStream"
+             accesskey="P">
+            previous
+          </a>
+        </li>
+        <li class="nav-item nav-item-0">
+          <a href="../index.html">Home</a>
+        </li>
+        <li class="nav-item nav-item-1">
+          <a href="../toc/extensions.html" >Extensions</a>
+        </li>
+        <li class="nav-item nav-item-2">
+          <a href="../toc/extensions/global.html" accesskey="U">global</a>
+        </li> 
+      </ul>
+    </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="fitted content" id="anchors-container">
+        <div class="body" role="main">
+          
+  <section id="fx-dfx">
+<span id="global-fx-dfx"></span><h1>FX-DFX<a class="headerlink" href="#fx-dfx" title="Permalink to this heading">¶</a></h1>
+<p>Implementation of the CTBTO/IDC polarization analysis for
+three-component stations.</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<p>The feature extraction as implemented at CTBTO IDC for single three-component
+stations determines back azimuth (station to origin) and slowness, including the
+uncertainties for both of these. In the IDC source code and database, the back
+azimuth is referred to as only azimuth.</p>
+</section>
+<section id="algorithm">
+<h2>Algorithm<a class="headerlink" href="#algorithm" title="Permalink to this heading">¶</a></h2>
+<p>The algorithm computes polarization attributes for a three-component station using
+a modification to the <span id="id1">Jurkevics [<a class="reference internal" href="../base/references.html#id42" title="A. Jurkevics. Polarization analysis of three-component array data. Bull. Seismol. Soc. Am., 78(5):1725-1743, 1988. doi:10.1785/BSSA0710041105.">45</a>]</span> algorithm. Some of these attributes are
+then used to determine detection azimuth (seazp = P-type azimuth in degrees),
+detection slowness and azimuth/slowness uncertainties (inang1 = emergence (incidence)
+angle and rect = rectilinearity).</p>
+<p>A fixed noise window of 9.5 seconds ([-30s;-20.5s] with respect to trigger time)
+and a signal window of 5.5 seconds ([-4s;1.5s] with respect to trigger time)
+is used. The signal window is subdivided into intervals of 1.5s length which
+overlap by 50%.</p>
+<ol class="arabic simple">
+<li><p>De-mean data according to mean of noise window.</p></li>
+<li><p>Apply cosine ramp to noise data and filter the entire data window.</p></li>
+<li><p>Rotate three components into ZNE space.</p></li>
+<li><p>Compute 3x3 covariance matrix for each interval.</p></li>
+<li><p>Extract eigenvalues and compute parameters including rectilinearity.</p></li>
+<li><p>Choose the result set with the largest rectilinearity.</p></li>
+</ol>
+</section>
+<section id="picks">
+<h2>Picks<a class="headerlink" href="#picks" title="Permalink to this heading">¶</a></h2>
+<p>In addition to the extracted back azimuth and slowness values the rectilinearity
+is added as a comment to the resulting pick. The comment ID is
+<code class="docutils literal notranslate"><span class="pre">DFX:rectilinearity</span></code> and the comment is the value in string representation.</p>
+</section>
+</section>
+
+
+          <div id="anchors-bottom"></div>
+        </div>
+        
+      <div class="sidebar" role="navigation" aria-label="main navigation">
+        <div id="anchors-top"></div>
+        <div id="anchors" class="content">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">FX-DFX</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#algorithm">Algorithm</a></li>
+<li><a class="reference internal" href="#picks">Picks</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="global_recordstream.html"
+                          title="previous chapter">RecordStream</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="global_mb_bb.html"
+                          title="next chapter">mB_BB</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/apps/global_fx-dfx.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="horizontal layout content">
+        <a class="fade-in" href="https://www.gempa.de" target="_blank">
+          <img class="brand" src="../_static/brands/gempa.svg"/>
+        </a>
+        <div class="stretched align-center fitted content">
+          <div>
+		  Version <b>5.5.14</b> Release
+          </div>
+            <div class="copyright">
+              Copyright &copy; gempa GmbH, GFZ Potsdam.
+            </div>
+        </div>
+        <a class="fade-in" href="https://www.gfz-potsdam.de" target="_blank">
+          <img class="brand" src="../_static/brands/gfz.svg"/>
+        </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
